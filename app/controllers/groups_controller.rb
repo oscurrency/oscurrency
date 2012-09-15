@@ -5,6 +5,7 @@ class GroupsController < ApplicationController
   load_and_authorize_resource
   
   def index
+    @body = "noajax"
     # XXX can't define abilities w/ blocks (accessible_by) http://github.com/ryanb/cancan/wiki/Upgrading-to-1.4
     @groups = Group.name_sorted_and_paginated(params[:page])
 
@@ -20,14 +21,14 @@ class GroupsController < ApplicationController
       format.html do
         @forum = @group.forum
         @topics = Topic.find_recently_active(@forum, params[:page]) 
-        @reqs = Req.search(nil, 
+        @reqs = Req.custom_search(nil,
                            @group, 
                            active=true,
                            1, # params[:page] 
                            AJAX_POSTS_PER_PAGE,
                            nil
                            )
-        @offers = Offer.search(nil,
+        @offers = Offer.custom_search(nil,
                                @group,
                                active=true,
                                1, #params[:page]
