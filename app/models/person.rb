@@ -11,7 +11,7 @@ class Person < ActiveRecord::Base
   end
 
   #  attr_accessor :password, :verify_password, :new_password, :password_confirmation
-  attr_accessor :sorted_photos, :accept_agreement
+  attr_accessor :accept_agreement
   attr_accessible *attribute_names, :as => :admin
   attr_accessible :password, :password_confirmation, :as => :admin
   attr_accessible :email, :password, :password_confirmation, :name
@@ -91,8 +91,9 @@ class Person < ActiveRecord::Base
 
   has_many :connections
   has_many :contacts, :through => :connections, :conditions => {"connections.status" => Connection::ACCEPTED}
-  has_many :photos, :dependent => :destroy, :order => 'created_at'
   has_many :requested_contacts, :through => :connections, :source => :contact#, :conditions => REQUESTED_AND_ACTIVE
+
+  mount_uploader :picture, ImageUploader
 
   with_options :dependent => :destroy, :order => 'created_at DESC' do |person|
     person.has_many :_sent_messages, :foreign_key => "sender_id",
@@ -181,7 +182,7 @@ class Person < ActiveRecord::Base
   # converts params[:id] into an int, and in Ruby
   # '1-michael-hartl'.to_i == 1
   def to_param
-    "#{id}-#{name.to_safe_uri}"
+    "#{id}-#{name.parameterize}"
   end
 
   ## Feeds
@@ -334,44 +335,6 @@ class Person < ActiveRecord::Base
   def is?(role, group)
     mem = Membership.mem(self, group)
     mem && mem.is?(role)
-  end
-
-  ## Photo helpers
-
-  def photo
-    # This should only have one entry, but be paranoid.
-    photos.find_all_by_primary(true).first
-  end
-
-  # Return all the photos other than the primary one
-  def other_photos
-    photos.length > 1 ? photos - [photo] : []
-  end
-
-  def main_photo
-    photo.nil? ? "default.png" : photo.public_filename
-  end
-
-  def thumbnail
-    photo.nil? ? "default_thumbnail.png" : photo.public_filename(:thumbnail)
-  end
-
-  def icon
-    photo.nil? ? "default_icon.png" : photo.public_filename(:icon)
-  end
-
-  def bounded_icon
-    photo.nil? ? "default_icon.png" : photo.public_filename(:bounded_icon)
-  end
-
-  # Return the photos ordered by primary first, then by created_at.
-  # They are already ordered by created_at as per the has_many association.
-  def sorted_photos
-    # The call to partition ensures that the primary photo comes first.
-    # photos.partition(&:primary) => [[primary], [other one, another one]]
-    # flatten yields [primary, other one, another one]
-    @sorted_photos ||= photos.partition(&:primary).flatten
-    #@sorted_photos ||= photos.order("(CASE WHEN primary THEN 1 WHEN primary IS NULL THEN 2 ELSE 3 END)")
   end
 
   def change_password?(passwords)

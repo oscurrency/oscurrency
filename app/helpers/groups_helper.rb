@@ -8,22 +8,12 @@ module GroupsHelper
   # The default is to display the group's icon linked to the profile.
   def group_image_link(group, options = {})
     link = options[:link] || group
-    image = options[:image] || :icon
-    image_options = { :title => h(group.name), :alt => h(group.name) }
-    unless options[:image_options].nil?
-      image_options.merge!(options[:image_options]) 
-    end
-    link_options =  { :title => h(group.name) }
-    unless options[:link_options].nil?                    
-      link_options.merge!(options[:link_options])
-    end
-    content = image_tag(group.send(image), image_options)
-    # This is a hack needed for the way the designer handled rastered images
-    # (with a 'vcard' class).
-    if options[:vcard]
-      content = %(#{content}#{content_tag(:span, h(group.name), 
-                                                 :class => "fn" )})
-    end
+    version = options[:image] || :icon
+    image_options = (options[:image_options] || {}).merge title: h(group.name), alt: h(group.name)
+    link_options = (options[:link_options] || {}).merge title: h(group.name)
+    content = image_tag(group.picture.send(version).url, image_options)
+    # This is a hack needed for the way the designer handled rastered images (with a 'vcard' class).
+    content += content_tag :span, h(group.name), :class => "fn" if options[:vcard]
     link_to(content, link, link_options)
   end
   

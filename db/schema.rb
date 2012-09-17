@@ -285,6 +285,7 @@ ActiveRecord::Schema.define(:version => 20120911165701) do
     t.boolean  "mandatory",                                          :default => false
     t.decimal  "default_credit_limit", :precision => 8, :scale => 2
     t.string   "asset"
+    t.string   "picture"
   end
 
   create_table "groups_people", :id => false, :force => true do |t|
@@ -444,30 +445,13 @@ ActiveRecord::Schema.define(:version => 20120911165701) do
     t.integer  "activity_status_id"
     t.integer  "plan_type_id"
     t.integer  "support_contact_id"
+    t.string   "picture"
   end
 
   add_index "people", ["admin"], :name => "index_people_on_admin"
   add_index "people", ["deactivated"], :name => "index_people_on_deactivated"
   add_index "people", ["email"], :name => "index_people_on_email", :unique => true
   add_index "people", ["perishable_token"], :name => "index_people_on_perishable_token"
-
-  create_table "photos", :force => true do |t|
-    t.integer  "person_id"
-    t.integer  "parent_id"
-    t.string   "content_type"
-    t.string   "filename"
-    t.string   "thumbnail"
-    t.integer  "size"
-    t.integer  "width"
-    t.integer  "height"
-    t.boolean  "primary"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "group_id"
-  end
-
-  add_index "photos", ["parent_id"], :name => "index_photos_on_parent_id"
-  add_index "photos", ["person_id"], :name => "index_photos_on_person_id"
 
   create_table "plan_types", :force => true do |t|
     t.string   "name",        :limit => 100, :null => false

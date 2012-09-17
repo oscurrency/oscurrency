@@ -41,44 +41,6 @@
       <%= f.submit t('button_update'), :class => "button" %>
     </div>
   <% end %>
-  
-  
-  <h3><%= t('groups.edit.photos') %></h3>
-  
-    <% if @group.photos.empty? %>
-      <%= image_tag @group.thumbnail %>
-    <% else %>
-    <table>
-      <% @group.sorted_photos.collect_every(N_COLUMNS) do |row| %>
-      <tr>
-      <% row.each do |photo| %>
-        <td  style="padding-left: 1em;">
-          <%= image_tag photo.public_filename(:thumbnail) %>
-        </td>
-      <% end %>
-      </tr>
-      <tr>
-        <% row.each do |photo| %>
-        <td style="padding-left: 1em;">
-          <% if photo.primary? %>
-            <%= t('groups.edit.primary') %>
-          <% else %>
-            <%= link_to "select", photo_path(photo),
-                                          :method => :put %>
-          <% end %>
-          |
-          <%= link_to image_tag("icons/close.gif"), 
-                      delete_photo_group_path(@group)+"?photo_id=#{photo.id}",
-                      :method => :delete %>
-        </td>
-        <% end %>
-      </tr>
-      <% end %>
-    </table>
-    <% end %>
-    <br />
-    <%= button_to t('groups.edit.add_a_photo'), new_photo_group_path(@group), :class => "button" %>
-  </div>
 
 <%- end -%>
 <%= column_div :type => :secondary do -%>

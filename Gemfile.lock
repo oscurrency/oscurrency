@@ -18,41 +18,40 @@ GEM
   remote: http://rubygems.org/
   specs:
     aasm (3.0.8)
-    actionmailer (3.1.8)
-      actionpack (= 3.1.8)
-      mail (~> 2.3.3)
-    actionpack (3.1.8)
-      activemodel (= 3.1.8)
-      activesupport (= 3.1.8)
+    actionmailer (3.2.8)
+      actionpack (= 3.2.8)
+      mail (~> 2.4.4)
+    actionpack (3.2.8)
+      activemodel (= 3.2.8)
+      activesupport (= 3.2.8)
       builder (~> 3.0.0)
       erubis (~> 2.7.0)
-      i18n (~> 0.6)
-      rack (~> 1.3.6)
+      journey (~> 1.0.4)
+      rack (~> 1.4.0)
       rack-cache (~> 1.2)
-      rack-mount (~> 0.8.2)
       rack-test (~> 0.6.1)
-      sprockets (~> 2.0.4)
-    activemodel (3.1.8)
-      activesupport (= 3.1.8)
+      sprockets (~> 2.1.3)
+    activemodel (3.2.8)
+      activesupport (= 3.2.8)
       builder (~> 3.0.0)
-      i18n (~> 0.6)
-    activerecord (3.1.8)
-      activemodel (= 3.1.8)
-      activesupport (= 3.1.8)
-      arel (~> 2.2.3)
+    activerecord (3.2.8)
+      activemodel (= 3.2.8)
+      activesupport (= 3.2.8)
+      arel (~> 3.0.2)
       tzinfo (~> 0.3.29)
-    activeresource (3.1.8)
-      activemodel (= 3.1.8)
-      activesupport (= 3.1.8)
-    activesupport (3.1.8)
-      multi_json (>= 1.0, < 1.3)
+    activeresource (3.2.8)
+      activemodel (= 3.2.8)
+      activesupport (= 3.2.8)
+    activesupport (3.2.8)
+      i18n (~> 0.6)
+      multi_json (~> 1.0)
     acts_as_tree_rails3 (0.1.0)
     addressable (2.3.2)
     annotate (2.5.0)
       rake
     ar_after_transaction (0.2.4)
       activerecord
-    arel (2.2.3)
+    arel (3.0.2)
     artifice (0.6)
       rack-test
     audited (3.0.0.rc2)
@@ -63,13 +62,9 @@ GEM
       activerecord (>= 3.0.0)
       activesupport (>= 3.0.0)
     awesome_print (1.0.2)
-    aws-s3 (0.6.3)
-      builder
-      mime-types
-      xml-simple
     bbenezech-nested_form (0.0.6)
-    bootstrap-sass (2.0.4.2)
-    builder (3.0.0)
+    bootstrap-sass (2.1.0.0)
+    builder (3.0.3)
     calendar_helper (0.2.4)
       open4
     cancan (1.6.8)
@@ -80,11 +75,14 @@ GEM
       rack-test (>= 0.5.4)
       selenium-webdriver (~> 2.0)
       xpath (~> 0.1.4)
+    carrierwave (0.6.2)
+      activemodel (>= 3.2.0)
+      activesupport (>= 3.2.0)
     childprocess (0.3.5)
       ffi (~> 1.0, >= 1.0.6)
-    coffee-rails (3.1.1)
+    coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
-      railties (~> 3.1.0)
+      railties (~> 3.2.0)
     coffee-script (2.2.0)
       coffee-script-source
       execjs
@@ -115,6 +113,17 @@ GEM
       hpricot (>= 0.6)
       simple-rss (>= 1.1)
     ffi (1.1.5)
+    fog (1.6.0)
+      builder
+      excon (~> 0.14)
+      formatador (~> 0.2.0)
+      mime-types
+      multi_json (~> 1.0)
+      net-scp (~> 1.0.4)
+      net-ssh (>= 2.1.3)
+      nokogiri (~> 1.5.0)
+      ruby-hmac
+    formatador (0.2.3)
     geokit (1.6.5)
       multi_json
     geokit-rails3 (0.1.5)
@@ -143,7 +152,8 @@ GEM
     hpricot (0.8.6)
     httpauth (0.1)
     i18n (0.6.1)
-    jquery-rails (2.1.1)
+    journey (1.0.4)
+    jquery-rails (2.1.2)
       railties (>= 3.1.0, < 5.0)
       thor (~> 0.14)
     jquery-ui-rails (1.1.1)
@@ -152,7 +162,7 @@ GEM
     json (1.7.5)
     jwt (0.1.5)
       multi_json (>= 1.0)
-    kaminari (0.14.0)
+    kaminari (0.14.1)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
     kgio (2.7.4)
@@ -164,14 +174,17 @@ GEM
     listen (0.5.0)
     macaddr (1.6.1)
       systemu (~> 2.5.0)
-    mail (2.3.3)
+    mail (2.4.4)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.19)
-    multi_json (1.2.0)
+    multi_json (1.3.6)
     multi_xml (0.5.1)
     multipart-post (1.1.5)
+    net-scp (1.0.4)
+      net-ssh (>= 1.99.1)
+    net-ssh (2.5.2)
     netrc (0.7.7)
     newrelic_rpm (3.4.1)
     nokogiri (1.5.5)
@@ -189,29 +202,27 @@ GEM
       oauth (~> 0.4.4)
     pg (0.14.1)
     polyglot (0.3.3)
-    rack (1.3.6)
+    rack (1.4.1)
     rack-cache (1.2)
       rack (>= 0.4)
-    rack-mount (0.8.3)
-      rack (>= 1.0.0)
     rack-openid (1.3.1)
       rack (>= 1.1.0)
       ruby-openid (>= 2.1.8)
-    rack-pjax (0.5.9)
-      hpricot (~> 0.8.6)
+    rack-pjax (0.6.0)
+      nokogiri (~> 1.5)
       rack (~> 1.3)
     rack-ssl (1.3.2)
       rack
     rack-test (0.6.1)
       rack (>= 1.0)
-    rails (3.1.8)
-      actionmailer (= 3.1.8)
-      actionpack (= 3.1.8)
-      activerecord (= 3.1.8)
-      activeresource (= 3.1.8)
-      activesupport (= 3.1.8)
+    rails (3.2.8)
+      actionmailer (= 3.2.8)
+      actionpack (= 3.2.8)
+      activerecord (= 3.2.8)
+      activeresource (= 3.2.8)
+      activesupport (= 3.2.8)
       bundler (~> 1.0)
-      railties (= 3.1.8)
+      railties (= 3.2.8)
     rails3_acts_as_paranoid (0.1.4)
       activerecord (~> 3.1)
     rails_admin (0.0.5)
@@ -227,13 +238,13 @@ GEM
       rails (~> 3.1)
       remotipart (~> 1.0)
       sass-rails (~> 3.1)
-    railties (3.1.8)
-      actionpack (= 3.1.8)
-      activesupport (= 3.1.8)
+    railties (3.2.8)
+      actionpack (= 3.2.8)
+      activesupport (= 3.2.8)
       rack-ssl (~> 1.3.2)
       rake (>= 0.8.7)
       rdoc (~> 3.4)
-      thor (~> 0.14.6)
+      thor (>= 0.14.6, < 2.0)
     raindrops (0.10.0)
     rake (0.9.2.2)
     rdoc (3.12)
@@ -256,14 +267,14 @@ GEM
       activesupport (>= 3.0)
       railties (>= 3.0)
       rspec (~> 2.11.0)
+    ruby-hmac (0.4.0)
     ruby-openid (2.2.0)
     rubyzip (0.9.9)
-    sass (3.1.21)
-    sass-rails (3.1.5)
-      actionpack (~> 3.1.0)
-      railties (~> 3.1.0)
-      sass (~> 3.1.10)
-      tilt (~> 1.3.2)
+    sass (3.2.1)
+    sass-rails (3.2.5)
+      railties (~> 3.2.0)
+      sass (>= 3.1.10)
+      tilt (~> 1.3)
     selenium-webdriver (2.25.0)
       childprocess (>= 0.2.5)
       libwebsocket (~> 0.1.3)
@@ -272,7 +283,7 @@ GEM
     silent-postgres (0.1.1)
     simple-rss (1.2.3)
     spork (0.9.2)
-    sprockets (2.0.4)
+    sprockets (2.1.3)
       hike (~> 1.2)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
@@ -283,7 +294,7 @@ GEM
       activerecord (~> 3.0)
     therubyracer (0.10.2)
       libv8 (~> 3.3.10)
-    thor (0.14.6)
+    thor (0.16.0)
     tilt (1.3.3)
     treetop (1.4.10)
       polyglot
@@ -302,7 +313,6 @@ GEM
       activemodel
       mail
     will_paginate (3.0.3)
-    xml-simple (1.1.1)
     xpath (0.1.4)
       nokogiri (~> 1.3)
 
@@ -318,10 +328,10 @@ DEPENDENCIES
   audited-activerecord
   authlogic
   awesome_print
-  aws-s3
   calendar_helper
   cancan
   capybara
+  carrierwave
   cucumber
   cucumber-rails
   dalli
@@ -329,6 +339,7 @@ DEPENDENCIES
   dynamic_form
   exception_notification
   feed-normalizer
+  fog
   geokit-rails3
   girl_friday
   guard-spork
@@ -344,14 +355,14 @@ DEPENDENCIES
   pg
   rack
   rack-test
-  rails (~> 3.1.3)
+  rails (~> 3.2.0)
   rails3_acts_as_paranoid (~> 0.1.4)
   rails_admin
   redcarpet
   rmagick
   rspec-rails
   ruby-openid
-  sass-rails (= 3.1.5)
+  sass-rails
   silent-postgres
   spork
   sqlite3
