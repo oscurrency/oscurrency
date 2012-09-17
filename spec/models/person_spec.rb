@@ -121,49 +121,6 @@ describe Person do
     end
   end
 
-  describe "photo methods" do
-
-    before(:each) do
-      @photo_1 = mock_photo(:primary => true)
-      @photo_2 = mock_photo
-      @photos = [@photo_1, @photo_2]
-      @photos.stub!(:find_all_by_primary).and_return([@photo_1])
-      @person.stub!(:photos).and_return(@photos)
-    end
-
-    it "should have a photo method" do
-      @person.should respond_to(:photo)
-    end
-
-    it "should have a non-nil primary photo" do
-      @person.photo.should_not be_nil
-    end
-
-    it "should have other photos" do
-      @person.other_photos.should_not be_empty
-    end
-
-    it "should have the right other photos" do
-      @person.other_photos.should == (@photos - [@person.photo])
-    end
-
-    it "should have a main photo" do
-      @person.main_photo.should == @person.photo.public_filename
-    end
-
-    it "should have a thumbnail" do
-      @person.thumbnail.should_not be_nil
-    end
-
-    it "should have an icon" do
-      @person.icon.should_not be_nil
-    end
-
-    it "should have sorted photos" do
-      @person.sorted_photos.should == [@photo_1, @photo_2]
-    end
-  end
-
   describe "message associations" do
     it "should have sent messages" do
       @person.sent_messages.should_not be_nil

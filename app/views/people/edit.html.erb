@@ -126,40 +126,6 @@
 
   <br />
 
-  <h3><%= t('people.edit.photos') %></h3>
-
-    <% if @person.photos.empty? %>
-      <%= image_tag @person.thumbnail %>
-    <% else %>
-    <table>
-      <% @person.sorted_photos.collect_every(N_COLUMNS) do |row| %>
-      <tr>
-      <% row.each do |photo| %>
-        <td  style="padding-left: 1em;">
-          <%= image_tag photo.public_filename(:thumbnail) %>
-        </td>
-      <% end %>
-      </tr>
-      <tr>
-        <% row.each do |photo| %>
-        <td style="padding-left: 1em;">
-          <% if photo.primary? %>
-            primary
-          <% else %>
-            <%= link_to t('button_select'), photo_path(photo),
-                                          :method => :put %>
-          <% end %>
-          |
-          <%= link_to image_tag("icons/close.gif"), photo_path(photo),
-                                               :method => :delete %>
-        </td>
-        <% end %>
-      </tr>
-      <% end %>
-    </table>
-    <% end %>
-    <br />
-    <%= link_to t('people.edit.add_a_photo'), new_photo_path, :class => 'button' %>
   </div>
 
   <br />

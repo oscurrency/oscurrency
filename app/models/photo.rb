@@ -27,15 +27,15 @@ class Photo < ActiveRecord::Base
   
   belongs_to :person
   belongs_to :group
-  has_attachment :content_type => :image, 
-                 :storage => :s3,
-                 :processor => 'Rmagick',
-                 :max_size => UPLOAD_LIMIT.megabytes,
-                 :min_size => 1,
-                 :resize_to => '240>',
-                 :thumbnails => { :thumbnail    => '72>',
-                                  :icon         => '36>',
-                                  :bounded_icon => '36x36>' }
+  # has_attachment :content_type => :image, 
+  #                :storage => :s3,
+  #                :processor => 'Rmagick',
+  #                :max_size => UPLOAD_LIMIT.megabytes,
+  #                :min_size => 1,
+  #                :resize_to => '240>',
+  #                :thumbnails => { :thumbnail    => '72>',
+  #                                 :icon         => '36>',
+  #                                 :bounded_icon => '36x36>' }
   
   has_many :activities, :as => :item, :dependent => :destroy
   validate :filename_to_upload_exists_and_images_are_correct_format

@@ -1,5 +1,5 @@
         <div class="toolbox">
-          <%= image_tag @group.main_photo, :class => "profile-image photo",
+          <%= image_tag @group.picture.url, :class => "profile-image photo",
                                         :alt => h(@group.name) %>
             <ul class="tools">
             <%- if @membership.try(:person).try(:org) %>

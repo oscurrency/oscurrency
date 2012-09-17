@@ -9,8 +9,7 @@
       <%- @pending.each do |contact| -%>
         <li class="contact">
           <%= image_link contact, :image_options => { :class => "photo" },
-                                  :link_options => { :class => "url" },
-                                  :image => :bounded_icon %>
+                                  :link_options => { :class => "url" } %>
           <% if @group.owner?(current_person) %>
             <div class="accept_or_cancel_membership">
                 <%= link_to image_tag("icons/remove.gif"), 
@@ -38,8 +37,7 @@
         <% contact = membership.person %>
         <li class="contact">
           <%= image_link contact, :image_options => { :class => "photo" },
-                                  :link_options => { :class => "url" },
-                                  :image => :bounded_icon %>
+                                  :link_options => { :class => "url" } %>
           <% if can? :unsuscribe, membership %>
             <div class="cancel_membership">
                 <%= link_to image_tag("icons/remove.gif"), 
@@ -68,8 +66,7 @@
     <%- @group.admins.each do |admin| -%>
       <li class="contact">
       <%= image_link admin, :image_options => { :class => "photo" },
-                            :link_options => { :class => "url" },
-                            :image => :bounded_icon %>
+                            :link_options => { :class => "url" } %>
       </li>
     <%- end -%>
   </ul>
@@ -78,8 +75,7 @@
   <ul class="grid contacts medium">
     <li class="contact">
       <%= image_link @group.owner, :image_options => { :class => "photo" },
-                              :link_options => { :class => "url" },
-                              :image => :bounded_icon %>
+                              :link_options => { :class => "url" } %>
     </li>
   </ul>
 

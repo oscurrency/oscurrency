@@ -10,7 +10,7 @@
 <% if @worker %>
   <div class="profile vcard">
     <div class="toolbox">
-      <%= image_tag @worker.main_photo, :class => "profile-image photo",
+      <%= image_tag @worker.picture.url, :class => "profile-image photo",
                                         :alt => h(@worker.name) %>
     </div>
   </div>

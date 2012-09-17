@@ -8,22 +8,12 @@ module PeopleHelper
   # The default is to display the person's icon linked to the profile.
   def image_link(person, options = {})
     link = options[:link] || person
-    image = options[:image] || :icon
-    image_options = { :title => h(person.display_name), :alt => h(person.display_name) }
-    unless options[:image_options].nil?
-      image_options.merge!(options[:image_options]) 
-    end
-    link_options =  { :title => h(person.display_name) }
-    unless options[:link_options].nil?                    
-      link_options.merge!(options[:link_options])
-    end
-    content = image_tag(person.send(image), image_options)
-    # This is a hack needed for the way the designer handled rastered images
-    # (with a 'vcard' class).
-    if options[:vcard]
-      content = %(#{content}#{content_tag(:span, h(person.display_name), 
-                                                 :class => "fn" )})
-    end
+    version = options[:image] || :icon
+    image_options = (options[:image_options] || {}).merge title: h(person.display_name), alt: h(person.display_name)
+    link_options = (options[:link_options] || {}).merge title: h(person.display_name)
+    content = image_tag(person.picture.send(version).url, image_options)
+    # This is a hack needed for the way the designer handled rastered images (with a 'vcard' class).
+    content += content_tag :span, h(person.display_name), :class => "fn" if options[:vcard]
     link_to(content, link, link_options)
   end
 
@@ -41,15 +31,6 @@ module PeopleHelper
     # activities_helper_spec due to an RSpec bug.
     link_to(h(text), person, html_options)
   end
-    
-  private
-    
-    # Make captioned images.
-    def captioned(images, captions)
-      images.zip(captions).map do |image, caption|
-        markaby do
-          image << div { caption }
-        end
-      end
-    end
+
+
 end

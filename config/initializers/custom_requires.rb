@@ -1,7 +1,5 @@
 require 'digest/sha1'
-require 'rand'
 require 'will_paginate'
-require 'string'
 # Handle RDiscount and BlueCloth in a unified way.
 begin
   require 'rdiscount'

@@ -1,7 +1,7 @@
 <h2><%= @person.display_name %>'s <%= t('accounts.show.header_group') %> <%= @account.group.name %></h2>
   <div class="profile vcard">
     <div class="toolbox">
-    <%= link_to( image_tag( @person.main_photo, :class => "profile-image photo",
+    <%= link_to( image_tag( @person.picture.url, :class => "profile-image photo",
                                       :alt => h(@person.display_name) ), person_path(@person) ) %>
     <ul class="tools">
       <li>
