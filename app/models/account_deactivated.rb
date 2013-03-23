@@ -1,0 +1,3 @@
+class AccountDeactivated < Account
+
+end

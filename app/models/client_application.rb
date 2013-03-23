@@ -9,7 +9,7 @@ class ClientApplication < ActiveRecord::Base
   has_many :oauth_tokens
   validates_presence_of :name, :url, :key, :secret
   validates_uniqueness_of :key
-  before_validation_on_create :generate_keys
+  before_validation :generate_keys, :on => :create
 
   validates_format_of :url, :with => /\Ahttp(s?):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i
   validates_format_of :support_url, :with => /\Ahttp(s?):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i, :allow_blank=>true
@@ -38,36 +38,31 @@ class ClientApplication < ActiveRecord::Base
   end
   
   def oauth_server
-    @oauth_server||=OAuth::Server.new( "http://" + ClientApplication.global_prefs.server_name )
+    server_name = ClientApplication.global_prefs.server_name || ""
+    @oauth_server||=OAuth::Server.new( "http://" + server_name )
   end
   
   def credentials
     @oauth_client ||= OAuth::Consumer.new(key, secret)
   end
-    
+
   def create_request_token(params={}) 
+    r=nil
     if params[:scope]
-      scope_uri = URI.parse(params[:scope])
-      # XXX ignoring host:port and assuming it's our host:port
-      filepath = RAILS_ROOT + '/public' + scope_uri.path
-      if File.exist?(filepath)
-        # valid asset is required
-        asset = CGI::parse(scope_uri.query)['asset'][0]
-        unless asset.blank?
-          group = Group.find_by_asset(asset)
-          RequestToken.create(:client_application => self, 
-                              :scope => params[:scope], 
-                              :group_id => group.id, 
-                              :callback_url=>self.token_callback_url) unless group.nil?
-        end
-      else
-        logger.info "XXX create_request_token - file not found: #{scope_uri.path}"
+      if ::OauthScope.all_exist?(params[:scope])
+        r = RequestToken.create(:client_application => self, 
+                                :scope => params[:scope], 
+                                :callback_url=>self.token_callback_url)
       end
     end
+    r
   end
-  
+ 
+  def as_json
+    {:client_id => key, :client_secret => secret, :redirect_url => callback_url, :issued_at => created_at}.as_json
+  end
+
 protected
-  
   def generate_keys
     self.key = OAuth::Helper.generate_key(40)[0,40]
     self.secret = OAuth::Helper.generate_key(40)[0,40]

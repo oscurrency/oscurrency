@@ -3,10 +3,9 @@ module ApplicationHelper
 
   def current_page_pre22?(options)
     url_string = CGI.escapeHTML(url_for(options))
-    request = @controller.request
-    request_uri = request.request_uri
+    request_uri = request.fullpath
     if url_string =~ /^\w+:\/\//
-      url_string == "#{request.protocol}#{request.host_with_port}#{request_uri}"
+      url_string == "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
     else
       url_string == request_uri
     end
@@ -19,6 +18,17 @@ module ApplicationHelper
   end
   
   ## Menu helpers
+
+  def display_help?
+    !(
+      global_prefs.about.blank? &&
+      global_prefs.practice.blank? &&
+      global_prefs.steps.blank? &&
+      global_prefs.contact.blank? &&
+      global_prefs.agreement.blank? &&
+      global_prefs.questions.blank?
+    )
+  end
   
   def menu
     home     = menu_element("Home",   home_path)
@@ -29,7 +39,7 @@ module ApplicationHelper
     else
       forum = menu_element("Forums", forums_path)
     end
-    if logged_in? and not admin_view?
+    if logged_in?
       profile  = menu_element("Profile",  person_path(current_person))
       offers = menu_element("Offers", offers_path)
       requests = menu_element("Requests", reqs_path)
@@ -42,18 +52,8 @@ module ApplicationHelper
 #      links = [home, profile, contacts, messages, blog, people, forum]
       #events   = menu_element("Events", events_path)
         links = [home, profile, categories, offers, requests, people, messages, groups, forum]
-      # TODO: remove 'unless production?' once events are ready.
-      #links.push(events) #unless production?
-      
-    elsif logged_in? and admin_view?
-      spam = menu_element("eNews", admin_broadcast_emails_path)
-      people =  menu_element("People", admin_people_path)
-      exchanges =  menu_element("Ledger", admin_exchanges_path)
-      feed = menu_element("Feed", admin_feed_posts_path)
-      preferences = menu_element("Prefs", admin_preferences_path)
-      categories = menu_element("Categories", admin_categories_path)
-      neighborhoods = menu_element("Neighborhoods", admin_neighborhoods_path)
-      links = [spam, categories, neighborhoods, people, exchanges, feed, preferences]
+      # TODO: remove 'unless Rails.env.production?' once events are ready.
+      #links.push(events) #unless Rails.env.production?
     else
       #links = [home, people]
       links = [home, categories]
@@ -83,19 +83,20 @@ module ApplicationHelper
   end
 
   def waiting_image
-    "<span class='wait' style='display:none'><img alt='wait' class='wait' src='/images/loading.gif'></span>"
+    img = image_tag("loading.gif",:class=>"wait",:alt=>"wait")
+    "<span class='wait' style='display:none'>#{img}</span>".html_safe
   end
 
   def organization_image(person)
     if person.org?
-      "<img title=\"#{t('people.show.organization_profile')}\" src=\"/images/icons/community_small.png\" />"
+      image_tag("icons/community_small.png",:title=> t('people.show.organization_profile'))
     else
       ""
     end
   end
 
   def currency_units
-    "<span id='units' class='small'>#{t('currency_unit_plural')}</span>"
+    "<span id='units' class='small'>#{t('currency_unit_plural')}</span>".html_safe
   end
 
   def menu_element(content, address)
@@ -112,11 +113,6 @@ module ApplicationHelper
     content_tag(:li, menu_link_to(link, options), :class => klass)
   end
   
-  # Return true if the user is viewing the site in admin view.
-  def admin_view?
-    params[:controller] =~ /admin/ and admin?
-  end
-  
   def admin?
     logged_in? and current_person.admin?
   end
@@ -126,13 +122,13 @@ module ApplicationHelper
   def set_focus_to(id)
     javascript_tag("jQuery('##{id}').focus()");
   end
- 
-  # Same as Rails' simple_format helper without using paragraphs
-  def simple_format_without_paragraph(text)
-    text.to_s.
-      gsub(/\r\n?/, "\n").                    # \r\n and \r -> \n
-      gsub(/\n\n+/, "<br /><br />").          # 2+ newline  -> 2 br
-      gsub(/([^\n]\n)(?=[^\n])/, '\1<br />')  # 1 newline   -> br
+
+  def markdown(text)
+    markdown_parser.render(text).html_safe
+  end
+
+  def markdown_parser
+    @markdown_parser ||= Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(:hard_wrap => true))
   end
 
   # Display text by sanitizing and formatting.
@@ -152,7 +148,7 @@ module ApplicationHelper
       # Sometimes Markdown throws exceptions, so rescue gracefully.
       processed_text = content_tag(:p, sanitize(text))
     end
-    add_tag_options(processed_text, tag_opts)
+    add_tag_options(processed_text, tag_opts).html_safe
   end
   
   # Output a column div.
@@ -166,34 +162,57 @@ module ApplicationHelper
     # Allow callers to pass in additional classes.
     options[:class] = "#{klass} #{options[:class]}".strip
     content = content_tag(:div, capture(&block), options)
-    concat(content)
+    #concat(content)
   end
 
   def account_link(account, options = {})
+    label = options[:label] || ""
+    metric = case label
+      when t('balance') then account.balance_with_initial_offset
+      when t('paid') then account.paid
+      when t('earned') then account.earned
+      else 0
+    end
+
     path = person_account_path(account.person,account) # XXX link to transactions
     img = image_tag("icons/bargraph.gif")
     unless account.group
       str = ""
     else
       credit_limit = account.credit_limit.nil? ? "" : "(limit: #{account.credit_limit.to_s})"
-      action = "#{account.balance} #{account.group.unit} #{credit_limit}"
+      action = "#{metric} #{account.group.unit} #{credit_limit}"
       str = link_to(img,path, options)
-      str << " "
+      str << " #{label}: "
       str << link_to_unless_current(action, path, options)
+      # str.html_safe
     end
   end
 
   def exchange_link(person, group = nil, options = {})
     img = image_tag("icons/switch.gif")
     path = new_person_exchange_path(person, ({:group => group.id} unless group.nil?))
-    action = "Give credit"
+    action = t('exchanges.record_transaction')
     str = link_to(img,path,options)
     str << " "
     str << link_to_unless_current(action, path, options)
+    # str.html_safe
+  end
+
+  def support_link(person, group = nil, options = {})
+    img = image_tag("icons/question.gif")
+    path = person_path(person)
+    action = t('people.show.support_contact')
+    str = link_to(img,path,options)
+    str << " "
+    str << link_to_unless_current(action, path, options)
+    # str.html_safe
   end
 
   def email_link(person, options = {})
     reply = options[:replying_to]
+    classes = ['email-link']
+    classes << options[:class] if options[:class]
+
     if reply
       path = reply_message_path(reply)
     else
@@ -201,10 +220,14 @@ module ApplicationHelper
     end
     img = image_tag("icons/email.gif")
     action = reply.nil? ? "Send a message" : "Send reply"
-    opts = { :class => 'email-link' }
+    opts = { :class => classes.join(' ') }
     str = link_to(img, path, opts)
     str << " "
     str << link_to_unless_current(action, path, opts)
+  end
+
+  def first_n_words(s, n=20)
+    s.to_s[/(\s*\S+){,#{n}}/]
   end
 
   # Return a formatting note (depends on the presence of a Markdown library)
@@ -226,108 +249,6 @@ def relative_time_ago_in_words(time)
   else
     time_ago_in_words(time) + " " + t('ago')
   end
-end
-
-# YUI
-def yui_headers(textspace)  
-    @yui_head = capture do
-         content_for(:head) {'           
-        <!-- Combo-handled YUI CSS files: -->
-        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.6.0/build/assets/skins/sam/skin.css">
-        <!-- Combo-handled YUI JS files: -->
-        <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.6.0/build/yahoo-dom-event/yahoo-dom-event.js&2.6.0/build/container/container_core-min.js&2.6.0/build/menu/menu-min.js&2.6.0/build/element/element-beta-min.js&2.6.0/build/button/button-min.js&2.6.0/build/editor/editor-min.js"></script>
-'}
-  end
-  yui_rte(textspace)  
-end
-
-def yui_headers_debug(textspace) 
-    @yui_head = capture do
-         content_for(:head) {'           
-           <!-- Combo-handled YUI CSS files: -->
-           <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.6.0/build/menu/assets/skins/sam/menu.css&2.6.0/build/button/assets/skins/sam/button.css&2.6.0/build/editor/assets/skins/sam/editor.css&2.6.0/build/logger/assets/skins/sam/logger.css">
-           <!-- Combo-handled YUI JS files: -->
-           <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.6.0/build/yahoo/yahoo-debug.js&2.6.0/build/dom/dom-debug.js&2.6.0/build/event/event-debug.js&2.6.0/build/container/container_core-debug.js&2.6.0/build/menu/menu-debug.js&2.6.0/build/element/element-beta-debug.js&2.6.0/build/button/button-debug.js&2.6.0/build/editor/editor-debug.js&2.6.0/build/logger/logger-debug.js"></script>
-'}
-  end
-  yui_rte(textspace)  
-end
-
-def yui_headers_raw(textspace) 
-    @yui_head = capture do
-         content_for(:head) {'           
-           <!-- Combo-handled YUI CSS files: -->
-           <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.6.0/build/menu/assets/skins/sam/menu.css&2.6.0/build/button/assets/skins/sam/button.css&2.6.0/build/editor/assets/skins/sam/editor.css">
-           <!-- Combo-handled YUI JS files: -->
-           <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.6.0/build/yahoo/yahoo.js&2.6.0/build/dom/dom.js&2.6.0/build/event/event.js&2.6.0/build/container/container_core.js&2.6.0/build/menu/menu.js&2.6.0/build/element/element-beta.js&2.6.0/build/button/button.js&2.6.0/build/editor/editor.js"></script>
-'}
-  end
-  yui_rte(textspace)  
-end
-
-def yui_rte(textspace) 
-      @yui_text = capture do
-         content_for(:yui_rte) {'           
-           <script type="text/javascript">
-           var myEditor = new YAHOO.widget.Editor("' + textspace + '", {
-               handleSubmit: true,
-               dompath: false, //Turns on the bar at the bottom
-               animate: true, //Animates the opening, closing and moving of Editor windows
-               collapse: true,
-               titlebar: "This is text",
-               draggable: false,
-               buttons: [
-                         { group: "fontstyle", label: "Font Name and Size",
-                             buttons: [
-                                 { type: "select", label: "Arial", value: "fontname", disabled: true,
-                                     menu: [
-                                         { text: "Arial", checked: true },
-                                         { text: "Arial Black" },
-                                         { text: "Comic Sans MS" },
-                                         { text: "Courier New" },
-                                         { text: "Lucida Console" },
-                                         { text: "Tahoma" },
-                                         { text: "Times New Roman" },
-                                         { text: "Trebuchet MS" },
-                                         { text: "Verdana" }
-                             ]
-                           },
-                           { type: "spin", label: "13", value: "fontsize", range: [ 9, 75 ], disabled: true }
-                       ]
-                   },
-                   { type: "separator" },
-                   { group: "textstyle", label: "Font Style",
-                       buttons: [
-                           { type: "push", label: "Bold CTRL + SHIFT + B", value: "bold" },
-                           { type: "push", label: "Italic CTRL + SHIFT + I", value: "italic" },
-                           { type: "push", label: "Underline CTRL + SHIFT + U", value: "underline" },
-                           { type: "separator" },
-                           { type: "color", label: "Font Color", value: "forecolor", disabled: true },
-                           { type: "color", label: "Background Color", value: "backcolor", disabled: true }
-                       ]
-                   },
-                   { type: "separator" },
-                   { group: "indentlist", label: "Lists",
-                       buttons: [
-                           { type: "push", label: "Create an Unordered List", value: "insertunorderedlist" },
-                           { type: "push", label: "Create an Ordered List", value: "insertorderedlist" }
-                       ]
-                   },
-                   { type: "separator" },
-                   { group: "insertitem", label: "Insert Item",
-                       buttons: [
-                           { type: "push", label: "HTML Link CTRL + SHIFT + L", value: "createlink", disabled: true },
-                           { type: "push", label: "Insert Image", value: "insertimage" }
-                       ]
-                   }
-               ]
-               
-           });
-           myEditor.render();
-           </script>
-'}
-  end
-
 end
 
   private

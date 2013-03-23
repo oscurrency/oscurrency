@@ -1,8 +1,67 @@
 class Ability
+  extend PreferencesHelper
   include CanCan::Ability
   def initialize(person, access_token = nil)
+
     can :su, Person do |target_person|
       person.admin? && !target_person.admin?
+    end
+    can :unsu, Person
+
+    if person.admin?
+      can :dashboard
+    end
+
+    # need these for rails_admin
+    can [:read,:create], Person
+    can :update, Person do |target_person|
+      target_person == person || person.admin?
+    end
+    can :add_to_mailchimp_list, Person
+    can :export, Person
+
+    can :read, BusinessType
+    can [:create,:update,:destroy], BusinessType do |bt|
+      person.admin?
+    end
+
+    can :read, ActivityStatus
+    can [:create,:update,:destroy], ActivityStatus do |as|
+      person.admin?
+    end
+
+    can :read, PlanType
+    can [:create,:update,:destroy], PlanType do |pt|
+      person.admin?
+    end
+
+    can :read, FeedPost
+    can [:update,:destroy], FeedPost do |post|
+      person.admin?
+    end
+
+    can :read, Preference
+    can :update, Preference do |pref|
+      person.admin?
+    end
+
+    can :read, BroadcastEmail
+    can [:create,:update,:send_broadcast_email], BroadcastEmail do |broadcast_email|
+      person.admin?
+    end
+
+    # adding category,neighborhood to rails_admin
+    can :read, Category
+    can :create, Category do |category|
+      person.admin? || !(Ability.global_prefs.protected_categories?)
+    end
+    can [:update,:destroy], Category do |category|
+      person.admin?
+    end
+
+    can :read, Neighborhood
+    can [:create,:update], Neighborhood do |neighborhood|
+      person.admin?
     end
 
     can [:read, :create], Group
@@ -12,7 +71,7 @@ class Ability
       membership = Membership.mem(person,group)
       membership && membership.is?(:admin)
     end
-    can [:members,:exchanges,:graphs], Group
+    can [:members,:exchanges,:graphs,:people], Group
 
     can :read, Topic
     can :create, Topic do |topic|
@@ -25,6 +84,9 @@ class Ability
     can :read, ForumPost
     can :create, ForumPost do |post|
       post.topic.forum.worldwritable? || Membership.mem(person,post.topic.forum.group)
+    end
+    can :update, ForumPost do |post|
+      person.admin?
     end
     can :destroy, ForumPost do |post|
       person.is?(:admin,post.topic.forum.group) || post.person == person || person.admin?
@@ -45,12 +107,14 @@ class Ability
     can :update, Account do |account|
       person.is?(:admin,account.group)
     end
+    can :export, Account
+
 
     can :read, Offer
     can :create, Offer do |offer|
       Membership.mem(person,offer.group)
     end
-    can :update, Offer do |offer|
+    can [:update,:new_photo,:save_photo], Offer do |offer|
       person.is?(:admin,offer.group) || offer.person == person || person.admin?
     end
     can :destroy, Offer do |offer|
@@ -71,9 +135,14 @@ class Ability
       referenced = req.has_commitment? || req.has_approved? # no delete after a worker commits
       !referenced && (person.is?(:admin,req.group) || req.person == person || person.admin?)
     end
+    can :deactivate, Req do |req|
+      person.is?(:admin,req.group) || req.person == person || person.admin?
+    end
 
     can :read, Exchange
-    can :destroy, Exchange, :customer => person
+    can :destroy, Exchange do |exchange|
+      exchange.customer == person || person.admin?
+    end
     can :create, Exchange do |exchange|
       unless exchange.group
         # the presence of group is validated when creating an exchange
@@ -92,6 +161,10 @@ class Ability
           end
         end
       end
+    end
+
+    can :access, :rails_admin do |rails_admin|
+      person.admin?
     end
   end
 end

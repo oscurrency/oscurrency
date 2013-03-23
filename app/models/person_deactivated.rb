@@ -1,0 +1,3 @@
+class PersonDeactivated < Person
+
+end

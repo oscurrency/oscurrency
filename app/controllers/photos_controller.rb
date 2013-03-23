@@ -19,14 +19,6 @@ class PhotosController < ApplicationController
     end
   end
   
-  def new
-    @photo = Photo.new
-
-    respond_to do |format|
-      format.html
-    end
-  end
-
   def edit
     @display_photo = @photo
     respond_to do |format|
@@ -43,7 +35,7 @@ class PhotosController < ApplicationController
     if params[:commit] == "Cancel"
       redirect_to edit_person_url(current_person) and return
     end
-    person_data = { :person => current_person,
+    person_data = { :photoable => current_person,
                     :primary => current_person.photos.empty? }
     # raise params.inspect
     @photo = Photo.new(params[:photo].merge(person_data))
@@ -101,7 +93,7 @@ class PhotosController < ApplicationController
       @photo = Photo.find(params[:id])
       if @photo.nil?
         redirect_to edit_person_url(current_person)
-      elsif @photo.person != current_person
+      elsif @photo.photoable != current_person
         redirect_to home_url
       end
     end

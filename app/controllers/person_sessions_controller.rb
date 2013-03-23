@@ -30,12 +30,13 @@ class PersonSessionsController < ApplicationController
   end
 
   def destroy
-    unless current_person_session.nil?
+    unless @current_person_session.nil?
       @current_person_session.destroy
       flash[:success] = t('success_logout')
     else
       flash[:error] = t('error_already_logged_out')
     end
-    redirect_back_or_default root_url
+    custom_logout_url = global_prefs.logout_url.empty? ? root_url : global_prefs.logout_url
+    redirect_back_or_default custom_logout_url
   end
 end

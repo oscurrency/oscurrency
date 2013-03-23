@@ -1,16 +1,16 @@
-<% column_div :type => :primary do -%>
+<%= column_div :type => :primary do -%>
   <h2><%= t('offers.show.header') %></h2>
 <ul class="list full">
 <%= render :partial => @offer %>
 </ul>
 <% unless current_person?(@offer.person) %>
-  <% form_for(:message, :url => person_messages_path(@offer.person)) do |f| %>
-    <% fields_for :offer do |o| %>
+  <%= form_for(:message, :url => person_messages_path(@offer.person)) do |f| %>
+    <%= fields_for :offer do |o| %>
       <%= o.hidden_field :id %>
     <% end %>
     <%= f.hidden_field :subject, :id => "message_subject", :value => @offer.name %>
     <div class="form_row">
-      <label for="message_body"><%= t('offers.show.send') %> <%= h @offer.person.name %> <%= t('a_question') %></label>
+      <label for="message_body"><%= t('offers.show.send') %> <%= h @offer.person.display_name %> <%= t('a_question') %></label>
       <%= f.text_area :content, :id => "message_body", :rows => 5 %>
       <%= set_focus_to "message_body" %>
     </div>
@@ -22,7 +22,7 @@
 <% end %>
 <%- end -%>
 
-<% column_div :type => :secondary do -%>
+<%= column_div :type => :secondary do -%>
   <%= render :partial => 'shared/add_button', :locals => { :button_text => t('offers.show.add_offer'), :new_resource_path => new_offer_path } %>
   <%= render :partial => 'searches/box' %>
 <%- end -%>

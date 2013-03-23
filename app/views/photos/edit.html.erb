@@ -1,10 +1,10 @@
 <%= error_messages_for :photo %>
 
-<% form_for @photo, :html => { :multipart => true } do |f| -%>
+<%= form_for @photo, :html => { :multipart => true } do |f| -%>
   <div class="form_field">
-    <%= image_tag(@display_photo.public_filename(:thumbnail)) %><br />
+    <%= image_tag(@display_photo.picture_url(:thumbnail)) %><br />
     <label for="photo">Update your photo:</label><br />
-    <%= f.file_field :uploaded_data %>
+    <%= f.file_field :picture %>
   </div>
   <div class="form_field">
     <%= submit_tag 'Update' %>

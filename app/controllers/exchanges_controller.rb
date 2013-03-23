@@ -35,6 +35,8 @@ class ExchangesController < ApplicationController
     else
       if params[:group]
         @group = Group.find(params[:group])
+      else
+        @group = current_person.default_group
       end
       @req = Req.new
       @req.name = t('exchanges.new.enter_description')
@@ -70,7 +72,7 @@ class ExchangesController < ApplicationController
       @req.estimated_hours = @exchange.amount
       @req.due_date = Time.now
       @req.person = current_person
-      @req.active = false
+      @req.biddable = false
       @req.save!
 
       @exchange.metadata = @req
@@ -90,6 +92,7 @@ class ExchangesController < ApplicationController
       else
         flash[:error] = t('error_with_credit_transfer')
         @groups = Person.find(params[:person_id]).groups
+        @group = params[:group].nil? ? current_person.default_group : Group.find(params[:group])
         format.html { render :action => "new" }
         format.xml { render :xml => @exchange.errors, :status => :unprocessable_entity }
         format.json { render :json => @exchange.errors, :status => :unprocessable_entity }

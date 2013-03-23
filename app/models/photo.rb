@@ -21,51 +21,30 @@ class Photo < ActiveRecord::Base
   include ActivityLogger
   UPLOAD_LIMIT = 5 # megabytes
   
-  # attr_accessible is a nightmare with attachment_fu, so use
-  # attr_protected instead.
-  attr_protected :id, :person_id, :parent_id, :created_at, :updated_at
-  
-  belongs_to :person
-  belongs_to :group
-  has_attachment :content_type => :image, 
-                 :storage => :s3,
-                 :processor => 'Rmagick',
-                 :max_size => UPLOAD_LIMIT.megabytes,
-                 :min_size => 1,
-                 :resize_to => '240>',
-                 :thumbnails => { :thumbnail    => '72>',
-                                  :icon         => '36>',
-                                  :bounded_icon => '36x36>' }
-  
-  has_many :activities, :foreign_key => "item_id", :conditions => "item_type = 'Photo'", :dependent => :destroy
-    
+  belongs_to :photoable, :polymorphic => true
+
+  attr_accessible :picture, :primary, :photoable
+
+  has_many :activities, :as => :item, :dependent => :destroy
+
+  before_save :update_photo_attributes
   after_save :log_activity
-                 
-  # Override the crappy default AttachmentFu error messages.
-  def validate
-    if filename.nil?
-      errors.add_to_base("You must choose a file to upload")
-    else
-      # Images should only be GIF, JPEG, or PNG
-      enum = attachment_options[:content_type]
-      unless enum.nil? || enum.include?(send(:content_type))
-        errors.add_to_base("You can only upload images (GIF, JPEG, or PNG)")
-      end
-      # Images should be less than UPLOAD_LIMIT MB.
-      enum = attachment_options[:size]
-      unless enum.nil? || enum.include?(send(:size))
-        msg = "Images should be smaller than #{UPLOAD_LIMIT} MB"
-        errors.add_to_base(msg)
-      end
-    end
-  end
+
+  mount_uploader :picture, ImageUploader
   
   def log_activity
     if self.primary?
-      unless self.person.nil?
-        activity = Activity.create!(:item => self, :person => self.person)
-        add_activities(:activity => activity, :person => self.person)
+      unless (self.photoable.nil? || self.photoable.class != Person)
+        activity = Activity.create!(:item => self, :person => self.photoable)
+        add_activities(:activity => activity, :person => self.photoable)
       end
+    end
+  end
+
+  def update_photo_attributes
+    if picture.present? && picture_changed?
+      self.content_type = picture.file.content_type
+      self.size = picture.file.size
     end
   end
 

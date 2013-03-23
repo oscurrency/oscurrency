@@ -1,4 +1,4 @@
-<%- column_div :type => :primary do -%>
+<%= column_div :type => :primary do -%>
   <h2><%= t('people.edit.header') %></h2>
 
   <div id="profile_edit">
@@ -6,9 +6,7 @@
   <h3><%= t('people.edit.personal_details') %></h3>
 
     <%= error_messages_for :person %>
-    
-    <% form_for @person do |f| %>
-
+    <%= form_for @person do |f| %>
       <div class="form_row">
         <label for="person_name"><%= t('people.edit.name') %></label>
         <%= f.text_field :name, :maxlength => Person::MAX_NAME %>
@@ -26,10 +24,12 @@
   <div class="form_row full">
         <label for="person_categories"><%= t('people.edit.services_offered') %>
         </label>
-        <span class="categoryAdd"><%= link_to t('people.edit.add_new_category'), new_category_path %></span>
+        <% if can?(:create, @category) %>
+          <span class="categoryAdd"><%= link_to t('people.edit.add_new_category'), new_category_path %></span>
+        <% end %>
         <%= render :partial => "shared/select_categories", :locals => { :model_name => 'person' } %>
   </div>
-  
+
   <div class="form_row full">
         <label for="person_neighborhoods"><%= t('people.edit.neighborhood') %>
         </label>
@@ -50,20 +50,25 @@
 
       <div class="form_row">
         <label for="person_email"><%= t('people.edit.email') %></label>
-        <%= f.text_field :email, :maxlength => Person::MAX_EMAIL %>
+        <%= f.email_field :email %>
       </div>
-      
+
+      <div class="form_row">
+        <label for="person_web_site_url"><%= t('people.edit.web_site_url') %></label>
+        <%= f.text_field :web_site_url %>
+      </div>
+
       <%- if global_prefs.email_notifications? -%>
-      
+
         <br />
-      
+
         <h3><%= t('people.edit.email_notification_preferences') %></h3>
-      
+
         <p>
-          <%= t('people.edit.email_notification_note') %> 
+          <%= t('people.edit.email_notification_note') %>
         </p>
-        
-      
+
+
         <div class="form_row">
           <p>
           <label for="message_notifications"
@@ -71,18 +76,52 @@
           <%= f.check_box :message_notifications %>
           </p>
           <p>
-          <label for="wall_comment_notifications"
-                 class="checkbox"><%= t('people.edit.wall_comments') %></label>
-          <%= f.check_box :wall_comment_notifications %>
+            <%= f.check_box :broadcast_emails %>
+            <label for="broadcast_emails"
+                 class="checkbox"><%= t('people.edit.broadcast_emails') %></label>
           </p>
         </div>
       <%- end -%>
-      
+
+      <div class="form_row">
+        <p>
+        <label for="org"
+               class="checkbox"><%= t('people.edit.business_account') %>:</label>
+        <%= f.check_box :org %>
+        </p>
+      </div>
+
+      <div id="business_details">
+        <h3><%= t('people.edit.business_details') %></h3>
+
+        <div class="form_row">
+          <label for="person_business_name"><%= t('people.edit.business_name') %></label>
+          <%= f.text_field :business_name %>
+        </div>
+
+        <div class="form_row">
+          <label for="person_legal_business_name"><%= t('people.edit.legal_business_name') %></label>
+          <%= f.text_field :legal_business_name %>
+        </div>
+
+        <div class="form_row">
+          <label for="person_title"><%= t('people.edit.title') %></label>
+          <%= f.text_field :title %>
+        </div>
+
+        <div class="form_row full">
+          <label for="person_business_type"><%= t('people.edit.business_type') %>
+          </label>
+          <%= render :partial => "shared/select_business_type", :locals => { :model_name => 'person' } %>
+        </div>
+
+      </div>
+
       <br />
-  
+
       <div class="form_row">
         <%= f.submit t('button_update'), :class => "button" %>
-        <%= f.submit "Preview", :id => "preview", :class => "button" %>
+        <%= f.submit t('button_cancel'), :id => "cancel", :class => "button" %>
       </div>
       <input type="hidden" name="type" value="info_edit" />
   <% end %>
@@ -90,7 +129,7 @@
   <br />
 
   <h3><%= t('people.edit.photos') %></h3>
-  
+
     <% if @person.photos.empty? %>
       <%= image_tag @person.thumbnail %>
     <% else %>
@@ -99,7 +138,7 @@
       <tr>
       <% row.each do |photo| %>
         <td  style="padding-left: 1em;">
-          <%= image_tag photo.public_filename(:thumbnail) %>
+          <%= image_tag photo.picture_url(:thumbnail) %>
         </td>
       <% end %>
       </tr>
@@ -122,22 +161,22 @@
     </table>
     <% end %>
     <br />
-    <%= button_to t('people.edit.add_a_photo'), new_photo_path, :class => "button" %>
+    <%= link_to t('people.edit.add_a_photo'), new_photo_path, :class => 'button' %>
   </div>
 
   <br />
   <h3><%= t('people.edit.addresses') %></h3>
   <%= render :partial => 'address', :collection => @person.addresses %>
   <div class="status-btn" style="float: left">
-    <input type="button" name="update" value="<%= t('people.edit.add_address') %>" id="update-submit" onclick="document.location='<%= new_person_address_path(@person) %>';" />
+    <input type="button" name="update" class="button" value="<%= t('people.edit.add_address') %>" id="update-submit" onclick="document.location='<%= new_person_address_path(@person) %>';" />
   </div>
   <br />
 <%- end -%>
 
-<%- column_div :type => :secondary do -%>
+<%= column_div :type => :secondary do -%>
   <h2><%= t('people.edit.change_your_password') %></h2>
 
-  <% form_for @person, :html => { :id => "change_password" } do |f| %>
+  <%= form_for @person, :html => { :id => "change_password" } do |f| %>
 
     <div class="form_row">
       <label for="password"><%= t('people.edit.new_password') %></label>
@@ -161,7 +200,7 @@
 
   <h2>OpenID</h2>
 
-  <% form_for @person, :html => { :id => "openid" } do |f| %>
+  <%= form_for @person, :html => { :id => "openid_form" } do |f| %>
     <div class="form_row">
       <label for="openid_identifier"><%= t('people.edit.openid_identifier' ) %></label>
       <%= f.text_field :openid_identifier %>
@@ -173,5 +212,3 @@
 
   <% end %>
 <%- end -%>
-
-<%= yui_headers('person_description') %>

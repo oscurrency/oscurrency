@@ -4,7 +4,7 @@
     <%= image_link bid.person, :image => :thumbnail %>
     <%= image_tag "icons/new.gif", :class => "icon", :alt => "Bid" %>
   </div>
-  <% form_for :bid, :url => req_bid_path(bid.req, bid), :html => {:method => :put, :class => 'edit_bid'} do |f| %>
+  <%= form_for :bid, :url => req_bid_path(bid.req, bid), :html => {:method => :put, :class => 'edit_bid'} do |f| %>
   <% if current_person?(bid.req.person) && bid.requestor_event_for_current_state %>
     <%= hidden_field_tag :aasm_event, bid.requestor_event_for_current_state %>
     <%= f.submit bid.requestor_event_for_current_state %><%= waiting_image %>
@@ -24,7 +24,7 @@
     <% end -%>
     <br>
     <% if current_person?(bid.req.person) && !current_person.address.nil? && !bid.person.address.nil? && !current_person?(bid.person) -%>
-      <%= number_with_precision(bid.person.address.distance_to(current_person.address), 1).to_s %> <%= t('miles_away') %>
+      <%= number_with_precision(bid.person.address.distance_to(current_person.address), :precision => 1).to_s %> <%= t('miles_away') %>
     <% end -%>
   </p>
 </li>

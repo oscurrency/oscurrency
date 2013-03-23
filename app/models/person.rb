@@ -1,136 +1,133 @@
-# == Schema Information
-# Schema version: 20090216032013
-#
-# Table name: people
-#
-#  id                         :integer(4)      not null, primary key
-#  email                      :string(255)     
-#  name                       :string(255)     
-#  remember_token             :string(255)     
-#  crypted_password           :string(255)     
-#  description                :text            
-#  remember_token_expires_at  :datetime        
-#  last_contacted_at          :datetime        
-#  last_logged_in_at          :datetime        
-#  forum_posts_count          :integer(4)      default(0), not null
-#  blog_post_comments_count   :integer(4)      default(0), not null
-#  wall_comments_count        :integer(4)      default(0), not null
-#  created_at                 :datetime        
-#  updated_at                 :datetime        
-#  admin                      :boolean(1)      not null
-#  deactivated                :boolean(1)      not null
-#  connection_notifications   :boolean(1)      default(TRUE)
-#  message_notifications      :boolean(1)      default(TRUE)
-#  wall_comment_notifications :boolean(1)      default(TRUE)
-#  blog_comment_notifications :boolean(1)      default(TRUE)
-#  email_verified             :boolean(1)      
-#  identity_url               :string(255)     
-#  phone                      :string(255)     
-#  twitter_name               :string(255)     
-#
+require 'texticle/searchable'
 
 class Person < ActiveRecord::Base
   include ActivityLogger
   extend PreferencesHelper
 
   acts_as_authentic do |c|
-    c.openid_required_fields = [:nickname, :email]
+    c.crypto_provider = Authlogic::CryptoProviders.const_get(ENV['CRYPTOPROVIDER'].to_sym) unless ENV['CRYPTOPROVIDER'].blank?
+    c.openid_required_fields = ['http://axschema.org/contact/email',
+      'http://axschema.org/namePerson/first',
+      'http://axschema.org/namePerson/last',
+      :fullname,
+      :email
+    ]
     c.perishable_token_valid_for = 48.hours
+    c.maintain_sessions = false if Rails.env == "test"
   end
 
-#  attr_accessor :password, :verify_password, :new_password, :password_confirmation
+  #  attr_accessor :password, :verify_password, :new_password, :password_confirmation
   attr_accessor :sorted_photos, :accept_agreement
-  attr_accessible :email, :password, :password_confirmation, :name,
-                  :description, :connection_notifications,
-                  :message_notifications, :wall_comment_notifications, :forum_notifications,
-                  :blog_comment_notifications, :category_ids, :address_ids, :neighborhood_ids,
-                  :zipcode,
-                  :phone, :phoneprivacy,
-                  :accept_agreement,
-                  :language,
-                  :openid_identifier,
-                  :sponsor
+  attr_accessible *attribute_names, :as => :admin
+  attr_accessible :password, :password_confirmation, :as => :admin
+  attr_accessible :email, :password, :password_confirmation, :name
+  attr_accessible :business_name, :legal_business_name, :business_type_id
+  attr_accessible :title, :activity_status_id, :plan_type_id, :support_contact_id
+  attr_accessible :description, :connection_notifications
+  attr_accessible :message_notifications
+  attr_accessible :category_ids, :address_ids, :neighborhood_ids
+  attr_accessible :zipcode
+  attr_accessible :phone, :phoneprivacy
+  attr_accessible :accept_agreement
+  attr_accessible :language
+  attr_accessible :openid_identifier
+  attr_accessible :sponsor
+  attr_accessible :broadcast_emails
+  attr_accessible :web_site_url
 
-  index do
-    name
-    description
-  end
+  extend Searchable(:name, :business_name, :description)
 
-  #is_indexed :fields => [ 'name', 'description', 'deactivated',
-  #                        'email_verified'],
-  #           :conditions => "deactivated = false AND (email_verified IS NULL OR email_verified = true)"
-
-  MAX_EMAIL = MAX_PASSWORD = 40
+  MAX_PASSWORD = 40
   MAX_NAME = 40
   MAX_DESCRIPTION = 5000
-  EMAIL_REGEX = /\A[A-Z0-9\._%-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}\z/i
-  TRASH_TIME_AGO = 1.month.ago
+  TRASH_TIME_AGO = 1.month
   SEARCH_LIMIT = 20
   SEARCH_PER_PAGE = 8
   MESSAGES_PER_PAGE = 5
   EXCHANGES_PER_PAGE = 10
   NUM_RECENT_MESSAGES = 3
-  NUM_WALL_COMMENTS = 10
   NUM_RECENT = 8
   FEED_SIZE = 10
-  TIME_AGO_FOR_MOSTLY_ACTIVE = 12.months.ago
+  TIME_AGO_FOR_MOSTLY_ACTIVE = 12.months
   DEFAULT_ZIPCODE_STRING = '89001'
   # These constants should be methods, but I couldn't figure out how to use
   # methods in the has_many associations.  I hope you can do better.
-  ACCEPTED_AND_ACTIVE =  [%(status = ? AND
-                            deactivated = ? AND
-                            (email_verified IS NULL OR email_verified = ?)),
-                          Connection::ACCEPTED, false, true]
-  REQUESTED_AND_ACTIVE =  [%(status = ? AND
-                            deactivated = ? AND
-                            (email_verified IS NULL OR email_verified = ?)),
-                          Connection::REQUESTED, false, true]
 
-  has_one :blog
-  has_many :comments, :as => :commentable, :order => 'created_at DESC',
-                      :limit => NUM_WALL_COMMENTS
+  module Scopes
+
+    def active
+      if global_prefs.email_verifications
+        where(:deactivated => false, :email_verified => true)
+      else
+        where(:deactivated => false)
+      end
+    end
+
+    def mostly_active
+      where("last_logged_in_at >= ?", TIME_AGO_FOR_MOSTLY_ACTIVE.ago)
+    end
+
+    def with_zipcode(z)
+      includes(:addresses).where('addresses.zipcode_plus_4' => z)
+    end
+
+    def broadcast_email
+      where :broadcast_emails => true
+    end
+
+    def connection_notifications
+      where :connection_notifications => true
+    end
+
+    def by_first_letter
+      order("first_letter ASC")
+    end
+
+    def by_name
+      order("name ASC")
+    end
+
+    def by_newest
+      order("created_at DESC")
+    end
+
+  end
+
+  extend Scopes
+
   has_many :connections
-  has_many :contacts, :through => :connections,
-                      :conditions => ACCEPTED_AND_ACTIVE,
-                      :order => 'people.created_at DESC'
-  has_many :photos, :dependent => :destroy, :order => 'created_at'
-  has_many :requested_contacts, :through => :connections,
-           :source => :contact
-           #:conditions => REQUESTED_AND_ACTIVE
-  with_options :dependent => :destroy,
-               :order => 'created_at DESC' do |person|
+  has_many :contacts, :through => :connections, :conditions => {"connections.status" => Connection::ACCEPTED}
+  has_many :photos, :as => :photoable, :dependent => :destroy, :order => 'created_at'
+  has_many :requested_contacts, :through => :connections, :source => :contact#, :conditions => REQUESTED_AND_ACTIVE
+
+  with_options :dependent => :destroy, :order => 'created_at DESC' do |person|
     person.has_many :_sent_messages, :foreign_key => "sender_id",
-                    :conditions => "communications.sender_deleted_at IS NULL", :class_name => "Message"
+    :conditions => "communications.sender_deleted_at IS NULL", :class_name => "Message"
     person.has_many :_received_messages, :foreign_key => "recipient_id",
-                    :conditions => "communications.recipient_deleted_at IS NULL", :class_name => "Message"
+    :conditions => "communications.recipient_deleted_at IS NULL", :class_name => "Message"
     person.has_many :_sent_exchanges, :foreign_key => "customer_id", :class_name => "Exchange"
     person.has_many :_received_exchanges, :foreign_key => "worker_id", :class_name => "Exchange"
   end
-  has_many :exchanges
+
+  has_many :exchanges, :foreign_key => "worker_id"
   has_many :feeds
   has_many :activities, :through => :feeds, :order => 'activities.created_at DESC',
-                                            :limit => FEED_SIZE,
-                                            :conditions => ["people.deactivated = ?", false],
-                                            :include => :person
+  :limit => FEED_SIZE,
+  :conditions => ["people.deactivated = ?", false],
+  :include => :person
 
-#  has_many :page_views, :order => 'created_at DESC'
-  
-  has_many :own_groups, :class_name => "Group", :foreign_key => "person_id",
-    :order => "name ASC"
+  #  has_many :page_views, :order => 'created_at DESC'
+
+  has_many :own_groups, :class_name => "Group", :foreign_key => "person_id", :order => "name ASC"
   has_many :memberships
-  has_many :groups, :through => :memberships, :source => :group, 
-    :conditions => "status = 0", :order => "name ASC"
-  has_many :groups_not_hidden, :through => :memberships, :source => :group, 
-    :conditions => "status = 0 and mode != 2", :order => "name ASC"
-  
-  has_many :events
-  has_many :event_attendees
-  has_many :attendee_events, :through => :event_attendees, :source => :event
+  has_many :groups, :through => :memberships, :source => :group, :conditions => "status = 0", :order => "name ASC"
+  has_many :groups_not_hidden, :through => :memberships, :source => :group, :conditions => "status = 0 and mode != 2", :order => "name ASC"
+
   has_many :accounts
   has_many :addresses
   has_many :client_applications
   has_many :tokens, :class_name => "OauthToken", :order => "authorized_at DESC", :include => [:client_application]
-  has_many :transactions, :class_name=>"Transact", :finder_sql=>'select exchanges.* from exchanges where (customer_id=#{id} or worker_id=#{id}) order by created_at desc'
+  has_many :transactions, :class_name=>"Transact", :finder_sql=> proc {"select exchanges.* from exchanges where (customer_id=#{id} or worker_id=#{id}) order by created_at desc"}
 
   has_and_belongs_to_many :categories
   has_and_belongs_to_many :neighborhoods
@@ -139,27 +136,30 @@ class Person < ActiveRecord::Base
   has_many :bids
   belongs_to :default_group, :class_name => "Group", :foreign_key => "default_group_id"
   belongs_to :sponsor, :class_name => "Person", :foreign_key => "sponsor_id"
+  belongs_to :support_contact, :class_name => "Person", :foreign_key => "support_contact_id"
+  belongs_to :business_type
+  belongs_to :activity_status
+  belongs_to :plan_type
 
-  validates_presence_of     :email, :name
-#  validates_presence_of     :password,              :if => :password_required?
-#  validates_presence_of     :password_confirmation, :if => :password_required?
-#  validates_length_of       :password, :within => 4..MAX_PASSWORD,
-#                                       :if => :password_required?
-#  validates_confirmation_of :password, :if => :password_required?
-  validates_length_of       :email, :within => 6..MAX_EMAIL
-  validates_length_of       :name,  :maximum => MAX_NAME
-  validates_length_of       :description, :maximum => MAX_DESCRIPTION
-  validates_format_of       :email,
-                            :with => EMAIL_REGEX,
-                            :message => "must be a valid email address"
-  validates_uniqueness_of   :email
-#  validates_uniqueness_of   :identity_url, :allow_nil => true
+  validates :name, :presence => true, :length => { :maximum => MAX_NAME }
+  validates :description, :length => { :maximum => MAX_DESCRIPTION }
+  validates :email, :presence => true, :uniqueness => true, :email => true
+  validates :business_name, :length => { :maximum => 100 }
+  validates :legal_business_name, :length => { :maximum => 100 }
+  validates :business_type, :presence => true, :if => lambda { |p| p.org }
+  #  validates_presence_of     :password,              :if => :password_required?
+  #  validates_presence_of     :password_confirmation, :if => :password_required?
+  #  validates_length_of       :password, :within => 4..MAX_PASSWORD,
+  #                                       :if => :password_required?
+  #  validates_confirmation_of :password, :if => :password_required?
+
+  #  validates_uniqueness_of   :identity_url, :allow_nil => true
 
   # XXX just doing jquery validation
   #validates_acceptance_of :accept_agreement, :accept => true, :message => "Please accept the agreement to complete registration", :on => :create
 
-  before_create :create_blog, :check_config_for_deactivation
-  before_create :set_default_group
+  before_create :check_config_for_deactivation
+  before_create :set_language_and_default_group
   after_create :create_address
   after_create :join_mandatory_groups
   before_save :update_group_letter
@@ -170,63 +170,21 @@ class Person < ActiveRecord::Base
   after_update :log_activity_description_changed
   before_destroy :destroy_activities, :destroy_feeds
 
-  class << self
 
-    # Return the paginated active users.
-    def active(page = 1)
-      paginate(:all, :page => page,
-                     :per_page => RASTER_PER_PAGE,
-                     :conditions => conditions_for_active)
-    end
-    
-    # Return the people who are 'mostly' active.
-    # People are mostly active if they have logged in recently enough.
-    def mostly_active(sort_opts, page = 1)
-      opts = { :page => page,
-               :per_page => RASTER_PER_PAGE,
-               :conditions => conditions_for_mostly_active }
-      opts.merge!(sort_opts)
-      paginate(:all, opts)
-    end
+  # Return the first admin created.
+  # We suggest using this admin as the primary administrative contact.
+  def Person.find_first_admin
+    where(:admin => true).order(:created_at).first
+  end
 
-    def mostly_active_alpha(page = 1)
-      sort_opts = {:order => "first_letter ASC", :group_by => "first_letter"}
-      mostly_active(sort_opts, page)
-    end
+  # Display name based upon entity type
+  def display_name
+    org ? business_name : name
+  end
 
-    def mostly_active_newest(page = 1)
-      sort_opts = {:order => "created_at DESC"}
-      mostly_active(sort_opts, page)
-    end
-
-    def mostly_active_with_zipcode(zipcode, page = 1)
-      addresses = Address.find(:all, :conditions => ['zipcode_plus_4 = ?', zipcode])
-      people = addresses.map {|a| a.person}.uniq
-      people.paginate(:page => page,
-                      :per_page => RASTER_PER_PAGE,
-                      :conditions => conditions_for_mostly_active,
-                      :order => "name ASC")
-    end
-    
-    # Return *all* the active users.
-    def all_active
-      find(:all, :conditions => conditions_for_active)
-    end
-
-    def find_recent
-      # TODO: configure attachment_fu for the S3 backend when deploying to Heroku
-      find(:all, :order => "people.created_at DESC",
-                 :limit => NUM_RECENT)
-#      find(:all, :order => "people.created_at DESC",
-#                 :include => :photos, :limit => NUM_RECENT)
-    end
-
-    # Return the first admin created.
-    # We suggest using this admin as the primary administrative contact.
-    def find_first_admin
-      find(:first, :conditions => ["admin = ?", true],
-                   :order => :created_at)
-    end
+  # Display name based upon entity type plus contact for business
+  def display_name_and_contact
+    org ? "#{business_name} (#{name})" : name
   end
 
   # Params for use in urls.
@@ -253,8 +211,7 @@ class Person < ActiveRecord::Base
   end
 
   def recent_activity
-    Activity.find_all_by_person_id(self, :order => 'created_at DESC',
-                                         :limit => FEED_SIZE)
+    Activity.where(:person_id => self.id).order('created_at DESC').limit(FEED_SIZE)
   end
 
   ## For the home page...
@@ -263,12 +220,11 @@ class Person < ActiveRecord::Base
   def some_contacts
     contacts[(0...12)]
   end
-  
+
   def requested_memberships
-    Membership.find(:all, 
-          :conditions => ['status = 2 and group_id in (?)', self.own_group_ids])
+    Membership.where(:status => 2, :group_id => own_group_ids)
   end
-  
+
   # Contact links for the contact image raster.
   def requested_contact_links
     requested_contacts.map do |p|
@@ -280,95 +236,97 @@ class Person < ActiveRecord::Base
   ## Message methods
 
   def received_messages(page = 1)
-    _received_messages.paginate(:page => page, :per_page => MESSAGES_PER_PAGE)
+    _received_messages.
+    paginate(:page => page, :per_page => MESSAGES_PER_PAGE)
   end
 
   def sent_messages(page = 1)
-    _sent_messages.paginate(:page => page, :per_page => MESSAGES_PER_PAGE)
+    _sent_messages.
+    paginate(:page => page, :per_page => MESSAGES_PER_PAGE)
   end
 
   ## Exchange methods
- 
+
   def received_exchanges(page = 1)
-    _received_exchanges.paginate(:page => page, :per_page => EXCHANGES_PER_PAGE, :conditions => "group_id is NULL")
+    _received_exchanges.
+    where(:group_id => nil).
+    paginate(:page => page, :per_page => EXCHANGES_PER_PAGE)
   end
 
   def received_group_exchanges(group_id, page = 1)
-    _received_exchanges.paginate(:page => page, :per_page => EXCHANGES_PER_PAGE, :conditions => ["group_id = ?", group_id])
+    _received_exchanges.
+    where(:group_id => group_id).
+    paginate(:page => page, :per_page => EXCHANGES_PER_PAGE)
   end
 
   def sent_exchanges(page = 1)
-    _sent_exchanges.paginate(:page => page, :per_page => EXCHANGES_PER_PAGE)
+    _sent_exchanges.
+    paginate(:page => page, :per_page => EXCHANGES_PER_PAGE)
   end
 
   def sent_group_exchanges(group_id, page = 1)
-    _sent_exchanges.paginate(:page => page, :per_page => EXCHANGES_PER_PAGE, :conditions => ["group_id = ?", group_id])
+    _sent_exchanges.
+    where(:group_id => group_id).
+    paginate(:page => page, :per_page => EXCHANGES_PER_PAGE)
   end
 
   def trashed_messages(page = 1)
-    conditions = [%((sender_id = :person AND sender_deleted_at > :t) OR
-                    (recipient_id = :person AND recipient_deleted_at > :t)),
-                  { :person => id, :t => TRASH_TIME_AGO }]
-    order = 'created_at DESC'
-    trashed = Message.paginate(:all, :conditions => conditions,
-                                     :order => order,
-                                     :page => page,
-                                     :per_page => MESSAGES_PER_PAGE)
+    Message.
+    where(%((sender_id = ? AND sender_deleted_at > ?) OR (recipient_id = ? AND recipient_deleted_at > ?)),
+    id, TRASH_TIME_AGO.ago, id, TRASH_TIME_AGO.ago).
+    order('created_at DESC').
+    paginate(:page => page, :per_page => MESSAGES_PER_PAGE)
   end
 
   def recent_messages
-    Message.find(:all,
-                 :conditions => [%(recipient_id = ? AND
-                                   recipient_deleted_at IS NULL), id],
-                 :order => "created_at DESC",
-                 :limit => NUM_RECENT_MESSAGES)
+    Message.
+    where(:recipient_id => id, :recipient_deleted_at => nil).
+    order("created_at DESC").
+    limit(NUM_RECENT_MESSAGES)
   end
 
   def has_unread_messages?
-    Message.count(:all,
-                  :conditions => [%(recipient_id = ? AND
-                                    recipient_read_at IS NULL), id]) > 0
+    Message.where(:recipient_id => id, :recipient_read_at => nil).exists?
   end
 
   def formatted_categories
-    categories.collect { |cat| cat.long_name + "<br>"}.to_s.chop.chop.chop.chop
+    categories_long_name('<br>')
   end
 
   # from Columbia
   def listed_categories
-    categories.collect { |cat| cat.long_name + ", "}.to_s.chop.chop
+    categories_long_name(', ')
+  end
+
+  def categories_long_name(joiner = nil)
+    l = categories.collect &:long_name
+    joiner ? l.join(joiner) : l
   end
 
   def current_offers
-    today = DateTime.now
-    offers = self.offers.find(:all, :conditions => ["expiration_date >= ?", today], :order => 'created_at DESC')
+    offers.where("expiration_date >= ?", DateTime.now).order('created_at DESC')
   end
 
   def current_and_active_reqs
-    today = DateTime.now
-    reqs = self.reqs.find(:all, :conditions => ["active = ? AND due_date >= ?", true, today], :order => 'created_at DESC')
-    reqs.delete_if { |req| req.has_approved? }
+    reqs.current.biddable.order('created_at DESC')
   end
 
   def current_and_active_bids
-    today = DateTime.now
-    bids = self.bids.find(:all, :conditions => ["state != ? AND NOT (state = ? AND expiration_date < ?)", 'approved', 'offered', today], :order => 'created_at DESC')
+    bids.where("state != ? AND NOT (state = ? AND expiration_date < ?)", 'approved', 'offered', DateTime.now).order('created_at DESC')
   end
 
   def create_address
-    address = Address.new( :name => 'personal' )
-    address.zipcode_plus_4 = self.zipcode.blank? ? DEFAULT_ZIPCODE_STRING : self.zipcode
-    address.person = self
-    address.save
+    addresses.create(:name => 'personal', :zipcode_plus_4 => (zipcode.presence || DEFAULT_ZIPCODE_STRING))
   end
 
-  def set_default_group
+  def set_language_and_default_group
     self.default_group_id = Person.global_prefs.default_group_id
+    self.language = Person.global_prefs.locale
   end
 
   def join_mandatory_groups
-    Group.all(:conditions => ['mandatory = ?', true]).each do |g|
-      Membership.request(self,g,false)
+    Group.where(:mandatory => true).each do |g|
+      Membership.request(self, g, false)
     end
   end
 
@@ -379,15 +337,15 @@ class Person < ActiveRecord::Base
   ## Account helpers
 
   def account(group)
-    accounts.first(:conditions => ['group_id = ?', group.id])
+    accounts.where(:group_id => group.id).first
   end
 
   def notifications
     connection_notifications
   end
 
-  def is?(role,group)
-    mem = Membership.mem(self,group)
+  def is?(role, group)
+    mem = Membership.mem(self, group)
     mem && mem.is?(role)
   end
 
@@ -404,19 +362,19 @@ class Person < ActiveRecord::Base
   end
 
   def main_photo
-    photo.nil? ? "/images/default.png" : photo.public_filename
+    photo.nil? ? "default.png" : photo.picture_url
   end
 
   def thumbnail
-    photo.nil? ? "/images/default_thumbnail.png" : photo.public_filename(:thumbnail)
+    photo.nil? ? "default_thumbnail.png" : photo.picture_url(:thumbnail)
   end
 
   def icon
-    photo.nil? ? "/images/default_icon.png" : photo.public_filename(:icon)
+    photo.nil? ? "default_icon.png" : photo.picture_url(:icon)
   end
 
   def bounded_icon
-    photo.nil? ? "/images/default_icon.png" : photo.public_filename(:bounded_icon)
+    photo.nil? ? "default_icon.png" : photo.picture_url(:icon)
   end
 
   # Return the photos ordered by primary first, then by created_at.
@@ -426,6 +384,7 @@ class Person < ActiveRecord::Base
     # photos.partition(&:primary) => [[primary], [other one, another one]]
     # flatten yields [primary, other one, another one]
     @sorted_photos ||= photos.partition(&:primary).flatten
+    #@sorted_photos ||= photos.order("(CASE WHEN primary THEN 1 WHEN primary IS NULL THEN 2 ELSE 3 END)")
   end
 
   def change_password?(passwords)
@@ -440,124 +399,103 @@ class Person < ActiveRecord::Base
 
   # Return true if the person is the last remaining active admin.
   def last_admin?
-    num_admins = Person.count(:conditions => ["admin = ? AND deactivated = ?",
-                                              true, false])
+    num_admins = Person.where(:admin => true, :deactivated => false).count
     admin? and num_admins == 1
   end
 
   def active?
-    if Person.global_prefs.email_verifications?
-      not deactivated? and email_verified?
-    else
-      not deactivated?
-    end
+    not deactivated? and (Person.global_prefs.email_verifications? ? email_verified? : true)
   end
 
   # Return the common connections with the given person.
   def common_contacts_with(contact, page = 1)
-    sql = %(SELECT DISTINCT contact_id FROM connections
-            INNER JOIN people contact ON connections.contact_id = contact.id
-            WHERE ((person_id = ? OR person_id = ?)
-                   AND status = ? AND
-                   contact.deactivated = ? AND
-                   (contact.email_verified IS NULL
-                    OR contact.email_verified = ?)))
-    conditions = [sql, id, contact.id, Connection::ACCEPTED, false, true]
-    opts = { :page => page, :per_page => RASTER_PER_PAGE }
-    connections = 
-    @common_contacts ||= Person.find(Connection.
-                                     paginate_by_sql(conditions, opts).
-                                     map(&:contact_id)).paginate
+    Person.
+    active.
+    joins(:connections).
+    where("connections.contact_id" => [self.id, contact.id]).
+    group("people.id having count(connections.*) = 2").
+    paginate(:page => page, :per_page => RASTER_PER_PAGE)
   end
 
   def deliver_password_reset_instructions!
     reset_perishable_token!
-    PersonMailer.deliver_password_reset_instructions(self)
+    after_transaction { PersonMailerQueue.password_reset_instructions(self) }
   end
 
   def deliver_email_verification!
     reset_perishable_token!
-    PersonMailer.deliver_email_verification(self)
+    after_transaction { PersonMailerQueue.email_verification(self) }
   end
-  
+
   protected
 
-    def map_openid_registration(registration)
-      self.email = registration['email'] if email.blank?
-      self.name = registration['nickname'] if name.blank?
+  def map_openid_registration(sreg_registration, ax_registration)
+    unless sreg_registration.nil?
+      self.email = sreg_registration['email'] if email.blank?
+      self.name = sreg_registration['fullname'] if name.blank?
     end
-
-    ## Callbacks
-
-    # Prepare email for database insertion.
-    def prepare_email
-      self.email = email.downcase.strip if email
-    end
-
-    # Handle the case of a nil description.
-    # Some databases (e.g., MySQL) don't allow default values for text fields.
-    # By default, "blank" fields are really nil, which breaks certain
-    # validations; e.g., nil.length raises an exception, which breaks
-    # validates_length_of.  Fix this by setting the description to the empty
-    # string if it's nil.
-    def handle_nil_description
-      self.description = "" if description.nil?
-    end
-
-    def update_group_letter
-      self.first_letter = name.mb_chars[0,1].capitalize
-    end
-
-    def check_config_for_deactivation
-      if Person.global_prefs.whitelist?
-        self.deactivated = true
+    unless ax_registration.nil?
+      self.email = ax_registration["http://axschema.org/contact/email"].first if email.blank?
+      if name.blank?
+        self.name = [ax_registration['http://axschema.org/namePerson/first'].first,
+                     ax_registration['http://axschema.org/namePerson/last'].first].join(' ')
       end
     end
+  end
 
-    def set_old_description
-      p = Person.find(self)
-      @old_description = p.description
-    end
+  ## Callbacks
 
-    def log_activity_description_changed
-      unless @old_description == description or description.blank?
-        add_activities(:item => self, :person => self)
-      end
-    end
+  # Prepare email for database insertion.
+  def prepare_email
+    self.email = email.downcase.strip if email
+  end
 
-    # Clear out all activities associated with this person.
-    def destroy_activities
-      Activity.find_all_by_person_id(self).each {|a| a.destroy}
-    end
-    
-    def destroy_feeds
-      Feed.find_all_by_person_id(self).each {|f| f.destroy}
-    end
+  # Handle the case of a nil description.
+  # Some databases (e.g., MySQL) don't allow default values for text fields.
+  # By default, "blank" fields are really nil, which breaks certain
+  # validations; e.g., nil.length raises an exception, which breaks
+  # validates_length_of.  Fix this by setting the description to the empty
+  # string if it's nil.
+  def handle_nil_description
+    self.description = "" unless description
+  end
 
-    ## Other private method(s)
+  def update_group_letter
+    self.first_letter = display_name.mb_chars.first.upcase.to_s
+  end
 
-    def password_required?
-      true
-      #(crypted_password.blank? && identity_url.nil?) || !password.blank? ||
-      #!verify_password.nil?
+  def check_config_for_deactivation
+    if Person.global_prefs.whitelist?
+      self.deactivated = true
     end
-    
-    class << self
-    
-      # Return the conditions for a user to be active.
-      def conditions_for_active
-        [%(deactivated = ? AND 
-           (email_verified IS NULL OR email_verified = ?)),
-         false, true]
-      end
-      
-      # Return the conditions for a user to be 'mostly' active.
-      def conditions_for_mostly_active
-        [%(deactivated = ? AND 
-           (email_verified IS NULL OR email_verified = ?) AND
-           (last_logged_in_at IS NOT NULL AND
-            last_logged_in_at >= ?)),
-         false, true, TIME_AGO_FOR_MOSTLY_ACTIVE]
-      end
+  end
+
+  def set_old_description
+    p = Person.find(self)
+    @old_description = p.description
+  end
+
+  def log_activity_description_changed
+    unless @old_description == description or description.blank?
+      add_activities(:item => self, :person => self)
     end
+  end
+
+  # Clear out all activities associated with this person.
+  def destroy_activities
+    Activity.where(:person_id => self.id).each &:destroy
+  end
+
+  def destroy_feeds
+    Feed.where(:person_id => self.id).each &:destroy
+  end
+
+  ## Other private method(s)
+
+  def password_required?
+    true
+    #(crypted_password.blank? && identity_url.nil?) || !password.blank? ||
+    #!verify_password.nil?
+  end
+
 end

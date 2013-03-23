@@ -1,0 +1,7 @@
+<%= strip_tags(@message.content) %>
+--
+<%= t('person_mailer.message_notification.click_to_view') %> <%= @server %>:
+
+http://<%= @server %>/messages/<%= @message.to_param %>
+
+<%= @preferences_note %>

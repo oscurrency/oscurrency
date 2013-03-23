@@ -1,7 +1,8 @@
 class MembershipsController < ApplicationController
   before_filter :login_required
-  load_and_authorize_resource 
-  
+  load_resource :group
+  load_and_authorize_resource :membership, :through => :group, :shallow => true
+
   rescue_from CanCan::AccessDenied do |exception|
     flash[:error] = exception.message
     respond_to do |format|
@@ -10,17 +11,15 @@ class MembershipsController < ApplicationController
   end
 
   def index
-    @group = Group.find(params[:group_id])
-
     @selected_category = params[:category_id].nil? ? nil : Category.find(params[:category_id])
     @selected_neighborhood = params[:neighborhood_id].nil? ? nil : Neighborhood.find(params[:neighborhood_id])
 
-    @memberships = Membership.search(@selected_neighborhood || @selected_category, 
-                                     @group, 
-                                     params[:page], 
-                                     AJAX_POSTS_PER_PAGE, 
-                                     params[:search]
-                                     )
+    @memberships = Membership.custom_search(@selected_neighborhood || @selected_category, 
+                                            @group, 
+                                            params[:page], 
+                                            AJAX_POSTS_PER_PAGE, 
+                                            params[:search]
+                                            )
 
     respond_to do |format|
       format.js
@@ -41,7 +40,6 @@ class MembershipsController < ApplicationController
   end
   
   def create
-    @group = Group.find(params[:group_id])
 
     respond_to do |format|
       @hr = Membership.request(current_person, @group)
@@ -88,17 +86,17 @@ class MembershipsController < ApplicationController
     @membership.breakup
     
     respond_to do |format|
-      flash[:success] = t('success_you_have_unsubscribed') + " '#{@membership.person.name}' #{t('success_from_group')} '#{@membership.group.name}'"
+      flash[:success] = t('success_you_have_unsubscribed') + " '#{@membership.person.display_name}' #{t('success_from_group')} '#{@membership.group.name}'"
       format.html { redirect_to(members_group_path(@membership.group)) }
     end
   end
   
   def suscribe
     @membership.accept
-    PersonMailer.deliver_membership_accepted(@membership)
+    after_transaction { PersonMailerQueue.membership_accepted(@membership) }
 
     respond_to do |format|
-      flash[:success] = t('success_you_have_accepted') + " '#{@membership.person.name}' #{t('success_for_group')} '#{@membership.group.name}'"
+      flash[:success] = t('success_you_have_accepted') + " '#{@membership.person.display_name}' #{t('success_for_group')} '#{@membership.group.name}'"
       format.html { redirect_to(members_group_path(@membership.group)) }
     end
   end

@@ -1,143 +1,97 @@
-# == Schema Information
-# Schema version: 20090216032013
-#
-# Table name: reqs
-#
-#  id              :integer(4)      not null, primary key
-#  name            :string(255)     
-#  description     :text            
-#  estimated_hours :decimal(8, 2)   default(0.0)
-#  due_date        :datetime        
-#  person_id       :integer(4)      
-#  created_at      :datetime        
-#  updated_at      :datetime        
-#  active          :boolean(1)      default(TRUE)
-#  twitter         :boolean(1)      
-#
+require 'texticle/searchable'
 
 class Req < ActiveRecord::Base
   include ActivityLogger
-  extend PreferencesHelper 
+  include AnnouncementBase
+  extend PreferencesHelper
 
-  index do
-    name
-    description
-  end
-  
-  named_scope :active, :conditions => {:active => true}
-  named_scope :with_group_id, lambda {|group_id| {:conditions => ['group_id = ?', group_id]}}
-  named_scope :search, lambda { |text| {:conditions => ["lower(name) LIKE ? OR lower(description) LIKE ?","%#{text}%".downcase,"%#{text}%".downcase]} }
+  extend Searchable(:name, :description)
 
-  has_and_belongs_to_many :categories
-  has_and_belongs_to_many :neighborhoods
-  belongs_to :person
-  belongs_to :group
+  scope :active, :conditions => ["active IS true AND due_date >= ?", DateTime.now]
+  scope :biddable, where("biddable = ?", true)
+  scope :current, lambda { where("due_date >= ?", DateTime.now) }
+  scope :without_approved_bid,
+    joins("LEFT JOIN bids AS approved_bids ON approved_bids.req_id = reqs.id AND approved_bids.state = 'approved'").
+    where("approved_bids.id IS NULL")
+
+  has_many :workers, :through => :categories, :source => :people
   has_many :bids, :order => 'created_at DESC', :dependent => :destroy
-  has_many :exchanges, :as => :metadata
+  has_many :accepted_bids, :class_name => "Bid", :conditions => "accepted_at IS NOT NULL"
+  has_many :completed_bids, :class_name => "Bid", :conditions => "completed_at IS NOT NULL"
+  has_many :committed_bids, :class_name => "Bid", :conditions => "committed_at IS NOT NULL"
+  has_many :approved_bids, :class_name => "Bid", :conditions => "approved_at IS NOT NULL"
 
   attr_accessor :ability
   attr_protected :ability
-  attr_protected :person_id, :created_at, :updated_at
-  attr_readonly :group_id
-  validates_presence_of :name, :due_date
-  validates_presence_of :group_id
+  attr_readonly :estimated_hours
 
-  after_create :notify_workers, :if => :notifications
-  after_create :log_activity
+  validates :due_date, :presence => true
+
+  before_create :make_active, :if => :biddable
+  after_create :send_req_notifications, :if => :notifications
 
   class << self
 
     def current_and_active(page=1)
-      today = DateTime.now
-      @reqs = Req.paginate(:all, :page => page, :conditions => ["active = ? AND due_date >= ?", true, today], :order => 'created_at DESC')
-      @reqs.delete_if { |req| req.has_approved? }
+      self.biddable.current.without_approved_bid.page(page).order('created_at DESC')
     end
 
     def all_active(page=1)
-      @reqs = Req.paginate(:all, :page => page, :conditions => ["active = ?", true], :order => 'created_at DESC')
+      self.biddable.page(page).order('created_at DESC')
     end
 
-    def search(category,group,page,posts_per_page,search=nil)
-      unless category
-        group.reqs.active.search(search).paginate(:page => page, :per_page => posts_per_page)
-      else
-        category.reqs.active.with_group_id(group.id).paginate(:page => page, :per_page => posts_per_page)
-      end
-    end
   end
 
-  def unit
-    group.unit
+  def considered_active?
+    active? && (due_date > DateTime.now)
   end
 
-  def formatted_categories
-    categories.collect {|cat| cat.long_name + "<br>"}.to_s.chop.chop.chop.chop
+  def deactivate
+    update_attributes(:active => false)
   end
 
   def has_accepted_bid?
-    a = false
-    bids.each {|bid| a = true if bid.accepted_at != nil }
-    return a
+    return bids.any? &:accepted_at if bids.loaded?
+    accepted_bids.exists?
   end
 
   def has_completed?
-    a = false
-    bids.each {|bid| a = true if bid.completed_at != nil }
-    return a
+    return bids.any? &:completed_at if bids.loaded?
+    completed_bids.exists?
   end
 
   def has_commitment?
-    a = false
-    bids.each {|bid| a = true if bid.committed_at != nil }
-    return a
+    return bids.any? &:committed_at if bids.loaded?
+    committed_bids.exists?
   end
 
   def has_approved?
-    a = false
-    bids.each {|bid| a = true if bid.approved_at != nil }
-    return a
+    return bids.any? &:approved_at if bids.loaded?
+    approved_bids.exists?
   end
 
   def log_activity
-    if active?
-      add_activities(:item => self, :person => self.person, :group => self.group)
-    end
+    super if active?
   end
 
-  private
-
-  def validate
-    if self.categories.length > 5
-      errors.add_to_base('Only 5 categories are allowed per request')
-    end
-
-    unless self.group.nil?
-      unless self.group.adhoc_currency?
-        errors.add(:group_id, "does not have its own currency")
-      end
-      unless person.groups.include?(self.group)
-        errors.add(:group_id, "does not include you as a member")
-      end
-    end
+  def notifiable_workers
+    workers.active.connection_notifications
   end
 
-  def notify_workers
-    workers = []
-    # even though pseudo-reqs created by direct payments do not have associated categories, let's
-    # be extra cautious and check for the active property as well
-    #
-    if self.active? && Req.global_prefs.can_send_email? && Req.global_prefs.email_notifications?
-      self.categories.each do |category|
-        workers << category.people
-      end
-
-      workers.flatten!
-      workers.uniq!
-      workers.each do |worker|
-        if worker.active?
-          PersonMailer.deliver_req_notification(self, worker) if worker.connection_notifications?
-        end
-      end
-    end
+  def should_send_notifications?
+    active and Req.global_prefs.can_send_email? and Req.global_prefs.email_notifications?
   end
+
+  # private
+
+  def make_active
+    self.active = true
+  end
+
+  def send_req_notifications
+    notifiable_workers.each do |worker|
+      after_transaction { PersonMailerQueue.req_notification(self, worker) }
+    end if should_send_notifications?
+  end
+
 end

@@ -3,6 +3,7 @@ gr:
 
   button_submit: "Υποβολή"
   button_delete: "Διαγραφή"
+  button_deactivate: "Απενεργοποίηση"
   button_edit: "Επεξεργασία"
   button_create: "Δημιουργία"
   button_update: "Ενημέρωση"
@@ -34,11 +35,12 @@ gr:
   last_logged_in: "Τελευταία Είσοδος"
   post: "δημοσίευση"
   posted: "δημοσιεύτηκε"
+  balance: "balance"
   earned: "κέρδισε"
+  paid: "paid"
   for: "για"
   said: "είπε"
   reply_on: "απάντηση προς"
-  wall: "τοίχος"
   see_all: "Προβολή όλων"
   by: "από"
   to: "προς"
@@ -46,53 +48,130 @@ gr:
   in: "σε"
   or: "ή"
   hours: "ώρες"
-  event: "γεγονός"
+  active: "ενεργός"
+  all: "όλα"
+  cancelled: "cancelled"
 
   datetime:
     distance_in_words:
       half_a_minute: "μισό λεπτό"
       less_than_x_seconds:
-        one:   "λιγότερο από 1 δευτερόλεπτο"
+        one: "λιγότερο από ένα δευτερόλεπτο"
         other: "λιγότερο από %{count} δευτερόλεπτα"
       x_seconds:
-        one:   "1 δευτερόλεπτο"
+        one: "1 δευτερόλεπτο"
         other: "%{count} δευτερόλεπτα"
       less_than_x_minutes:
-        one:   "λιγότερο από ένα λεπτό"
+        one: "λιγότερο από ένα λεπτό"
         other: "λιγότερο από %{count} λεπτά"
       x_minutes:
-        one:   "1 λεπτό"
+        one: "1 λεπτό"
         other: "%{count} λεπτά"
       about_x_hours:
-        one:   "περίπου 1 ώρα"
+        one: "περίπου μία ώρα"
         other: "περίπου %{count} ώρες"
       x_days:
-        one:   "1 ημέρα"
-        other: "%{count} ημέρες"
+        one: "1 μέρα"
+        other: "%{count} μέρες"
       about_x_months:
-        one:   "περίπου 1 μήνα"
+        one: "περίπου ένα μήνα"
         other: "περίπου %{count} μήνες"
       x_months:
-        one:   "1 μήνα"
+        one: "1 μήνα"
         other: "%{count} μήνες"
       about_x_years:
-        one:   "περίπου 1 χρόνο"
+        one: "περίπου ένα χρόνο"
         other: "περίπου %{count} χρόνια"
       over_x_years:
-        one:   "πάνω από 1 χρόνο"
+        one: "πάνω από ένα χρόνο"
         other: "πάνω από %{count} χρόνια"
       almost_x_years:
-        one:   "almost 1 year"
-        other: "almost %{count} years"
+        one:   "σχεδόν ένα χρόνο"
+        other: "σχεδόν %{count} χρόνια"
+    prompts:
+      year: "Έτος"
+      month: "Μήνας"
+      day: "Ημέρα"
+      hour: "Ώρα"
+      minute: "Λεπτό"
+      second: "Δευτερόλεπτο"
 
   date:
     formats:
-      default: "%d.%m.%Y"
+      default: "%d/%m/%Y"
+      short: "%d %b"
+      long: "%e %B %Y"
+      long_ordinal: "%e %B %Y"
+      only_day: "%e"
+
+    day_names:
+      - Κυριακή
+      - Δευτέρα
+      - Τρίτη
+      - Τετάρτη
+      - Πέμπτη
+      - Παρασκευή
+      - Σάββατο
+    abbr_day_names:
+      - Κυρ
+      - Δευ
+      - Τρι
+      - Τετ
+      - Πεμ
+      - Παρ
+      - Σαβ
+    month_names:
+      - ~
+      - Ιανουάριος
+      - Φεβρουάριος
+      - Μάρτιος
+      - Απρίλιος
+      - Μάιος
+      - Ιούνιος
+      - Ιούλιος
+      - Αύγουστος
+      - Σεπτέμβριος
+      - Οκτώβριος
+      - Νοέμβριος
+      - Δεκέμβριος
+    abbr_month_names:
+      - ~
+      - Ιαν.
+      - Φεβ.
+      - Μάρ.
+      - Απρ.
+      - Μαι.
+      - Ιουν.
+      - Ιούλ.
+      - Αυγ.
+      - Σεπ.
+      - Οκτ.
+      - Νοε.
+      - Δεκ.
+    order:
+      - :day
+      - :month
+      - :year
+
   time:
-    am: "π.μ."
-    pm: "μ.μ."
     formats:
-      default: "%d.%m.%Y %I:%M %p"
+      default: "%d %B %Y %H:%M"
+      time: "%H:%M"
+      short: "%d %b %H:%M"
+      long: "%A %d %B %Y %H:%M:%S %Z"
+      long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
+      only_second: "%S"
+    am: 'πμ'
+    pm: 'μμ'
+
+  oauth:
+    authorize:
+      authorize_access_to_your_account: "Authorize access to your account"
+      would_you_like_to_authorize: "Would you like to authorize"
+      to_access_your_account: "to access your account?"
+      authorize: "authorize"
+      authorize_access: "authorize access"
+      button_authorize: "Authorize!"
 
   accounts:
     show:
@@ -133,14 +212,6 @@ gr:
       name: "¨Ονομα"
       parent_category: "Γενική Κατηγορία"
 
-  comments:
-    event_new:
-      header: "Σχόλιο γεγονότος"
-      leave_a_comment: "Κάνε σχόλιο"
-    wall_new:
-      header: "Σχόλιο τοίχου"
-      leave_a_comment: "Κάνε σχόλιο"
-
   forums:
     show:
       header: "Θέματα Συζήτησης"
@@ -164,6 +235,8 @@ gr:
       photos: "Φωτογραφίες"
       primary: "πρωτεύων"
       add_a_photo: "Προσθήκη Φωτογραφίας"
+      private_txns: "Private transactions"
+      enable_forum: "Enable forum"
     members:
       pending_request: "Η Ζήτηση είναι σε εξέλιξη"
       cancel_membership: "Ακύρωση Συμμετοχής"
@@ -182,10 +255,12 @@ gr:
       default_credit_limit: "Προεπιλεγμένο πιστωτικό όριο"
       description: "Περιγραφή"
       mode: "Λειτουργία"
+      private_txns: "Private transactions"
     new_photo:
       header: "Ανέβασμα φωτογραφίας ομάδας"
       upload_a_photo: "Ανέβασε μια φωτογραφία:"
     show:
+      contact: "Επικοινωνία"
       header: "Ομάδα:"
       blank_description: "Η περιγραφή της ομάδας είναι κενή."
       add_description: "Πατήστε εδώ για να προσθέσετε περιγραφή"
@@ -225,7 +300,6 @@ gr:
 
   home:
     menu:
-      blog: "Blog"
       skillbank: "Υπηρεσίες"
       about: "Σχετικά"
       practice: "Εξάσκηση"
@@ -249,9 +323,6 @@ gr:
       unread_messages: "Έχετε μη αναγνωσμένη αλληλογραφία."
       see_your_messages: "Πατήστε εδώ για να δείτε τα μηνύματα σας"
     show:
-      header: "blog"
-    _blog:
-      header: "blog"
     _dashboard:
       bids: "Οι ενεργές δηλώσεις σας"
       no_active_bids: "Δεν υπάρχουν ενεργές δηλώσεις"
@@ -278,8 +349,6 @@ gr:
       requests_membership_for: "ζητάει συμμετοχή σε"
       view_group: "Προβολή Ομάδας"
       view_profile: "Προβολή Προφίλ"
-    _secondary_column:
-      header: "Blog Συστήματος"
 
   offers:
     partial:
@@ -296,6 +365,9 @@ gr:
       header: "Νέα Προσφορά"
       total_available: "Διαθέσιμο Σύνολο"
       description_label: "Βεβαιωθείτε πως αναφέρετε προτιμώμενα μέσα επικοινωνίας, πχ προσωπικό μήνυμα, email ή τηλέφωνο."
+    new_photo:
+      header: "Offer photo upload"
+      upload_a_photo: "Ανέβασε μια φωτογραφία"
     show:
       header: "Προσφορά"
       send: "Αποστολή"
@@ -304,6 +376,8 @@ gr:
   people:
     edit:
       header: "Επεξεργασία προφίλ"
+      business_details: "Business Details"
+      business_account: "This is a business account"
       personal_details: "Προσωπικά στοιχεία"
       name: "Όνομα"
       share_phone_number: "Κοινός αριθμός τηλεφώνου:"
@@ -318,8 +392,8 @@ gr:
       email_notification_note: "Θα λαμβάνεται ειδοποιήσεις μέσω email για κάθε τύπο γεγονότος που έχετε επιλεγμένο."
       requests_in_my_service_categories: "Αιτήσεις για τις κατηγορίες των υπηρεσιών μου:"
       messages: "Μηνύματα:"
-      wall_comments: "Σχόλια τοίχου:"
       forum_posts: "Δημοσιεύσεις του φόρουμ:"
+      broadcast_emails: "Newsletter:"
       photos: "Φωτογραφίες"
       add_a_photo: "Προσθήκη φωτογραφίας"
       addresses: "Διευθύνσεις"
@@ -330,6 +404,14 @@ gr:
       confirm_password: "Επιβεβαίωση Κωδικού Πρόσβασης"
       change_password: "Αλλαγή Κωδικού Πρόσβασης"
       change_openid: "Αλλαγή OpenID"
+      web_site_url: "URL ιστοσελίδας"
+      business_name: "Business Name"
+      legal_business_name: "Business Legal Name"
+      business_type: "Business Type"
+      title: "Your Title"
+      activity_status: "Activity Status"
+      plan_type: "Plan Type"
+      support_contact: "Support Contact"
     groups:
       no_groups: "Καμία ομάδα (ακόμη)"
       new_group: "Νέα Ομάδα"
@@ -344,6 +426,7 @@ gr:
       no_invitations: "Καμία Πρόσκληση (ακόμη)"
     new:
       header: "Εγγραφή"
+      business_account: "This is a business account"
       email_address: "Ηλεκτρονική διεύθυνση"
       comma_will_be_verified: ", θα επαληθευτεί"
       never_made_public: "ποτέ δεν θα εμφανίζεται"
@@ -366,7 +449,8 @@ gr:
       respond: "Απάντηση"
       no_membership_request: "Καμία αίτηση συμμετοχής (ακόμη)"
     show:
-      header: "Προφίλ:"
+      header: "Προφίλ"
+      support_contact: "Support Contact"
       organization_profile: "Αυτό είναι προφίλ οργανισμού"
       not_active: "Αυτό το πρόσωπο δεν είναι ενεργό"
       description_blank: "Η περιγραφή σας είναι κενή."
@@ -411,8 +495,9 @@ gr:
       private_message_to_requestor: "Προσωπικό μήνυμα στον αιτούντα"
 
   exchanges:
+    record_transaction: "Record transaction"
     new:
-      enter_credit_for: "Εισάγεται μονάδες για"
+      enter_credit_for: "Transfer %{currency} to" 
       amount: "ποσό"
       for: "Για:"
       or_ask: "ή ζητήστε"
@@ -465,6 +550,9 @@ gr:
       header: "Νέο μήνυμα"
       preview: "Προεπισκόπηση μηνύματος"
       body: "Κείμενο μηνύματος"
+      to:
+        placeholder: "Πληκτρολογήστε το όνομα του παραλήπτη ..."
+      new_message: "Σύνθεση μηνύματος"
     show:
       subject: "Θέμα"
       sent: "Στάλθηκε"
@@ -526,8 +614,6 @@ gr:
       have_connected: "έχουν συνδεθεί"
       commented: "έκανε σχόλιο"
       forum_post: "δημοσίευση στο φόρουμ"
-      blog_post: "δημοσίευση στο blog"
-      new_blog_post: "νέα δημοσίευση στο blog"
       new_discussion_topic: "νέο θέμα συζήτησης"
       made_post_on_forum_topic: "έκανε δημοσίευση στο φόρουμ στο θέμα"
       hours_for: "ώρες για"
@@ -536,18 +622,14 @@ gr:
       created_the_group: "δημιούργησε την ομάδα"
       joined_the_group: "συμμετέχει στην ομάδα"
       has_created_a_new: "δημιούργησε νέο"
-      is_attending: "παρακολουθεί"
       offer_created: "δημιούργησε νέα προσφορά"
       req_created: "δημιούργησε νέα ζήτηση"
-      event_created: "δημιούργησε ένα νέο γεγονός"
 
     transact:
       for: "για"
     multiple_select_label: "Για πολλαπλή επιλογή από την παρακάτω λίστα, κρατήστε πατημένο το πλήκτρο Ctrl"
 
   person_mailer:
-    blog_comment_notification:
-      new: "Έχετε ένα νέο σχόλιο στο blog από"
     connection_request:
       new: "Έχετε μια νέα αίτηση σύνδεσης από"
     email_verification:
@@ -573,14 +655,12 @@ gr:
       matches_a_skill_category_you_have: "αναφέρεται σε μια κατηγορία που έχετε δηλώσει"
       description: "Περιγραφή"
       requested_by: "Ζητήθηκε από"
-    wall_comment_notification:
-      new: "Έχετε ένα νέο σχόλιο στον τοίχο σας από"
     _footer:
       thankyou: "Thank you for supporting open source software."
 
-  pagination:
-    previous: "Προηγούμενο"
-    next: "Επόμενο"
+  will_paginate:
+    previous_label: "&laquo; Προηγούμενο"
+    next_label: "Επόμενο &raquo;"
 
   authlogic:
     attributes:
@@ -601,6 +681,11 @@ gr:
       not_confirmed: "Ο λογαριασμός σας δεν έχει επιβεβαιωθεί."
       not_approved: "Ο λογαριασμός σας δεν έχει εγκριθεί."
       no_authentication_details: "Δεν εισάγατε στοιχεία εισόδου"
+
+  valid_email:
+    validations:
+      email:
+        invalid: "is invalid."
 
   activerecord:
     attributes:
@@ -649,14 +734,10 @@ gr:
   notice_bid_removed: "Η δήλωση αφαιρέθηκε."
   notice_category_updated: "Η Κατηγορία ενημερώθηκε επιτυχώς."
   notice_forum_updated: "Το Φόρουμ ενημερώθηκε επιτυχώς."
-  notice_event_updated: "Το Γεγονός ενημερώθηκε επιτυχώς."
-  notice_you_are_attending_this_event: "Παρακολουθείτε αυτό το γεγονός."
-  notice_you_are_not_attending: "Δεν παρακολουθείτε αυτό το γεγονός."
   notice_in_progress: "Η εργασία για αυτό το χαρακτηριστικό είναι σε εξέλιξη."
   notice_group_updated: "Η Ομάδα ενημερώθηκε επιτυχώς."
   notice_invite_contacts: "Έχετε προσκαλέσει κάποιες επαφές σας σε"
   notice_upload_canceled: "Έχετε ακυρώσει το ανέβασμα"
-  notice_blog_updated: "Το Blog ενημερώθηκε"
   notice_entries: "εγγραφές."
   notice_you_have_joined: "¨Εχετε γίνει μέλος στο "
   notice_membership_request_sent: "Η αίτηση συμμετοχής στάλθηκε!"
@@ -687,7 +768,6 @@ gr:
   success_category_created: "Η Κατηγορία δημιουργήθηκε επιτυχώς."
   success_comment_created: "Το σχόλιο δημιουργήθηκε επιτυχώς."
   success_comment_deleted: "Το σχόλιο διαγράφηκε"
-  success_event_created: "Το γεγονός δημιουργήθηκε επιτυχώς."
   success_credit_transfer_succeeded: "Επιτυχής μεταφορά μονάδων."
   success_payment_suspended: "Η πληρωμή έχει ανασταλλεί."
   success_group_created: "Η Ομάδα δημιουργήθηκε επιτυχώς"
@@ -717,6 +797,7 @@ gr:
   success_post_destroyed: "Η δημοσίευση διαγράφηκε"
   success_request_created: "Η ζήτηση δημιουργήθηκε επιτυχώς."
   success_request_destroyed: "Η ζήτηση διαγράφηκε"
+  success_request_deactivated: "Η ζήτηση απενεργοποιήθηκε"
   success_you_have_been_logged_out: "Έχετε αποσυνδεθεί."
   success_topic_created: "Το θέμα δημιουργήθηκε επιτυχώς."
   success_topic_destroyed: "Το θέμα διαγράφηκε επιτυχώς."
@@ -726,6 +807,7 @@ gr:
   success_connection_ended: "Τερματίστηκε επιτυχώς η σύνδεση με"
   success_password_updated: "Ο κωδικός πρόσβασης ενημερώθηκε."
   success_credit_limit_updated: "Το πιστωτικό όριο ενημερώθηκε"
+  success_account_updated: "Account updated"
 
   error_geocoding_failed: "Η Γεωκωδικοποίηση απέτυχε"
   error_at_least_one_address: "Πρέπει να έχετε τουλάχιστον μία διεύθυνση"
@@ -733,14 +815,11 @@ gr:
   error_default_password: "Προειδοποίηση: Ο κωδικός πρόσβασης είναι ακόμη ο προεπιλεγμένος."
   error_creating_bid: "Σφάλμα κατά την δημιουργία της δήλωσης."
   error_category_authorization: "Απαιτείται εξουσιοδότηση για να επεξεργαστείτε τις Κατηγορίες"
-  error_you_can_only_attend_once: "Μπορείτε να παρακολουθήσετε μόνο μία φορά."
-  error_you_are_not_attending: "Δεν παρακολουθείτε αυτό το γεγονός."
   error_offer_person_mismatch: "Η επιλεγμένη προσφορά δεν ταιριάζει με πρόσωπο"
   error_with_credit_transfer: "Σφάλμα κατά την μεταφορά μονάδων."
   error_with_suspension: "Σφάλμα κατά την αναστολή πληρωμών."
   error_no_contacts: "Δεν έχετε επαφές ή έχετε και τις προσκαλέσατε ήδη όλες"
   error_browser_upload_fail: "Φαίνεται πως ο browser σας δεν υποστηρίζει ανέβασμα αρχείων"
-  error_blog_update: "Η ενημέρωση του Blog απέτυχε."
   error_connection_invalid: "Μη έγκυρη σύνδεση."
   error_invalid_or_expired_membership: "Μη έγκυρη ή ληξιπρόθεσμη αίτηση συμμετοχής"
   error_invalid_action: "Μη έγκυρη ενέργεια"
@@ -769,6 +848,7 @@ gr:
   error_could_not_find_payee: "δεν βρέθηκε ο αμοιβόμενος"
   error_with_transfer: "Σφάλμα με την μεταφορά."
   error_credit_limit_update_failed: "Η ενημέρωση του πιστωτικού ορίου απέτυχε!"
+  error_account_update_failed: "Account update failed"
   error_connection_request_invadid_or_expired: "Η αίτηση σύνδεσης δεν είναι έγκυρη ή έχει λήξει"
   error_connection_request_person_deactivated: "Μη έγκυρη αίτηση σύνδεσης: το πρόσωπο είναι απενεργοποιημένο"
   error_email_not_found: "Δεν βρέθηκε κανένας με αυτήν την διεύθυνση email"

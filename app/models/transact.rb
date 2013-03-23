@@ -5,6 +5,14 @@ class Transact < Exchange
 
   after_create :perform_callback
 
+  module Scopes
+    def by_newest
+      order('created_at DESC').limit(10)
+    end
+  end
+
+  extend Scopes
+
   def create_req(memo)
     req = Req.new
     req.name = memo.blank? ? 'miscellaneous' : memo 
@@ -12,7 +20,7 @@ class Transact < Exchange
     req.person = customer
     req.estimated_hours = amount
     req.due_date = Time.now
-    req.active = false
+    req.biddable = false
     req.save!
     req
   end
@@ -29,7 +37,7 @@ class Transact < Exchange
       :from => customer.email,
       :amount => amount.to_s,
       :txn_date => created_at.iso8601,
-      :memo => metadata.name,
+      :note => metadata.name,
       :txn_id => "http://" + Transact.global_prefs.server_name + "/transacts/#{id}",
       :status => 'ok'
     }

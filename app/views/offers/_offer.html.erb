@@ -1,8 +1,8 @@
 <div class="offer offer_id_<%= offer.id %>">
   <a name="offer_<%= offer.id %>"></a>
   <div class="profile-image">
-    <%= image_link offer.person, :image => :thumbnail %>
-    <%= image_tag "icons/new.gif", :class => "icon", :alt => "Offer" %>
+    <%= offer_image_link offer, :image => ( (full rescue false) ? :main_photo : :thumbnail) %>
+    <%= (full rescue false) ? "" : image_tag("icons/new.gif", :class => "icon", :alt => "Offer") %>
   </div>
   <p>
   <%= link_to h(offer.name), offer, :class => "show-follow" %> (<%= h offer.price %> <%= offer.unit %>)
@@ -11,9 +11,9 @@
 <% end %>
 <%= t('offers.partial.expires') %> <%= offer.expiration_date.nil? ? '' : relative_time_ago_in_words(offer.expiration_date) %>
   </p>
-    <%= display offer.formatted_categories, :class => "meta" %>
+    <%= display formatted_offer_categories(offer.long_categories), :class => "meta" %>
   <p>
-    <%= display simple_format_without_paragraph(offer.description) %>
+    <%= markdown((full rescue false) ? offer.description.to_s : first_n_words(offer.description)) %>
   </p>
   <p class="meta">
   <%= t('offers.partial.available_count') %>: <%= offer.available_count %>
@@ -23,12 +23,15 @@
     <% if can?(:update, offer) -%>
       | <%= link_to t('button_edit'), edit_offer_path(offer), :class => 'show-follow' %>
     <% end -%>
+    <% if can?(:new_photo, offer) -%>
+      | <%= link_to t('offers.new_photo.upload_a_photo'), new_photo_offer_path(offer) %>
+    <% end -%>
     <% if can?(:destroy, offer) -%>
       | <%= link_to t('button_delete'), offer, :class => "delete_offer" %>
     <% end -%>
     <br>
     <% if !current_person.address.nil? && !offer.person.address.nil? && !current_person?(offer.person) -%>
-      <%= number_with_precision(offer.person.address.distance_to(current_person.address), 1).to_s %> <%= t('miles_away') %>
+      <%= number_with_precision(offer.person.address.distance_to(current_person.address), :precision => 1).to_s %> <%= t('miles_away') %>
     <% end -%>
   </p>
 </div>

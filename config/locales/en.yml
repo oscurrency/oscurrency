@@ -3,6 +3,7 @@ en:
 
   button_submit: "Submit"
   button_delete: "Delete"
+  button_deactivate: "Deactivate"
   button_edit: "Edit"
   button_create: "Create"
   button_update: "Update"
@@ -34,18 +35,30 @@ en:
   last_logged_in: "last logged in"
   post: "post"
   posted: "posted"
+  balance: "balance"
   earned: "earned"
+  paid: "paid"
   for: "for"
   said: "said"
   reply_on: "reply on"
-  wall: "wall"
   see_all: "See all"
   by: "by"
   to: "to"
   from: "from"
   in: "in"
   or: "or"
-  event: "event"
+  active: "Active"
+  all: "All"
+  cancelled: "cancelled"
+
+  oauth:
+    authorize:
+      authorize_access_to_your_account: "Authorize access to your account"
+      would_you_like_to_authorize: "Would you like to authorize"
+      to_access_your_account: "to access your account?"
+      authorize: "authorize"
+      authorize_access: "authorize access"
+      button_authorize: "Authorize!"
 
   accounts:
     show:
@@ -86,14 +99,6 @@ en:
       name: "Name"
       parent_category: "Parent Category"
 
-  comments:
-    event_new:
-      header: "Event comment"
-      leave_a_comment: "Leave a comment"
-    wall_new:
-      header: "Wall comment"
-      leave_a_comment: "Leave a comment"
-
   forums:
     show:
       header: "Discussion Topics"
@@ -117,6 +122,8 @@ en:
       photos: "Photos"
       primary: "primary"
       add_a_photo: "Add a photo"
+      private_txns: "Private transactions"
+      enable_forum: "Enable forum"
     members:
       pending_request: "Pending request"
       cancel_membership: "Cancel membership"
@@ -135,10 +142,12 @@ en:
       default_credit_limit: "Default credit limit"
       description: "Description"
       mode: "Mode"
+      private_txns: "Private transactions"
     new_photo:
       header: "Group photo upload"
       upload_a_photo: "Upload a photo:"
     show:
+      contact: "Contact"
       header: "Group:"
       blank_description: "The group description is blank."
       add_description: "Click here to add a description"
@@ -178,7 +187,6 @@ en:
 
   home:
     menu:
-      blog: "Blog"
       skillbank: "Skillbank"
       about: "About"
       practice: "Practice"
@@ -201,10 +209,6 @@ en:
       tab_graphs: "Graphs"
       unread_messages: "You have unread messages in your mailbox."
       see_your_messages: "Click here to see your messages"
-    show:
-      header: "blog"
-    _blog:
-      header: "blog"
     _dashboard:
       bids: "Your Active Bids/Work"
       no_active_bids: "No active bids"
@@ -231,8 +235,6 @@ en:
       requests_membership_for: "requests membership for"
       view_group: "View group"
       view_profile: "View profile"
-    _secondary_column:
-      header: "System Blog"
 
   offers:
     partial:
@@ -249,6 +251,9 @@ en:
       header: "New offer"
       total_available: "Total available"
       description_label: "Be sure to include your preferred means of communication, i.e. email. text or telephone."
+    new_photo:
+      header: "Offer photo upload"
+      upload_a_photo: "Upload a photo"
     show:
       header: "Offer"
       send: "Send"
@@ -257,6 +262,8 @@ en:
   people:
     edit:
       header: "Edit profile"
+      business_details: "Business Details"
+      business_account: "This is a business account"
       personal_details: "Personal details"
       name: "Name"
       share_phone_number: "Share phone number:"
@@ -271,8 +278,8 @@ en:
       email_notification_note: "You will receive email notifications for each event type whose box is checked."
       requests_in_my_service_categories: "Requests in my service categories:"
       messages: "Messages:"
-      wall_comments: "Wall comments:"
       forum_posts: "Forum posts:"
+      broadcast_emails: "Newsletter:"
       photos: "Photos"
       add_a_photo: "Add a photo"
       addresses: "Addresses"
@@ -283,6 +290,14 @@ en:
       confirm_password: "Confirm Password"
       change_password: "Change Password"
       change_openid: "Change OpenID"
+      web_site_url: "Web Site URL"
+      business_name: "Business Name"
+      legal_business_name: "Business Legal Name"
+      business_type: "Business Type"
+      title: "Your Title"
+      activity_status: "Activity Status"
+      plan_type: "Plan Type"
+      support_contact: "Support Contact"
     groups:
       no_groups: "No groups (yet)"
       new_group: "New group"
@@ -297,6 +312,7 @@ en:
       no_invitations: "No invitations (yet)"
     new:
       header: "Sign up"
+      business_account: "This is a business account"
       email_address: "Email address"
       comma_will_be_verified: ", will be verified"
       never_made_public: "never made public"
@@ -319,7 +335,8 @@ en:
       respond: "Respond"
       no_membership_request: "No membership request (yet)"
     show:
-      header: "Profile:"
+      header: "Profile"
+      support_contact: "Support Contact"
       organization_profile: "This is a profile of an organization"
       not_active: "This person is not active"
       description_blank: "Your description is blank."
@@ -364,8 +381,9 @@ en:
       private_message_to_requestor: "Private message to requestor"
 
   exchanges:
+    record_transaction: "Record transaction"
     new:
-      enter_credit_for: "Enter credit for"
+      enter_credit_for: "Transfer %{currency} to" 
       amount: "amount"
       for: "For:"
       or_ask: "or ask"
@@ -418,6 +436,9 @@ en:
       header: "New message"
       preview: "Message preview"
       body: "Your message"
+      to:
+        placeholder: "Type recipient's name..."
+      new_message: "Compose New Message"
     show:
       subject: "Subject"
       sent: "Sent"
@@ -479,8 +500,6 @@ en:
       have_connected: "have connected"
       commented: "made a comment"
       forum_post: "forum post"
-      blog_post: "blog post"
-      new_blog_post: "new blog post"
       new_discussion_topic: "new discussion topic"
       made_post_on_forum_topic: "made a post on the forum topic"
       hours_for: "hours for"
@@ -489,22 +508,18 @@ en:
       created_the_group: "created the group"
       joined_the_group: "joined the group"
       has_created_a_new: "has created a new"
-      is_attending: "is attending"
       offer_created: "has created a new offer"
       req_created: "has created a new request"
-      event_created: "has created a new event"
     transact:
       for: "for"
     multiple_select_label: "For multiple selection in the list below, press and hold Ctrl key (or Command for Mac users)"
 
   person_mailer:
-    blog_comment_notification:
-      new: "You have a new comment on your blog from"
     connection_request:
       new: "You have a new connection request from"
     email_verification:
       message_default: "Click here to complete your email verification:"
-      message_whitelist: "Click here to complete your email verification.  Note that access to the exchange requires admin approval (following orientation or other blessing ritual) of your account"
+      message_whitelist: "Click here to complete your email verification.  Note that access to the exchange requires admin approval"
       thanks: "Thanks!"
     membership_accepted:
       accepted: "Your membership request has been accepted to join"
@@ -525,8 +540,6 @@ en:
       matches_a_skill_category_you_have: "matches a skill category you have"
       description: "Description"
       requested_by: "Requested by"
-    wall_comment_notification:
-      new: "You have a new comment on your wall from"
     _footer:
       thankyou: "Thank you for supporting open source software."
 
@@ -534,9 +547,14 @@ en:
     error_messages:
       not_active: "Your account is not active. It may require admin approval."
 
-  pagination:
-    previous: "Previous"
-    next: "Next"
+  will_paginate:
+    previous_label: "&laquo; Previous"
+    next_label: "Next &raquo;"
+
+  valid_email:
+    validations:
+      email:
+        invalid: "is invalid."
 
   notice_warning_your_email_address: "Warning: your email address is still at"
   notice_change_it_here: "Change it here"
@@ -548,14 +566,10 @@ en:
   notice_bid_removed: "Bid was removed."
   notice_category_updated: "Category was successfully updated."
   notice_forum_updated: "Forum was successfully updated."
-  notice_event_updated: "Event was successfully updated."
-  notice_you_are_attending_this_event: "You are attending this event."
-  notice_you_are_not_attending: "You are not attending this event."
   notice_in_progress: "Work on this feature is in progress."
   notice_group_updated: "Group was successfully updated."
   notice_invite_contacts: "You have invite some of your contacts to"
   notice_upload_canceled: "You have canceled the upload"
-  notice_blog_updated: "Blog updated"
   notice_entries: "entries."
   notice_you_have_joined: "You have joined "
   notice_membership_request_sent: "Membership request sent!"
@@ -586,7 +600,6 @@ en:
   success_category_created: "Category was successfully created."
   success_comment_created: "Comment was successfully created."
   success_comment_deleted: "Comment deleted"
-  success_event_created: "Event was successfully created."
   success_credit_transfer_succeeded: "Credit transfer succeeded."
   success_payment_suspended: "Payment suspended."
   success_group_created: "Group was successfully created."
@@ -616,6 +629,7 @@ en:
   success_post_destroyed: "Post destroyed"
   success_request_created: "Request was successfully created."
   success_request_destroyed: "Request destroyed"
+  success_request_deactivated: "Request deactivated"
   success_you_have_been_logged_out: "You have been logged out."
   success_topic_created: "Topic was successfully created."
   success_topic_destroyed: "Topic was successfully destroyed."
@@ -625,6 +639,7 @@ en:
   success_connection_ended: "Ended connection with"
   success_password_updated: "Your password was updated."
   success_credit_limit_updated: "Credit limit updated"
+  success_account_updated: "Account updated"
 
   error_geocoding_failed: "Geocoding failed"
   error_at_least_one_address: "You must have at least one address"
@@ -632,14 +647,11 @@ en:
   error_default_password: "Warning: your password is still the default."
   error_creating_bid: "Error creating bid."
   error_category_authorization: "Authorization required to edit category"
-  error_you_can_only_attend_once: "You can only attend once."
-  error_you_are_not_attending: "You are not attending this event."
   error_offer_person_mismatch: "Specified offer does not match person"
   error_with_credit_transfer: "Error with credit transfer."
   error_with_suspension: "Error with suspension of payment."
   error_no_contacts: "You have no contacts or you have invited all of them"
   error_browser_upload_fail: "Your browser doesn't appear to support file uploading"
-  error_blog_update: "Blog update failed."
   error_connection_invalid: "Invalid connection."
   error_invalid_or_expired_membership: "Invalid or expired membership request"
   error_invalid_action: "Invalid action"
@@ -668,6 +680,7 @@ en:
   error_could_not_find_payee: "could not find payee"
   error_with_transfer: "Error with transfer."
   error_credit_limit_update_failed: "Credit limit update failed"
+  error_account_update_failed: "Account update failed"
   error_connection_request_invadid_or_expired: "Invalid or expired connection request"
   error_connection_request_person_deactivated: "Invalid connection request: person deactivated"
   error_email_not_found: "No one was found with that email address"

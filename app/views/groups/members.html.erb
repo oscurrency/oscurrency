@@ -1,5 +1,5 @@
 
-<%- column_div :type => :primary do -%>
+<%= column_div :type => :primary do -%>
   <h2><%= link_to h(@group.name), group_path(@group) %></h2>
   
   <% unless @pending.empty? -%>
@@ -7,10 +7,9 @@
     <%= will_paginate(@pending) %>
     <ul class="grid contacts medium">
       <%- @pending.each do |contact| -%>
-        <li class="vcard contact">
+        <li class="contact">
           <%= image_link contact, :image_options => { :class => "photo" },
                                   :link_options => { :class => "url" },
-                                  :vcard => true,
                                   :image => :bounded_icon %>
           <% if @group.owner?(current_person) %>
             <div class="accept_or_cancel_membership">
@@ -37,11 +36,10 @@
     <ul class="grid contacts medium">
       <%- @memberships.each do |membership| -%>
         <% contact = membership.person %>
-        <li class="vcard contact">
+        <li class="contact">
           <%= image_link contact, :image_options => { :class => "photo" },
                                   :link_options => { :class => "url" },
-                                  :vcard => true,
-                                  :image => :bounded_icon %>
+                                  :image => :bounded_icon, :vcard => true, :truncate => 24 %>
           <% if can? :unsuscribe, membership %>
             <div class="cancel_membership">
                 <%= link_to image_tag("icons/remove.gif"), 
@@ -68,22 +66,20 @@
   <h3><%= t('groups.members.admins') %></h3>
   <ul class="grid contacts medium">
     <%- @group.admins.each do |admin| -%>
-      <li class="vcard contact">
+      <li class="contact">
       <%= image_link admin, :image_options => { :class => "photo" },
                             :link_options => { :class => "url" },
-                            :vcard => true,
-                            :image => :bounded_icon %>
+                            :image => :bounded_icon, :vcard => true, :truncate => 24 %>
       </li>
     <%- end -%>
   </ul>
 
   <h3><%= t('groups.members.created_by') %></h3>
   <ul class="grid contacts medium">
-    <li class="vcard contact">
+    <li class="contact">
       <%= image_link @group.owner, :image_options => { :class => "photo" },
                               :link_options => { :class => "url" },
-                              :vcard => true,
-                              :image => :bounded_icon %>
+                              :image => :bounded_icon, :vcard => true, :truncate => 24 %>
     </li>
   </ul>
 

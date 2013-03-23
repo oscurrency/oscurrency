@@ -6,7 +6,7 @@ module GroupsHelper
   
   # Return a group's image link.
   # The default is to display the group's icon linked to the profile.
-  def image_link(group, options = {})
+  def group_image_link(group, options = {})
     link = options[:link] || group
     image = options[:image] || :icon
     image_options = { :title => h(group.name), :alt => h(group.name) }
@@ -27,16 +27,16 @@ module GroupsHelper
     link_to(content, link, link_options)
   end
   
-  
   def group_link(group)
     link_to(h(group.name), group_path(group))
   end
-  
-  def get_groups_modes
-    modes = []
-    modes << ["Public",0]
-    modes << ["Membership approval required",1]
-    return modes
+
+  def delete_membership_link(person,group)
+    membership = Membership.mem(person,group)
+    if membership
+      membership_path(membership)
+    else
+      "#"
+    end
   end
-  
 end

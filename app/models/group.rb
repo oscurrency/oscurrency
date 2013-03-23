@@ -1,13 +1,18 @@
+require 'texticle/searchable'
+
 class Group < ActiveRecord::Base
   include ActivityLogger
+  extend PreferencesHelper
   
   validates_presence_of :name, :person_id
-  attr_protected :mandatory
+
+  attr_accessible :name, :description, :mode, :unit, :adhoc_currency, :default_credit_limit
+  attr_accessible :asset, :private_txns, :enable_forum, :display_balance, :display_earned, :display_paid
 
   has_one :forum
-  has_many :reqs, :order => "created_at DESC"
+  has_many :reqs, :conditions => "biddable IS true", :order => "created_at DESC"
   has_many :offers, :order => "created_at DESC"
-  has_many :photos, :dependent => :destroy, :order => "created_at"
+  has_many :photos, :as => :photoable, :dependent => :destroy, :order => "created_at"
   has_many :exchanges, :order => "created_at DESC"
   has_many :memberships, :dependent => :destroy
   has_many :people, :through => :memberships, 
@@ -17,36 +22,56 @@ class Group < ActiveRecord::Base
   
   belongs_to :owner, :class_name => "Person", :foreign_key => "person_id"
   
-  has_many :activities, :foreign_key => "item_id", :conditions => "item_type = 'Group'", :dependent => :destroy
+  has_many :activities, :as => :item, :dependent => :destroy
 
   validates_uniqueness_of :name
   validates_uniqueness_of :unit, :allow_nil => true
   validates_uniqueness_of :asset, :allow_nil => true
-  validates_format_of :asset, :with => /^[-\.a-z0-9]+$/i, :allow_blank => true
+  validates_format_of :asset, :with => /^[-\.a-z0-9_]+$/i, :allow_blank => true
+  validate :changing_asset_name_only_allowed_if_empty
   after_create :create_owner_membership
   after_create :create_forum
   after_create :log_activity
   before_update :update_member_credit_limits
   
-  index do 
-    name description
-  end
+  extend Searchable(:name, :description)
   
   # GROUP modes
   PUBLIC = 0
   PRIVATE = 1
   
+  def get_groups_modes
+    modes = []
+    modes << ["Public",PUBLIC]
+    modes << ["Membership approval required",PRIVATE] unless default_group?
+    return modes
+  end
+
+  def default_group?
+    id == Group.global_prefs.default_group_id
+  end
+  
   class << self
 
     def name_sorted_and_paginated(page = 1)
-      paginate(:all, :page => page,
-                     :per_page => RASTER_PER_PAGE,
-                     :order => "name ASC")
+      paginate(:page => page,
+               :per_page => RASTER_PER_PAGE,
+               :order => "name ASC")
+    end
+
+    def by_opentransact(asset)
+      Group.find_by_asset(asset)
     end
   end
 
+  def opentransact?
+    !asset.nil?
+  end
+
   def admins
-    memberships.with_role('admin').map {|m| m.person}
+    admins = memberships.with_role('admin').map {|m| m.person}
+    admins << owner if admins.empty?
+    admins
   end
 
   def public?
@@ -73,19 +98,19 @@ class Group < ActiveRecord::Base
   end
 
   def main_photo
-    photo.nil? ? "/images/g_default.png" : photo.public_filename
+    photo.nil? ? "g_default.png" : photo.picture_url
   end
 
   def thumbnail
-    photo.nil? ? "/images/g_default_thumbnail.png" : photo.public_filename(:thumbnail)
+    photo.nil? ? "g_default_thumbnail.png" : photo.picture_url(:thumbnail)
   end
 
   def icon
-    photo.nil? ? "/images/g_default_icon.png" : photo.public_filename(:icon)
+    photo.nil? ? "g_default_icon.png" : photo.picture_url(:icon)
   end
 
   def bounded_icon
-    photo.nil? ? "/images/g_default_icon.png" : photo.public_filename(:bounded_icon)
+    photo.nil? ? "g_default_icon.png" : photo.picture_url(:icon)
   end
 
   # Return the photos ordered by primary first, then by created_at.
@@ -100,7 +125,7 @@ class Group < ActiveRecord::Base
   
   private
 
-  def validate
+  def changing_asset_name_only_allowed_if_empty
     unless new_record?
       if asset_changed?
         unless asset_was.blank?

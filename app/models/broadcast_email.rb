@@ -4,21 +4,21 @@
 # Table name: broadcast_emails
 #
 #  id         :integer(4)      not null, primary key
-#  subject    :string(255)     
-#  message    :text            
-#  created_at :datetime        
-#  updated_at :datetime        
+#  subject    :string(255)
+#  message    :text
+#  created_at :datetime
+#  updated_at :datetime
 #
 
 class BroadcastEmail < ActiveRecord::Base
 
-  def perform
-    peeps = Person.all_active
-    peeps.each do |peep|
-      logger.info("BroadcaseEmail: sending email to #{peep.id}: #{peep.name}")
-      email = BroadcastMailer.create_spew(peep, subject, message)
-      email.set_content_type("text/html")
-      BroadcastMailer.deliver(email)
+  def spew
+    peeps = Person.active.broadcast_email
+    after_transaction do
+      peeps.each do |peep|
+        logger.info("BroadcastEmail: sending email to #{peep.id}: #{peep.name}")
+        BroadcastMailerQueue.spew(peep, subject, message)
+      end
     end
   end
 

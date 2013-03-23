@@ -5,12 +5,9 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   include SharedHelper
   include PreferencesHelper
-  include ExceptionNotifiable
 
   helper_method :current_person
   helper_method :logged_in?
-
-  filter_parameter_logging :password
 
   before_filter :require_activation, :admin_warning,
                 :set_person_locale
@@ -20,7 +17,13 @@ class ApplicationController < ActionController::Base
   rescue_from CanCan::AccessDenied do |exception|
     flash[:error] = exception.message
     respond_to do |format|
-      format.html {redirect_to @group}
+      format.html do
+        unless @group.nil?
+          redirect_to @group
+        else
+          redirect_to index
+        end
+      end
       format.js do
         canvas = case params[:action] 
           when 'new_req','create_req','update' # from bids#update payment denied
@@ -35,9 +38,9 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  ActiveScaffold.set_defaults do |config|
-    config.ignore_columns.add [ :created_at, :updated_at, :audits]
-  end
+  #ActiveScaffold.set_defaults do |config|
+  #  config.ignore_columns.add [ :created_at, :updated_at, :audits]
+  #end
 
 #  audit Req, Offer, Bid, Exchange, Account, Person, :only => [:create, :update, :destroy]
 
@@ -69,7 +72,7 @@ class ApplicationController < ActionController::Base
     end
 
     def store_location
-      session[:return_to] = request.request_uri
+      session[:return_to] = request.fullpath
     end
 
     def redirect_back_or_default(default)
@@ -88,6 +91,10 @@ class ApplicationController < ActionController::Base
       @current_person = current_person_session && current_person_session.record
     end
 
+    def current_person=(person)
+      @current_person=person
+    end
+
     def current_user
       current_person 
     end
@@ -101,7 +108,7 @@ class ApplicationController < ActionController::Base
         I18n.locale = current_person.language
       else
         session[:locale] = params[:locale] if params[:locale]
-        I18n.locale = session[:locale] || I18n.default_locale
+        I18n.locale = session[:locale] || global_prefs.locale || I18n.default_locale
       end
     end
 
@@ -136,8 +143,7 @@ class ApplicationController < ActionController::Base
           redirect_to logout_url
         end
         # last_logged_in_at actually captures site activity, so update it now.
-        current_person.last_logged_in_at = Time.now
-        current_person.save
+        current_person.touch :last_logged_in_at
       end
     end
     
@@ -146,16 +152,12 @@ class ApplicationController < ActionController::Base
       if request.format.html?
         default_domain = "example.com"
         default_password = "admin"
-        if logged_in? and current_person.admin? 
+        if logged_in? and current_person.admin? and !(request.fullpath =~ /^\/admin/)
           if current_person.email =~ /@#{default_domain}$/
             flash[:notice] = %(#{t('notice_warning_your_email_address')} 
               #{default_domain}.
               <a href="#{edit_person_path(current_person)}">#{t('notice_change_it_here')}</a>.)
           end
-          #if current_person.unencrypted_password == default_password
-          #  flash[:error] = %(#{t('error_default_password')}
-          #    <a href="#{edit_person_path(current_person)}">#{t('notice_change_it_here')}</a>.)          
-          #end
         end
       end
     end

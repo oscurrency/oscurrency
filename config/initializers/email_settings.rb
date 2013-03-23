@@ -1,38 +1,23 @@
-
-module ActionMailer
-  class Base
-    def perform_delivery_smtp(mail)
-      destinations = mail.destinations
-      mail.ready_to_send
-      sender = (mail['return-path'] && mail['return-path'].spec) || Array(mail.from).first
-
-      smtp = Net::SMTP.new(smtp_settings[:address], smtp_settings[:port])
-      smtp.enable_starttls_auto if smtp_settings[:enable_starttls_auto] && smtp.respond_to?(:enable_starttls_auto)
-      smtp.start(smtp_settings[:domain], smtp_settings[:user_name], smtp_settings[:password],
-                 smtp_settings[:authentication]) do |smtp|
-        smtp.sendmail(mail.encoded, sender, destinations)
-      end
-    end
-  end
-end
-
 begin
-  unless test?
-    global_prefs = Preference.find(:first)
-    if global_prefs.email_notifications?
-      smtp_port = 'smtp.gmail.com' == global_prefs.smtp_server ? 587 : 25
+  unless Rails.env.test?
+    global_prefs = Preference.first
+    if global_prefs.using_email?
       ActionMailer::Base.delivery_method = :smtp
+      smtp_port = ENV['SMTP_PORT'] ? ENV['SMTP_PORT'].to_i : 587
+      starttls_auto = 587==smtp_port ? true : false
       ActionMailer::Base.smtp_settings = {
-        :address    => global_prefs.smtp_server,
-	:port => smtp_port,
-	:authentication => :plain,
-        :domain     => global_prefs.domain,
-#	:domain => ENV['GMAIL_SMTP_USER'],
-	:user_name => ENV['GMAIL_SMTP_USER'],
-	:password => ENV['GMAIL_SMTP_PASSWORD']
+        :address        => ENV['SMTP_SERVER'] || 'smtp.sendgrid.net',
+        :port           => smtp_port,
+        :authentication => :plain,
+        :enable_starttls_auto => starttls_auto,
+        :user_name      => ENV['SMTP_USER'] || ENV['SENDGRID_USERNAME'],
+        :password       => ENV['SMTP_PASSWORD'] || ENV['SENDGRID_PASSWORD'],
+        :domain         => ENV['SMTP_DOMAIN'] || 'herokuapp.com'
       }
+      ActionMailer::Base.default_url_options[:host] = global_prefs.server_name
     end
   end
+
 rescue
   # Rescue from the error raised upon first migrating
   # (needed to bootstrap the preferences).

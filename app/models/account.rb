@@ -15,25 +15,40 @@ class Account < ActiveRecord::Base
   belongs_to :person
   belongs_to :group
 
-  attr_accessible :credit_limit
+  attr_accessible :credit_limit, :offset, :as => :admin
+  attr_accessible :credit_limit, :offset
 
   before_update :check_credit_limit
 
   INITIAL_BALANCE = 0
 
+  def name
+    unless read_attribute(:name).blank?
+      read_attribute(:name)
+    else
+      person.display_name if person
+    end
+  end
+
   def membership
     Membership.mem(person,group)
   end
 
+  def balance_with_initial_offset
+    balance + offset
+  end
+
   def authorized?(amount)
-    credit_limit.nil? or (amount <= balance + credit_limit)
+    credit_limit.nil? or (amount <= balance_with_initial_offset + credit_limit)
   end
 
   def withdraw(amount)
+    self.paid += amount
     adjust_balance_and_save(-amount)
   end
 
   def deposit(amount)
+    self.earned += amount
     adjust_balance_and_save(amount)
   end
 
@@ -63,8 +78,8 @@ class Account < ActiveRecord::Base
 
   def check_credit_limit 
     if credit_limit_changed?
-      if credit_limit + balance < 0
-        raise CanCan::AccessDenied.new("Denied: Updating credit limit for #{person.name} would put account in prohibited state.", :update, Account)
+      if (not credit_limit.nil?) and (credit_limit + balance_with_initial_offset < 0)
+        raise CanCan::AccessDenied.new("Denied: Updating credit limit for #{person.display_name} would put account in prohibited state.", :update, Account)
       end
     end
   end

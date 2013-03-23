@@ -151,7 +151,7 @@ describe Group do
 
       describe 'delegated payments with oauth' do
         before(:each) do
-          @token = RequestToken.new :client_application => client_applications(:one), :group => @g, :callback_url => "http://example.com/callback"  
+          @token = RequestToken.new :client_application => client_applications(:one), :callback_url => "http://example.com/callback"  
         end
 
         it "should not allow a payment with wrong scope type" do
@@ -212,8 +212,8 @@ describe Group do
           if @scoped_ability.can? :create, @e
             @e.save
             # when access token present, invalidate on successful payment
-            if @access_token.action_id == 'single_payment'
-              @access_token.invalidate!
+            if @access_token.capabilities[0].action_id == 'single_payment'
+              @access_token.capabilities[0].invalidate!
             end
           end
           @scoped_ability.should_not be_able_to(:create,@e)

@@ -1,9 +1,9 @@
-<%- column_div :type => :primary do -%>
+<%= column_div :type => :primary do -%>
   <div class="profile vcard">
     <%- if @person.openid_identifier.nil? -%>
-      <h2><%= t('people.show.header') %> <span class="fn n"><%= h @person.name %></span></h2>
+      <h2><%= t('people.show.header') %> <span class="fn n"><%= h @person.display_name %></span></h2>
     <%- else -%>
-    <h2><%= t('people.show.header') %> <span class="fn n"><%= link_to h(@person.name), @person.openid_identifier, :title => @person.openid_identifier %></span>&nbsp;<img src="http://openid.net/images/login-bg.gif"></h2>
+    <h2><%= t('people.show.header') %> <span class="fn n"><%= link_to h(@person.display_name), @person.openid_identifier, :title => @person.openid_identifier %></span>&nbsp;<%= image_tag("login-bg.gif") %></h2>
     <%- end -%>
     <%- if admin? and not @person.active? -%>
       <p class="error"><%= t('people.show.not_active') %></p>
@@ -21,7 +21,7 @@
           <%= link_to t('people.show.edit_it'), edit_person_path(@person) %>
         </div>
       <%- end -%>
-      <%- if Person::DEFAULT_ZIPCODE_STRING == current_person.address.zipcode_plus_4 %>
+      <%- if current_person.address && Person::DEFAULT_ZIPCODE_STRING == current_person.address.zipcode_plus_4 %>
         <div class="error">
           <%= link_to t('people.show.update_location'),
                       edit_person_path(@person) %>. 
@@ -31,13 +31,16 @@
     <%- end -%>
     <div class="toolbox">
       <%= image_tag @person.main_photo, :class => "profile-image photo",
-                                        :alt => h(@person.name) %>
+                                        :alt => h(@person.display_name) %>
 
         <ul class="tools">
+          <%- if @person.org %>
+            <li><span class="label"><%= t('groups.show.contact') %></span>: <%= @person.name %></li>
+          <%- end %>
         <%- unless current_person?(@person) -%>
           <%- if logged_in? -%>
             <li><%= exchange_link @person %></li>
-            <li><%= email_link @person %></li>
+            <li><%= email_link @person, :class => 'noajax' %></li>
             <%= render :partial => 'account', :collection => @person.accounts %>
           <%- end -%>
           <%- if current_person.admin? -%>
@@ -64,6 +67,9 @@
         <% else -%>
           <%- if logged_in? -%>
             <%= render :partial => 'account', :collection => @person.accounts %>
+            <%- if current_person?(@person) && @person.support_contact -%>
+              <li><%= support_link @person.support_contact %></li>
+            <%- end -%>
           <%- end -%>
         <%- end -%>
       </ul>
@@ -79,21 +85,13 @@
       </div>
       <%- end -%>
     <%- end -%>
-    <%= display simple_format_without_paragraph @person.description %>
+    <%= markdown(@person.description) %>
   </div>
 
-  <%= render :partial => '/shared/wall' %>
   <%= render :partial => '/shared/recent_activity' %>
 <%- end -%>
 
-<%- column_div :type => :secondary do -%>
-  <%= render :partial => 'groups', 
-             :locals => {:groups => @person.own_groups, :title => "Admin Groups", :link => "admin"} %>
-  <%= render :partial => 'groups', 
-             :locals => {:groups => @groups, :title => "Groups", :link => "groups"} %>
+<%= column_div :type => :secondary do -%>
   <%= render :partial => 'searches/box' %>
-  <%- if global_prefs.zipcode_browsing? -%>
-    <%= render :partial => 'zip', :collection => @zips %>
-  <%- end -%>
 <%- end -%>
 

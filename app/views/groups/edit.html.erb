@@ -1,8 +1,8 @@
-<%- column_div :type => :primary do -%>
+<%= column_div :type => :primary do -%>
   <h2><%= t('groups.edit.header') %></h2>
   <div id="profile_edit">
 
-  <% form_for(@group) do |f| %>
+  <%= form_for(@group) do |f| %>
     <%= f.error_messages %>
 
     <div class="form_row">
@@ -25,7 +25,29 @@
       <label for="default_credit_limit"><%= t('groups.edit.default_credit_limit') %></label>
       <%= f.text_field :default_credit_limit, :size => 5 %>
     </div>
+
+    <div class="form_row">
+      <label for="display_balance" class="checkbox"><%= t('groups.edit.display_balance') %></label>
+      <%= f.check_box :display_balance %>
+    </div>
+    <div class="form_row">
+      <label for="display_earned" class="checkbox"><%= t('groups.edit.display_earned') %></label>
+      <%= f.check_box :display_earned %>
+    </div>
+    <div class="form_row">
+      <label for="display_paid" class="checkbox"><%= t('groups.edit.display_paid') %></label>
+      <%= f.check_box :display_paid %>
+    </div>
+    <div class="form_row">
+      <label for="private_txns" class="checkbox"><%= t('groups.edit.private_txns') %></label>
+      <%= f.check_box :private_txns %>
+    </div>
 <%- end -%>
+
+    <div class="form_row">
+      <label for="enable_forum" class="checkbox"><%= t('groups.edit.enable_forum') %></label>
+      <%= f.check_box :enable_forum %>
+    </div>
 
     <div class="form_row">
       <label for="description"><%= t('groups.edit.description') %></label>
@@ -34,7 +56,7 @@
 
     <div class="form_row">
       <label for="mode"><% t('groups.edit.mode') %></label>
-      <%= f.select :mode, get_groups_modes %>
+      <%= f.select :mode, @group.get_groups_modes %>
     </div>  
     
     <div class="form_row">
@@ -53,7 +75,7 @@
       <tr>
       <% row.each do |photo| %>
         <td  style="padding-left: 1em;">
-          <%= image_tag photo.public_filename(:thumbnail) %>
+          <%= image_tag photo.picture_url(:thumbnail) %>
         </td>
       <% end %>
       </tr>
@@ -81,11 +103,13 @@
   </div>
 
 <%- end -%>
-<%- column_div :type => :secondary do -%>
+<%= column_div :type => :secondary do -%>
+<% if @group.enable_forum %>
   <h2>Forum</h2>
   <p>
   <%= link_to "Edit Forum Preferences", edit_forum_path(@group.forum) %>
   </p>
+<% end %>
   <h2>Members</h2>
   <p>
     <%= link_to "Edit Member Roles", members_group_path(@group) %>

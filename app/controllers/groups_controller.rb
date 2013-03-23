@@ -5,6 +5,7 @@ class GroupsController < ApplicationController
   load_and_authorize_resource
   
   def index
+    @body = "noajax"
     # XXX can't define abilities w/ blocks (accessible_by) http://github.com/ryanb/cancan/wiki/Upgrading-to-1.4
     @groups = Group.name_sorted_and_paginated(params[:page])
 
@@ -20,19 +21,23 @@ class GroupsController < ApplicationController
       format.html do
         @forum = @group.forum
         @topics = Topic.find_recently_active(@forum, params[:page]) 
-        @reqs = Req.search(nil, 
+        @reqs = Req.custom_search(nil,
                            @group, 
+                           active=true,
                            1, # params[:page] 
                            AJAX_POSTS_PER_PAGE,
                            nil
                            )
-        @offers = Offer.search(nil,
+        @offers = Offer.custom_search(nil,
                                @group,
+                               active=true,
                                1, #params[:page]
                                AJAX_POSTS_PER_PAGE,
                                nil
                                )
-        @exchanges = @group.exchanges.paginate(:page => params[:page], :per_page => AJAX_POSTS_PER_PAGE)
+        unless @group.private_txns?
+          @exchanges = @group.exchanges.paginate(:page => params[:page], :per_page => AJAX_POSTS_PER_PAGE)
+        end
         @memberships = @group.memberships.active.paginate(:page => params[:page],
                                               :conditions => ['status = ?', Membership::ACCEPTED],
                                               :order => 'memberships.created_at DESC',
@@ -46,6 +51,7 @@ class GroupsController < ApplicationController
   end
 
   def new
+    @photo = Photo.new
     respond_to do |format|
       format.html
     end
@@ -96,7 +102,14 @@ class GroupsController < ApplicationController
     end
   end
 
+  def people
+    respond_to do |format|
+      format.html { redirect_to group_path(@group, :anchor => 'people') }
+    end
+  end
+
   def members
+    @body = "noajax"
     @memberships = @group.memberships.paginate(:page => params[:page],
                                           :conditions => ['status = ?', Membership::ACCEPTED],
                                           :include => :person,
@@ -125,6 +138,7 @@ class GroupsController < ApplicationController
   end
   
   def new_photo
+    @photo = Photo.new
     respond_to do |format|
       format.html
     end
@@ -142,7 +156,7 @@ class GroupsController < ApplicationController
       redirect_to(edit_group_path(@group)) and return
     end
     
-    group_data = { :group => @group,
+    group_data = { :photoable => @group,
                     :primary => @group.photos.empty? }
     @photo = Photo.new(params[:photo].merge(group_data))
     

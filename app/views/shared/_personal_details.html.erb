@@ -1,9 +1,9 @@
-<%- column_div :type => :primary do -%>
+<%= column_div :type => :primary do -%>
   <h2>Edit Personal Info</h2>
 
   <%= error_messages_for :personal_details %>
 
-  <% form_for personal_details do |f| -%>
+  <%= form_for personal_details do |f| -%>
 
   <div class="form_row">
     <label for="email">
@@ -11,7 +11,7 @@
       public<%= ", will be verified" if global_prefs.email_verifications? %>)
       </span>
     </label>
-    <%= f.text_field :email, :maxlength => Person::MAX_EMAIL %>
+    <%= f.email_field :email %>
     <%= set_focus_to "person_email" %>  
   </div>
 
