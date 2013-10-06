@@ -12,6 +12,7 @@
     <li><a href="#tab_people" data-toggle="tab"><%= t("groups.show.people") %></a></li>
   </ul>
 
+
   <div class="tab-content">
     <div class="tab-pane active" id="tab_home">
       <div id="home_canvas">
@@ -41,13 +42,13 @@
       <%= render '/offers/offers_canvas' %>
       </div>
     </div>
+    
     <div class="tab-pane" id="tab_people">
       <div id="people_canvas">
       <%= render '/memberships/members_canvas' %>
       </div>
     </div>
   </div>
-
   <div class="clearfix"></div>
 
 </div>
