@@ -16,12 +16,11 @@ class Account < ActiveRecord::Base
   belongs_to :person
   belongs_to :group
 
-  attr_accessible :credit_limit, :offset, :as => :admin
-  attr_accessible :credit_limit, :offset
-  attr_accessible :fees, :as => :admin
+  attr_accessible :credit_limit, :offset, :fees , :as => :admin
+  attr_accessible :credit_limit, :offset, :fees
 
   before_update :check_credit_limit
-  after_save :update_balance
+  after_update :update_balance , :if => Proc.new { |ac| ac.fees && ac.fees_changed? }
 
   INITIAL_BALANCE = 0
 
@@ -98,8 +97,7 @@ class Account < ActiveRecord::Base
   end
 
   def update_balance
-    if self.fees &&  self.fees_changed?
-      self.balance -= self.fees
-    end
+      self.offset -= self.fees
   end
+
 end
