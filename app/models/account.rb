@@ -98,7 +98,7 @@ class Account < ActiveRecord::Base
   end
 
   def update_balance
-    if self.fees.changed?
+    if self.fees &&  self.fees_changed?
       self.balance -= self.fees
     end
   end
