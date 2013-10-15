@@ -17,7 +17,7 @@ class Account < ActiveRecord::Base
   belongs_to :group
 
   attr_accessible :credit_limit, :offset, :fees , :as => :admin
-  attr_accessible :credit_limit, :offset, :fees
+  attr_accessible :credit_limit, :offset, :fees, :balance
 
   before_update :check_credit_limit
   after_update :update_balance , :if => Proc.new { |ac| ac.fees && ac.fees_changed? }
@@ -97,7 +97,10 @@ class Account < ActiveRecord::Base
   end
 
   def update_balance
-      self.offset -= self.fees
+   if !self.balance.nil?
+    self.balance -= self.fees
+    self.update_column :balance, self.balance
+   end
   end
 
 end
