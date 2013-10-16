@@ -438,6 +438,7 @@ DEPENDENCIES
   rails3_acts_as_paranoid
   rails_admin
   redcarpet
+  remotipart
   rmagick
   rspec-rails
   ruby-openid

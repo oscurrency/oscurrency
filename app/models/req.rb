@@ -20,6 +20,8 @@ class Req < ActiveRecord::Base
   has_many :completed_bids, :class_name => "Bid", :conditions => "completed_at IS NOT NULL"
   has_many :committed_bids, :class_name => "Bid", :conditions => "committed_at IS NOT NULL"
   has_many :approved_bids, :class_name => "Bid", :conditions => "approved_at IS NOT NULL"
+  has_many :photos, :as => :photoable, dependent: :destroy
+  accepts_nested_attributes_for :photos, :allow_destroy => true
 
   attr_accessor :ability
   attr_protected :ability
@@ -82,6 +84,29 @@ class Req < ActiveRecord::Base
     active and Req.global_prefs.can_send_email? and Req.global_prefs.email_notifications?
   end
 
+## Photo helpers
+  def photo
+    # This should only have one entry, but be paranoid.
+    photos.find_all_by_primary(true).first
+  end
+
+  # Return all the photos other than the primary one
+  def other_photos
+    photos.length > 1 ? photos - [photo] : []
+  end
+
+  def main_photo
+    photo.nil? ? "g_default.png" : photo.picture_url
+  end
+
+  def thumbnail
+    photo.nil? ? "g_default_thumbnail.png" : photo.picture_url(:thumbnail)
+  end
+
+  def icon
+    photo.nil? ? "g_default_icon.png" : photo.picture_url(:icon)
+  end
+  
   # private
 
   def make_active

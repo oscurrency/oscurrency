@@ -47,7 +47,8 @@ class ReqsController < ApplicationController
     @all_categories = Category.by_long_name
     @all_neighborhoods = Neighborhood.by_long_name
     @selected_neighborhoods = current_person.neighborhoods
-
+    @photo = @req.photos.build
+    
     respond_to do |format|
       format.js
       format.html { redirect_to group_path(@group, :anchor => 'reqs/new') }
@@ -60,7 +61,8 @@ class ReqsController < ApplicationController
     @group = @req.group
     @all_categories = Category.by_long_name
     @all_neighborhoods = Neighborhood.by_long_name
-
+    @photo = @req.photos.build if @req.photos.blank?
+     
     respond_to do |format|
       format.js
     end
@@ -85,6 +87,7 @@ class ReqsController < ApplicationController
         format.js
         format.xml  { head :ok }
       else
+        @photo = @req.photos.build if @req.photos.blank?
         format.html { render :action => "new" }
         format.js { render :action => "new" }
         format.xml  { render :xml => @req.errors, :status => :unprocessable_entity }
@@ -108,6 +111,7 @@ class ReqsController < ApplicationController
         format.js
         format.xml  { head :ok }
       else
+        @photo = @req.photos.build if @req.photos.blank?
         format.html { render :action => "edit" }
         format.js { render :action => "edit" }
         format.xml  { render :xml => @req.errors, :status => :unprocessable_entity }
