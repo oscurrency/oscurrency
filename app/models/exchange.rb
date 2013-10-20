@@ -85,6 +85,15 @@ class Exchange < ActiveRecord::Base
     Group.where(adhoc_currency:true).map {|g| [g.unit,g.id]}
   end
 
+  def self.to_csv_form
+    CSV.generate do |csv|
+      csv << ["Buyer", "Seller", "Amount", "Notes", "Group", "Date of Transactions"]
+      all.each do |exchange|
+         csv << [exchange.customer.name, exchange.worker.name, exchange.amount, exchange.notes, exchange.group.name , exchange.created_at]
+      end
+    end
+  end
+
   private
 
   # Hack to create a new Request when Exchanges are

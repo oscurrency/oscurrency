@@ -87,6 +87,8 @@
     <%- end -%>
     <%= markdown(@person.description) %>
   </div>
-
+ <span  style="float:right;">
+   <%= link_to "Download My Activity", my_activity_person_path(@person), :class => "btn btn-primary" %>
+ </span>
   <%= render :partial => '/shared/recent_activity' %>
 </div>

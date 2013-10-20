@@ -79,6 +79,7 @@ Oscurrency::Application.routes.draw do
       get :su
       get :unsu
       get :common_contacts
+      get :my_activity, :defaults => { :format => 'csv' }
     end
     resources :messages
     resources :accounts

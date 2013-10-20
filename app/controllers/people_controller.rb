@@ -214,6 +214,14 @@ class PeopleController < ApplicationController
     redirect_to '/'
   end
 
+  def my_activity
+    @person = Person.find(params[:id].to_i)
+    @exchanges = @person.exchanges
+    respond_to do |format|
+      format.csv { send_data @exchanges.to_csv_form }
+    end
+  end
+
   private
     def correct_person_required
       @person = Person.find(params[:id])
