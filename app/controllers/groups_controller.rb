@@ -2,7 +2,7 @@ class GroupsController < ApplicationController
   before_filter :login_or_oauth_required
   skip_before_filter :require_activation
   load_and_authorize_resource
-  
+
   def index
     @body = "noajax"
     # XXX can't define abilities w/ blocks (accessible_by) http://github.com/ryanb/cancan/wiki/Upgrading-to-1.4
@@ -30,6 +30,7 @@ class GroupsController < ApplicationController
         @topics = Topic.where('1=0').paginate(:page => 1, :per_page => AJAX_POSTS_PER_PAGE)
         @reqs = Req.where('1=0').paginate(:page => 1, :per_page => AJAX_POSTS_PER_PAGE)
         @offers = Offer.where('1=0').paginate(:page => 1, :per_page => AJAX_POSTS_PER_PAGE)
+        @minifeed = Activity.group_feed(@group.id)
         unless @group.private_txns?
           @exchanges = @group.exchanges.paginate(:page => params[:page], :per_page => AJAX_POSTS_PER_PAGE)
         end
@@ -85,7 +86,7 @@ class GroupsController < ApplicationController
       format.html { redirect_to(groups_path) }
     end
   end
- 
+
   def exchanges
     @exchanges = @group.exchanges.paginate(:page => params[:page], :per_page => AJAX_POSTS_PER_PAGE)
     respond_to do |format|
@@ -129,14 +130,14 @@ class GroupsController < ApplicationController
       format.html
     end
   end
-  
+
   def new_photo
     @photo = Photo.new
     respond_to do |format|
       format.html
     end
   end
-  
+
   def save_photo
     #group = Group.find(params[:id])
     if params[:photo].nil?
@@ -148,11 +149,11 @@ class GroupsController < ApplicationController
       flash[:notice] = t('notice_upload_canceled')
       redirect_to(edit_group_path(@group)) and return
     end
-    
+
     group_data = { :photoable => @group,
                     :primary => @group.photos.empty? }
     @photo = Photo.new(params[:photo].merge(group_data))
-    
+
     respond_to do |format|
       if @photo.save
         flash[:success] = t('success_photo_uploaded')
@@ -166,7 +167,7 @@ class GroupsController < ApplicationController
       end
     end
   end
-  
+
   def delete_photo
     @group = Group.find(params[:id])
     @photo = Photo.find(params[:photo_id])
@@ -176,7 +177,7 @@ class GroupsController < ApplicationController
       format.html { redirect_to(edit_group_path(@group)) }
     end
   end
-  
+
   protected
 
   def membership

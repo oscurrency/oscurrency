@@ -11,7 +11,7 @@
         <%- if @transactions.length > 0 %>
           <h2><%= t('transacts.index.header') %></h2>
           <ul class="list activity full">
-            <%= render :partial => 'shared/transact', :collection => @transactions, :locals => {:ajaxified => true} %> 
+            <%= render :partial => 'shared/transact', :collection => @transactions, :locals => {:ajaxified => true} %>
           </ul>
           <% if @group.asset %>
             <%= link_to t('see_all'), transacts_path(@group.asset), :target => '_blank' %>
@@ -38,6 +38,6 @@
 <%- end -%>
       <%= render 'toolbox' %>
     </div>
-    <%= render 'shared/minifeed' %>
+    <%= render 'shared/minifeed', :collection => @minifeed %>
   </div>
 </div>

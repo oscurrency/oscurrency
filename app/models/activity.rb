@@ -4,12 +4,12 @@
 # Table name: activities
 #
 #  id         :integer(4)      not null, primary key
-#  public     :boolean(1)      
-#  item_id    :integer(4)      
-#  person_id  :integer(4)      
-#  item_type  :string(255)     
-#  created_at :datetime        
-#  updated_at :datetime        
+#  public     :boolean(1)
+#  item_id    :integer(4)
+#  person_id  :integer(4)
+#  item_type  :string(255)
+#  created_at :datetime
+#  updated_at :datetime
 #
 
 class Activity < ActiveRecord::Base
@@ -18,7 +18,7 @@ class Activity < ActiveRecord::Base
   belongs_to :group
   belongs_to :item, :polymorphic => true
   has_many :feeds, :dependent => :destroy
-  
+
   GLOBAL_FEED_SIZE = 10
 
   module Scopes
@@ -39,7 +39,8 @@ class Activity < ActiveRecord::Base
     end
 
     def group_feed(group_id)
-      global_feed.where(:group_id => group_id)
+      global_feed.joins("LEFT JOIN offers ON offers.id = activities.item_id")
+        .where(:group_id => group_id).merge(Offer.active)
     end
 
     def exchange_feed

@@ -1,7 +1,6 @@
 <div class="span3">
   <h2><%= t('shared.minifeed.activity') %></h2>
   <ul class="list activity small">
-      <%= render :partial => 'shared/minifeed_item',
-                 :collection => Activity.group_feed(@group.id) %>
+      <%= render :partial => 'shared/minifeed_item', :collection => @minifeed %>
   </ul>
 </div>
