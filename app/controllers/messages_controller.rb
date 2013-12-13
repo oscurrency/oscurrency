@@ -117,7 +117,7 @@ class MessagesController < ApplicationController
   
     respond_to do |format|
       format.html { redirect_to messages_url }
-      
+      format.js {render :action => 'index' if not request.xhr?}
     end
   end
   
@@ -131,7 +131,7 @@ class MessagesController < ApplicationController
     end
     respond_to do |format|
       format.html { redirect_to messages_url }
-      format.js { render :action => "index" }
+      format.js {render :action => 'reject' if not request.xhr?}
     end
   end
 

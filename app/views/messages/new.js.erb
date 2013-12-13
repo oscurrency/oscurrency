@@ -1,2 +1,6 @@
-$('#messages_canvas').html('<%= escape_javascript(render :partial => 'form') %>');
+<%- if @message.reply? %>
+  $('#messages_canvas').html('<%= escape_javascript(render :partial => 'form',:locals => {:content => content}) %>');
+<%- else %>
+  $('#messages_canvas').html('<%= escape_javascript(render :partial => 'form') %>');
+<% end %>
 <%= render :partial => '/shared/flash_messages', :locals => {:canvas_id => 'messages_canvas'} %>

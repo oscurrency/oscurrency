@@ -87,14 +87,17 @@ $(function() {
   route('people',   /^#people\/neighborhood_id=(\d+)$/,            '/groups/[:group_id]/memberships?neighborhood_id=[:1]');
   route('people',   /^#people\/neighborhood_id=(\d+)\/page=(\d+)$/,'/groups/[:group_id]/memberships?neighborhood_id=[:1]&page=[:2]');
 
-  route('messages', /^#messages$/,                                   '/messages/');
-  route('messages', /^#messages\/(\d+)$/,                              '/messages/[:1]');
-  route('messages', /^#messages\/new$/,                                 '/messages/new');
-  route('messages', /^#messages\/trash/,                                 '/messages/trash');
-  route('messages', /^#messages\/sent/,                                 '/messages/sent');
-  route('messages', /^#messages\/(\d+)\/edit$/,                        '/messages/[:1]/edit');
-  route('messages', /^#messages\/(\d+)\/reply$/,                        '/messages/[:1]/reply');
-  route('messages', /^#messages\/(\d+)\/undestroy$/,                        '/messages/[:1]/undestroy');
+  route('messages', /^#messages$/,                                  '/messages');
+  route('messages', /^#messages\/page=(\d+)$/,                      '/messages?page=[:1]');
+  route('messages', /^#messages\/(\d+)$/,                           '/messages/[:1]');
+  route('messages', /^#messages\/new$/,                             '/messages/new');
+  route('messages', /^#messages\/trash$/,                           '/messages/trash');
+  route('messages', /^#messages\/sent$/,                            '/messages/sent');
+  route('messages', /^#messages\/trash\/page=(\d+)$/,               '/messages/trash?page=[:1]');
+  route('messages', /^#messages\/sent\/page=(\d+)$/,                '/messages/sent?page=[:1]');
+  route('messages', /^#messages\/(\d+)\/edit$/,                     '/messages/[:1]/edit');
+  route('messages', /^#messages\/(\d+)\/reply$/,                    '/messages/[:1]/reply');
+  route('messages', /^#messages\/(\d+)\/undestroy$/,                '/messages/[:1]/undestroy');
 
   function find_group() {
     path = window.location.pathname;
@@ -113,7 +116,6 @@ $(function() {
     var tab = '';
     for(i=0;i<OSCURRENCY.routes.length;i++) {
       r = OSCURRENCY.routes[i];
-      console.log(r['path'], path)
       if(a = path.match(r['path'])) {
         tab = r['tab'];
         url = r['url'].replace(/\[:group_id\]/,OSCURRENCY.group_id);
