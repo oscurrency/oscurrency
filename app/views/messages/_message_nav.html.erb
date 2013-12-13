@@ -1,5 +1,5 @@
 <ul id="message-nav">
-  <%= list_link_with_active t('messages.index.inbox'), messages_path %>
-  <%= list_link_with_active t('messages.index.sent'), sent_messages_path %>
-  <%= list_link_with_active t('messages.index.trash'), trash_messages_path %>
+  <%= list_link_with_active t('messages.index.inbox'), messages_path, class: "show-follow" %>
+  <%= list_link_with_active t('messages.index.sent'), sent_messages_path, class: "show-follow" %>
+  <%= list_link_with_active t('messages.index.trash'), trash_messages_path, class: "show-follow"%>
 </ul>

@@ -9,12 +9,12 @@
   <%= markdown(full_message.content) %>
   <p class="meta tools">
     <%= t('messages.show.sent') %> <%= t('ago_time', :date => time_ago_in_words( full_message.created_at )) %> |
-    <%= link_to t('messages.show.reply'), reply_message_path(full_message) %> |
+    <%= link_to t('messages.show.reply'), reply_message_path(full_message) , :class => "show-follow"%> |
     <% unless full_message.trashed?(current_person) -%>
-      <%= link_to(t('messages.show.trash'), full_message, :method => :delete) %>
+      <%= link_to(t('messages.show.trash'), full_message, :method => :delete, :class => "show-follow") %>
     <% else -%>
       <%= link_to t('messages.show.untrash'), undestroy_message_path(full_message), 
-                             :method => :put %>
+                             :method => :put, :class => "show-follow" %>
     <% end -%>
   </p>
 </li>

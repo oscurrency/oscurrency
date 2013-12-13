@@ -2,7 +2,7 @@
   <div class="profile-image">
     <%= image_link message.other_person(current_person),
                    :image => :thumbnail,
-                   :image_options => { :class => "photo" } %>
+                   :image_options => { :class => "photo show-follow" } %>
 
     <%- if not message.read? and not current_person?(message.sender) -%>
       <%= image_tag("icons/email.gif", :class => "icon") %>
@@ -13,26 +13,26 @@
   <p>
     <%- if current_person?(message.sender) -%>
       <span class="label"><%= t('to').mb_chars.capitalize %>:</span>
-      <%= person_link message.recipient, :class => "url fn" %>
+      <%= person_link message.recipient, :class => "url fn show-follow" %>
     <%- else -%>
       <span class="label"><%= t('from').mb_chars.capitalize %>:</span>
-      <%= person_link message.sender, :class => "url fn" %>
+      <%= person_link message.sender, :class => "url fn show-follow" %>
     <%- end -%>
     <span class="meta"><%= t( 'ago_time', :date => time_ago_in_words( message.created_at )) %> </span>
   </p>
   <p>
     <span class="label"><%= t('messages.show.subject') %>:</span>
     <%= link_to sanitize(message.subject),
-                message_path(message, :anchor => message_anchor(message)) %>
+                message_path(message, :anchor => message_anchor(message)), :class => "show-follow" %>
   </p>
   <p class="tools meta">
-    <%= link_to t('messages.show.read'), message %> |
-    <%= link_to t('messages.show.reply'), reply_message_path(message) %> |
+    <%= link_to t('messages.show.read'), message, class: "show-follow" %> |
+    <%= link_to t('messages.show.reply'), reply_message_path(message), class: "show-follow" %> |
     <% unless message.trashed?(current_person) -%>
-      <%= link_to(t('messages.show.trash'), message, :method => :delete) %>
+      <%= link_to(t('messages.show.trash'), message, :method => :delete, class: "show-follow", :remote => true) %>
     <% else -%>
-      <%= link_to t('messages.show.untrash'), undestroy_message_path(message),
-                             :method => :put %>
+      <%= link_to t('messages.show.untrash'), undestroy_message_path(message), class: "show-follow",
+        :method => :put, :remote => true %>
     <% end -%>    
   </p>
 </li>

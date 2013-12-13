@@ -9,6 +9,7 @@ class MessagesController < ApplicationController
     @messages = current_person.received_messages(params[:page],params[:search])
     respond_to do |format|
       format.html { render :template => "messages/index" }
+      format.js {render :action => 'reject' if not request.xhr?}
     end
   end
 
@@ -17,6 +18,7 @@ class MessagesController < ApplicationController
     @messages = current_person.sent_messages(params[:page])
     respond_to do |format|
       format.html { render :template => "messages/index" }
+      format.js {render :template => "messages/index" }
     end
   end
   
@@ -25,6 +27,7 @@ class MessagesController < ApplicationController
     @messages = current_person.trashed_messages(params[:page])
     respond_to do |format|
       format.html { render :template => "messages/index" }
+      format.js {render :template => "messages/index" }
     end    
   end
 
@@ -45,6 +48,7 @@ class MessagesController < ApplicationController
     @message.mark_as_read if current_person?(@message.recipient)
     respond_to do |format|
       format.html
+      format.js 
     end
   end
 
@@ -68,15 +72,15 @@ class MessagesController < ApplicationController
 
     @recipient = not_current_person(original_message)
     original_text = "" 
-    if not original_message.content.empty?
+    if  not original_message.content.empty?
         original_text << t('messages.reply.preambule', :user=> @recipient.name) 
         original_message.content.split("\n").each do |mailline|
             original_text << t('messages.reply.prefix') << mailline 
         end
     end
-
     respond_to do |format|
       format.html { render :action => "new", :locals => {:content => original_text} }
+      format.js { render :action => "new", :locals => {:content => original_text} }
     end    
   end
 
@@ -94,7 +98,7 @@ class MessagesController < ApplicationController
       if @message.save
         flash[:notice] = t('success_message_sent') 
         format.html { redirect_to messages_url }
-        format.js
+        format.js { redirect_to sent_messages_url }
       else
         format.html { render :action => "new" }
         format.js { render :action => "new" }
@@ -113,6 +117,7 @@ class MessagesController < ApplicationController
   
     respond_to do |format|
       format.html { redirect_to messages_url }
+      
     end
   end
   
@@ -126,6 +131,7 @@ class MessagesController < ApplicationController
     end
     respond_to do |format|
       format.html { redirect_to messages_url }
+      format.js { render :action => "index" }
     end
   end
 

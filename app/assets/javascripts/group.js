@@ -21,7 +21,7 @@ $(function() {
   OSCURRENCY.delete_fadeout_time = 4000;
   OSCURRENCY.offers_mode = '';
   OSCURRENCY.reqs_mode = '';
-  OSCURRENCY.searchable_tabs = ['#people','#memberships','#reqs','#requests','#offers'];
+  OSCURRENCY.searchable_tabs = ['#people','#memberships','#reqs','#requests','#offers', '#messages'];
   OSCURRENCY.no_filter_option = 1;
   OSCURRENCY.categories_filter_option = 2;
   OSCURRENCY.neighborhoods_filter_option = 3;
@@ -87,6 +87,15 @@ $(function() {
   route('people',   /^#people\/neighborhood_id=(\d+)$/,            '/groups/[:group_id]/memberships?neighborhood_id=[:1]');
   route('people',   /^#people\/neighborhood_id=(\d+)\/page=(\d+)$/,'/groups/[:group_id]/memberships?neighborhood_id=[:1]&page=[:2]');
 
+  route('messages', /^#messages$/,                                   '/messages/');
+  route('messages', /^#messages\/(\d+)$/,                              '/messages/[:1]');
+  route('messages', /^#messages\/new$/,                                 '/messages/new');
+  route('messages', /^#messages\/trash/,                                 '/messages/trash');
+  route('messages', /^#messages\/sent/,                                 '/messages/sent');
+  route('messages', /^#messages\/(\d+)\/edit$/,                        '/messages/[:1]/edit');
+  route('messages', /^#messages\/(\d+)\/reply$/,                        '/messages/[:1]/reply');
+  route('messages', /^#messages\/(\d+)\/undestroy$/,                        '/messages/[:1]/undestroy');
+
   function find_group() {
     path = window.location.pathname;
     a = path.split('/');
@@ -104,6 +113,7 @@ $(function() {
     var tab = '';
     for(i=0;i<OSCURRENCY.routes.length;i++) {
       r = OSCURRENCY.routes[i];
+      console.log(r['path'], path)
       if(a = path.match(r['path'])) {
         tab = r['tab'];
         url = r['url'].replace(/\[:group_id\]/,OSCURRENCY.group_id);
@@ -332,6 +342,10 @@ $(function() {
 
   $('a[href=' + OSCURRENCY.tab_prefix + 'people]').bind('click',function() {
       window.location.hash = '#people';
+    });
+
+  $('a[href=' + OSCURRENCY.tab_prefix + 'messages]').bind('click',function() {
+      window.location.hash = '#messages';
     });
 
   $('.category_filter #req_category_ids').live('change',function() {
