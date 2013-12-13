@@ -85,12 +85,12 @@
     </div>
 
     <div class="tab-pane" id="tab_messages">
-      <div class="span7">
+      <div class="span8">
         <div id="messages_canvas">
           <%= render :partial => 'messages/messages_canvas', :locals => { :messages => @messages} %>
         </div>
       </div>
-      <div class="span3">
+      <div class="span3 pull-right">
         <%= link_to t('messages.new.new_message'), new_message_path, {:class => 'show-follow btn btn-primary'} %>
       </div>
     </div>
