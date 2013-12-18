@@ -30,6 +30,7 @@ class GroupsController < ApplicationController
         @topics = Topic.where('1=0').paginate(:page => 1, :per_page => ajax_posts_per_page)
         @reqs = Req.where('1=0').paginate(:page => 1, :per_page => ajax_posts_per_page)
         @offers = Offer.where('1=0').paginate(:page => 1, :per_page => ajax_posts_per_page)
+        @messages = current_person.received_messages(params[:page],params[:search])
         unless @group.private_txns?
           @exchanges = @group.exchanges.paginate(:page => params[:page], :per_page => ajax_posts_per_page)
         end

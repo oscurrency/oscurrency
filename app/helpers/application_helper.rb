@@ -8,7 +8,7 @@ module ApplicationHelper
     if url_string =~ /^\w+:\/\//
       url_string == "#{request.protocol}#{request.host_with_port}#{request.fullpath}"
     else
-      url_string == request_uri
+      url_string == request_uri or request_uri.end_with?(url_string)
     end
   end
 

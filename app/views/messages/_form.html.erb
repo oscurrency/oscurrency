@@ -6,7 +6,7 @@
     <%= link_to image_tag('default_thumbnail.png'), '#', :id => 'recipient_avatar' %>
   <%- end -%>
 
-  <%= bootstrap_form_for(@message, :url => (@recipient ? person_messages_path(@recipient) : messages_path(@message)), :html => {:id => 'new_message', :class => 'form-horizontal'}) do |f| %>
+  <%= bootstrap_form_for(@message, :url => (@recipient ? person_messages_path(@recipient) : messages_path(@message)), :remote => true, :html => {:id => 'new_message', :class => 'form-horizontal'}) do |f| %>
       <%= f.text_field :recipient, :value => (@recipient ? h(@recipient.name) : ''), :id => 'recipient_autocomplete', :class => 'recipient_autocomplete',  :placeholder => t('messages.new.to.placeholder'), :label => t('to').mb_chars.capitalize %>
       <%= f.text_field :subject, :id => "message_subject", :label => t('messages.show.subject') %>
       <%- if @message.reply? -%>
@@ -18,6 +18,6 @@
         <%= set_focus_to "message_subject" %>
       <%- end -%>
     <%= f.actions do %>
-      <%= f.primary t('button_send'), :id => "message_submit" %><%= waiting_image %>
+      <%= f.submit t('button_send'), :id => "message_submit", :class =>"btn btn-primary show-follow" %><%= waiting_image %>
     <% end %>
   <% end %>

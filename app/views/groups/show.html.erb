@@ -12,8 +12,15 @@
     <li><a href="#tab_requests" data-toggle="tab"><%= t("groups.show.requests") %></a></li>
     <li><a href="#tab_offers" data-toggle="tab"><%= t("groups.show.offers") %></a></li>
     <li><a href="#tab_people" data-toggle="tab"><%= t("groups.show.people") %></a></li>
+    <li><a href="#tab_messages" data-toggle="tab"><%= t("groups.show.messages") %>
+      <%- if current_person.has_inbox_messages? -%>
+        <span class="badge badge-error "><%= current_person.inbox_messages_count %></span>
+      <%- else -%>
+        <span class="badge ">0</span>
+      <%- end -%>
+        </a>
+    </li>
   </ul>
-
 
   <div class="tab-content">
     <div class="tab-pane active" id="tab_home">
@@ -74,6 +81,17 @@
       </div>
       <div id="people_canvas">
       <%= render '/memberships/members_canvas' %>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab_messages">
+      <div class="span8">
+        <div id="messages_canvas">
+          <%= render :partial => 'messages/messages_canvas', :locals => { :messages => @messages} %>
+        </div>
+      </div>
+      <div class="span3 pull-right">
+        <%= link_to t('messages.new.new_message'), new_message_path, {:class => 'show-follow btn btn-primary'} %>
       </div>
     </div>
   </div>

@@ -1,17 +1,7 @@
-  <h2><%= t('messages.index.header') %></h2>
+<h2><%= t('messages.index.header') %></h2>
 
 <div class="span7">
-  <%= render :partial => 'message_nav' %>
-  
-  <%- if @messages.empty? -%>
-    <h3 class="blankslate"><%= t('messages.index.no_messages') %></h3>
-  <%- else -%>
-    <%= will_paginate(:renderer => BootstrapPaginationHelper::LinkRenderer) %>
-    <ul class="list messages full">
-      <%= render :partial => @messages %>
-    </ul>
-    <%= will_paginate(:renderer => BootstrapPaginationHelper::LinkRenderer) %>
-  <%- end -%>
+  <%= render :partial => 'messages_canvas', :locals => { :messages => @messages} %>
 </div>
 <div class="span1">
 </div>
