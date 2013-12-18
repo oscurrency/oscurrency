@@ -52,3 +52,22 @@
     max-width: 70px;
   }
 }
+
+/* Styles for peoples offers */
+.offer {
+  .pay_now {
+    margin-bottom: 20px;
+  }
+
+  .primary-paynow-button {
+    text-align: center;
+    
+    .pay_now{
+      margin-bottom: 0px;
+    }
+  }
+
+  .bottom-offer-category-list {
+    margin-left: 102px;
+  }
+}
