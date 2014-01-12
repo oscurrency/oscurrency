@@ -64,7 +64,14 @@ Oscurrency::Application.routes.draw do
   resources :searches
   resources :activities
   resources :connections
-  resources :photos
+  resources :photos do
+    collection do
+      get :default_profile_picture
+      put :update_default_profile_picture
+      get :default_group_picture
+      put :update_default_group_picture
+    end
+  end
   resources :messages do
     collection do
       get :sent

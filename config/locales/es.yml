@@ -635,6 +635,10 @@ es:
       email:
         invalid: "no es válido."
 
+  preferences:
+    default_profile_picture: "Foto de perfil por defecto"
+    default_group_picture: "Foto de grupo por defecto"
+
   activerecord:
     attributes:
       person:
