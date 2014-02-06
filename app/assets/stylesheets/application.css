@@ -3,6 +3,7 @@
 *= require skin
 *= require bootstrap_form
 *= require style
+*= require users
 *  require jquery.ui.datepicker
 */
 
