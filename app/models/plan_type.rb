@@ -6,4 +6,5 @@ class PlanType < ActiveRecord::Base
 	has_many :people, :dependent => :restrict
 
 	default_scope :order => 'name ASC'
+
 end
