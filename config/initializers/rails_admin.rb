@@ -39,7 +39,7 @@ end
     export
   end
 
-  config.included_models = [Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,PlanType, ExchangeDeleted, TimeZone]
+  config.included_models = [Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,PlanType, ExchangeDeleted, TimeZone, Fee]
 
   config.default_items_per_page = 100
 
@@ -465,6 +465,8 @@ end
   end
 
   config.model PlanType do
+    label "Fee plan"
+    label_plural "Fee plans"
     list do
       field :name
       field :event
@@ -476,30 +478,27 @@ end
     end
 
     edit do
-      field :name
-      field :description
-      field :event, :enum do
-        enum do
-          [ [ 'Transaction', 'Transaction' ], 
-            [ 'Monthly', 'Monthly' ],
-            [ 'Yearly', 'Yearly' ],
-            [ 'Annual', 'Annual'] ] 
-        end
+      exclude_fields :people
+    end
+  end
+
+  config.model Fee do
+    visible false
+    field :event, :enum do
+      enum do
+        ['Transaction', 'Monthly', 'Yearly']
       end
-      field :pay_type, :enum do
-        label "Type"
-        enum do 
-          [ [ 'Percentage', 'Percentage' ], 
-            [ 'Trade Credit', 'Trade Credit' ],
-            [ 'Cash($)', 'Cash' ], ] 
-        end
+    end
+    field :fee_type, :enum do
+      enum do
+        ['Percentage', 'Fixed']
       end
-      field :amount, :float
-      # field :account, :enum do
-        # enum do
-          # Account.all.map { |account| [ account.name, account.id ] }
-        # end
-      # end
+    end
+    field :amount
+    field :account, :enum do
+      enum do
+        ['Reserve', 'Admin']
+      end
     end
   end
 
