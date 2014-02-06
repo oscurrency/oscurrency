@@ -5,6 +5,8 @@ class PlanType < ActiveRecord::Base
 
 	has_many :people, :dependent => :restrict
 
+  has_many :fees
+
 	default_scope :order => 'name ASC'
 
 end
