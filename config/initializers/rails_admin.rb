@@ -467,12 +467,39 @@ end
   config.model PlanType do
     list do
       field :name
+      field :event
+      field :pay_type do
+        label "Type"
+      end
+      field :amount
       sort_by :name
     end
 
     edit do
       field :name
       field :description
+      field :event, :enum do
+        enum do
+          [ [ 'Transaction', 'Transaction' ], 
+            [ 'Monthly', 'Monthly' ],
+            [ 'Yearly', 'Yearly' ],
+            [ 'Annual', 'Annual'] ] 
+        end
+      end
+      field :pay_type, :enum do
+        label "Type"
+        enum do 
+          [ [ 'Percentage', 'Percentage' ], 
+            [ 'Trade Credit', 'Trade Credit' ],
+            [ 'Cash($)', 'Cash' ], ] 
+        end
+      end
+      field :amount, :float
+      # field :account, :enum do
+        # enum do
+          # Account.all.map { |account| [ account.name, account.id ] }
+        # end
+      # end
     end
   end
 
