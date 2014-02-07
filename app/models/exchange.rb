@@ -164,6 +164,7 @@ class Exchange < ActiveRecord::Base
           raise "no group specified"
         else
           worker.account(group).deposit(amount)
+          worker.account(group).log_fees(amount)
           customer.account(group).withdraw(amount)
         end
       end
