@@ -85,6 +85,10 @@ class Account < ActiveRecord::Base
       end
     end
   end
+  
+  # def self.calculate_demmurage(accounts)
+#     
+  # end
 
   private
 

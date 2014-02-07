@@ -56,6 +56,7 @@ gem 'valid_email', :require => 'valid_email/email_validator'
 gem "calendar_helper"
 gem "gibbon", :git => "git://github.com/amro/gibbon.git"
 gem "bootstrap_form", "~> 0.3.2"
+gem "rufus-scheduler"
 
 group :development, :test do
   gem 'debugger'
@@ -76,6 +77,7 @@ group :development do
   gem 'meta_request'
   gem 'highline'
   gem 'git'
+  gem 'pry'
 end
 
 group :production do
