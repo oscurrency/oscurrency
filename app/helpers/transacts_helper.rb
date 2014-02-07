@@ -19,4 +19,10 @@ module TransactsHelper
       link_to counterparty.name, counterparty
     end
   end
+  
+  def paid_fee(transact)
+    fee = transact.paid_fee
+    return "Charged fee: #{fee}" if fee > 0
+    return "No fee charged."
+  end
 end
