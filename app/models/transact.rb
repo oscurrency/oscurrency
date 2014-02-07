@@ -51,6 +51,21 @@ class Transact < ExchangeAndFee
   def as_json(options={})
     results.as_json
   end
+  
+  def paid_fee
+    transaction_fee = 0
+    worker = Person.find(worker_id)
+    worker.plan_type.fees.each do |fee|
+      if fee.event.eql? "Transaction"
+        if fee.fee_type.eql? "Percentage"
+          transaction_fee += ( ( fee.amount / 100 ) * amount )
+        else
+          transaction_fee += fee.amount
+        end
+      end
+    end
+    return transaction_fee
+  end
 
   protected
 
@@ -73,4 +88,5 @@ class Transact < ExchangeAndFee
       response = http.request(request)
     end
   end
+  
 end
