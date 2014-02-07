@@ -47,6 +47,25 @@ class Account < ActiveRecord::Base
     self.paid += amount
     adjust_balance_and_save(-amount)
   end
+  
+  def log_fees(amount)
+    fees_sum = 0
+    person.plan_type.fees.each do |fee|
+      if fee.event.downcase.eql? "transaction"
+        if fee.fee_type.downcase.eql? "percentage"
+          fee_to_pay = (fee.amount / 100) * amount
+        else
+          fee_to_pay = fee.amount
+        end
+        fees_sum += fee_to_pay
+      end
+    end
+    if fees_sum > 0
+      self.paid_fees += fees_sum
+      # Just log to generate monthly invoice or pay now?
+      #adjust_balance_and_save(-fees_sum)
+    end
+  end
 
   def withdraw_and_decrement_earned(amount)
     self.earned -= amount
