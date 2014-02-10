@@ -491,7 +491,7 @@ end
     end
     field :fee_type, :enum do
       enum do
-        ['Percentage', 'Trade Credits', 'Cash($)']
+        ['Percentage(Trade Credits)', 'Percentage(Cash)' 'Trade Credits', 'Cash']
       end
     end
     field :amount
