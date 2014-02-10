@@ -52,12 +52,15 @@ class Transact < ExchangeAndFee
     results.as_json
   end
   
+  #TODO needs rework to divide on percentage in cash, percentage in trade credits, trade credits, cash
+  # since user would like to know currency.
+  
   def paid_fee
     transaction_fee = 0
     worker = Person.find(worker_id)
     worker.plan_type.fees.each do |fee|
-      if fee.event.eql? "Transaction"
-        if fee.fee_type.eql? "Percentage"
+      if fee.event.downcase.eql? "transaction"
+        if fee.fee_type.downcase.eql? "percentage"
           transaction_fee += ( ( fee.amount / 100 ) * amount )
         else
           transaction_fee += fee.amount
