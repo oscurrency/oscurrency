@@ -163,9 +163,21 @@ class Exchange < ActiveRecord::Base
           # this should not happen anymore
           raise "no group specified"
         else
+          customer_account = customer.account(group)
           worker.account(group).deposit(amount)
-          worker.account(group).log_fees(amount)
-          customer.account(group).withdraw(amount)
+          customer_account.withdraw(amount)
+          # Pay trade credits immediately.
+          admin_fee = 0
+          reserve_fee = 0
+          customer.plan_type.fees.where(:event => "Transaction", :fee_type => "Trade Credits").each do |fee|
+            customer_account.withdraw(fee.amount)
+            # Downcase and lower for case-insensitivity.
+            if fee.account.downcase.eql? "admin"
+              Account.includes(:person).where('lower(people.name = ?)', "admin")
+            elsif fee.account.downcase.eql? "reserve"
+              Account.includes(:person).where('lower(people.name = ?)', "reserve")
+            end
+          end
         end
       end
     rescue
