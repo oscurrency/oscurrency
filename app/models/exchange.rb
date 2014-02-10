@@ -173,9 +173,9 @@ class Exchange < ActiveRecord::Base
             customer_account.withdraw(fee.amount)
             # Downcase and lower for case-insensitivity.
             if fee.account.downcase.eql? "admin"
-              Account.includes(:person).where('lower(people.name = ?)', "admin")
+              Account.includes(:person).where('lower(people.name) = ?', "admin")
             elsif fee.account.downcase.eql? "reserve"
-              Account.includes(:person).where('lower(people.name = ?)', "reserve")
+              Account.includes(:person).where('lower(people.name) = ?', "reserve")
             end
           end
         end
