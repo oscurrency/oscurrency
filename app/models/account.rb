@@ -96,7 +96,7 @@ class Account < ActiveRecord::Base
     trade_credit_fees = 0
     cash_fees = 0    
     # User exchanges for given month.
-    user_exchanges = Exchange.where(:customer_id => person_id).by_month(onth_string)
+    user_exchanges = Exchange.where(:customer_id => person_id).by_month(month_string)
     # Array of amounts of transactions.
     amounts_array = user_exchanges.map{ |transaction| transaction.amount }
     # Sum of transictions for given month.
