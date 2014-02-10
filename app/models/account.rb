@@ -47,25 +47,6 @@ class Account < ActiveRecord::Base
     self.paid += amount
     adjust_balance_and_save(-amount)
   end
-  
-  def log_fees(amount)
-    fees_sum = 0
-    person.plan_type.fees.each do |fee|
-      if fee.event.downcase.eql? "transaction"
-        if fee.fee_type.downcase.eql? "percentage"
-          fee_to_pay = (fee.amount / 100) * amount
-        else
-          fee_to_pay = fee.amount
-        end
-        fees_sum += fee_to_pay
-      end
-    end
-    if fees_sum > 0
-      self.paid_fees += fees_sum
-      # Just log to generate monthly invoice or pay now?
-      #adjust_balance_and_save(-fees_sum)
-    end
-  end
 
   def withdraw_and_decrement_earned(amount)
     self.earned -= amount
@@ -108,6 +89,50 @@ class Account < ActiveRecord::Base
   # def self.calculate_demmurage(accounts)
 #     
   # end
+  
+  # Post as integers or strings. Year in 4 digit format. month can be month's name.
+  def fees_invoice_for_month(month, year)
+    month_string = get_by_month_string(month, year)
+    trade_credit_fees = 0
+    cash_fees = 0    
+    # User exchanges for given month.
+    user_exchanges = Exchange.where(:customer_id => person_id).by_month(onth_string)
+    # Array of amounts of transactions.
+    amounts_array = user_exchanges.map{ |transaction| transaction.amount }
+    # Sum of transictions for given month.
+    monthly_amount = user_exchanges.sum(:amount)
+    
+    person.plan_type.fees.each do |fee|
+      if fee.event.downcase.eql? "monthly"
+        case fee.fee_type.downcase
+          when "percentage(trade credits)" then trade_credits_fees += (fee.amount / 100) * monthly_amount
+          when "percentage(cash)" then cash_fees += (fee.amount / 100) * monthly_amount
+          when "trade credits" then trade_credit_fees += monthly_amount
+          when "cash" then cash_fees += monthly amount
+        end  
+      elsif fee.event.downcase.eql? "transaction"
+        case fee.fee_type.downcase
+          # Calculate percentage for each transaction and sum it up.
+          when "percentage(trade credits)" then 
+            amounts_array.each do |amount|
+              trade_credit_fees += (fee.amount / 100) * amount
+            end
+          
+          when "percentage(cash)" then
+            amounts_array.each do |amount|
+              cash_fees += (fee.amount / 100) * amount
+            end
+            
+         # Same fee for every transaction, so just fee * transaction number   
+          when "trade credits" then trade_credit_fees += fee.amount * amounts_array.count
+          when "cash" then cash_fees += fee.amount * amounts_array.count
+        end 
+      end
+      # Nice hash for user.
+      return {:"trade_credits" => trade_credits_fees, :cash => cash_fees}  
+    end
+    
+  end
 
   private
 
@@ -117,5 +142,10 @@ class Account < ActiveRecord::Base
         raise CanCan::AccessDenied.new("Denied: Updating credit limit for #{person.display_name} would put account in prohibited state.", :update, Account)
       end
     end
+  end
+  
+  def get_by_month_string(month, year)
+    month = Date::MONTHNAMES.index(month) if month.kind_of? String and month.to_i.zero?
+    "#{year.to_i}-#{month.to_i}-01"
   end
 end
