@@ -55,19 +55,31 @@ class Transact < ExchangeAndFee
   #TODO needs rework to divide on percentage in cash, percentage in trade credits, trade credits, cash
   # since user would like to know currency.
   
-  def paid_fee
-    transaction_fee = 0
+  def paid_fees
+    tc_transaction_fee = 0
+    cash_transaction_fee = 0
     worker = Person.find(worker_id)
     worker.plan_type.fees.each do |fee|
       if fee.event.downcase.eql? "transaction"
-        if fee.fee_type.downcase.eql? "percentage"
-          transaction_fee += ( ( fee.amount / 100 ) * amount )
+        if fee.fee_type.downcase.include? "percentage"
+          fee_paid = fee.amount.to_percents * amount 
+          if fee.fee_type.downcase.include? "cash"
+            cash_transaction_fee += fee_paid
+          elsif fee.fee_type.downcase.include? "trade credits"
+            tc_transaction_fee += fee_paid
+          else
+            raise "Wrong fee_type for fee id #{fee.id} - includes percentage, but does not include neither cash nor trade credits."
+          end
+
         else
-          transaction_fee += fee.amount
+          case fee.fee_type.downcase
+          when "cash" then cash_transaction_fee += fee.amount
+          when "trade credits" then tc_transaction_fee += fee.amount
+          end
         end
       end
     end
-    return transaction_fee
+    return {:"trade-credits" => tc_transaction_fee ,:cash => cash_transaction_fee}
   end
 
   protected

@@ -175,7 +175,7 @@ class Exchange < ActiveRecord::Base
           customer.plan_type.fees.where("lower(event) = ? and lower(fee_type) LIKE ?", "transaction", "%trade credits%").each do |fee|
             # Percentage trade credits fees.
             if fee.fee_type.downcase.include? "percentage"
-              fee = (fee.amount / 100) * amount
+              fee = fee.amount.to_percents * amount
               case fee.account.downcase
               when "admin" then admin_fees_sum += fee
               when "reserve" then reserve_fees_sum += fee

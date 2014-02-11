@@ -108,15 +108,15 @@ class Account < ActiveRecord::Base
       account.person.plan_type.fees.where("lower(event) = ?", "yearly").each do |y_fee|
         if y_fee.account.downcase.eql? "admin"
           case y_fee.fee_type.downcase
-            when "percentage(trade credits)" then admin_tc_fees_sum += (y_fee.amount / 100) * yearly_amount
-            when "percentage(cash)" then admin_cash_fees_sum += (y_fee.amount / 100) * yearly_amount
+            when "percentage(trade credits)" then admin_tc_fees_sum += y_fee.amount.to_percents * yearly_amount
+            when "percentage(cash)" then admin_cash_fees_sum += y_fee.amount.to_percents * yearly_amount
             when "trade credits" then admin_tc_fees_sum += y_fee.amount
             when "cash" then admin_cash_fees_sum += y_fee.amount
           end 
         elsif y_fee.account.downcase.eql? "reserve"
           case y_fee.fee_type.downcase
-            when "percentage(trade credits)" then reserve_tc_fees_sum += (y_fee.amount / 100) * yearly_amount
-            when "percentage(cash)" then reserve_cash_fees_sum += (y_fee.amount / 100) * yearly_amount
+            when "percentage(trade credits)" then reserve_tc_fees_sum += y_fee.amount.to_percents * yearly_amount
+            when "percentage(cash)" then reserve_cash_fees_sum += y_fee.amount.to_percents * yearly_amount
             when "trade credits" then reserve_tc_fees_sum += y_fee.amount
             when "cash" then reserve_cash_fees_sum += y_fee.amount
           end
@@ -154,15 +154,15 @@ class Account < ActiveRecord::Base
       account.person.plan_type.fees.where("lower(event) = ?", "monthly").each do |m_fee|
         if m_fee.account.downcase.eql? "admin"
           case m_fee.fee_type.downcase
-            when "percentage(trade credits)" then admin_tc_fees_sum += (m_fee.amount / 100) * monthly_amount
-            when "percentage(cash)" then admin_cash_fees_sum += (m_fee.amount / 100) * monthly_amount
+            when "percentage(trade credits)" then admin_tc_fees_sum += m_fee.amount.to_percents * monthly_amount
+            when "percentage(cash)" then admin_cash_fees_sum += m_fee.amount.to_percents * monthly_amount
             when "trade credits" then admin_tc_fees_sum += m_fee.amount
             when "cash" then admin_cash_fees_sum += m_fee.amount
           end 
         elsif m_fee.account.downcase.eql? "reserve"
           case m_fee.fee_type.downcase
-            when "percentage(trade credits)" then reserve_tc_fees_sum += (m_fee.amount / 100) * monthly_amount
-            when "percentage(cash)" then reserve_cash_fees_sum += (m_fee.amount / 100) * monthly_amount
+            when "percentage(trade credits)" then reserve_tc_fees_sum += m_fee.amount.to_percents * monthly_amount
+            when "percentage(cash)" then reserve_cash_fees_sum += m_fee.amount.to_percents * monthly_amount
             when "trade credits" then reserve_tc_fees_sum += m_fee.amount
             when "cash" then reserve_cash_fees_sum += m_fee.amount
           end
@@ -200,7 +200,7 @@ class Account < ActiveRecord::Base
         # Percentage cash fees
         if t_fee.fee_type.downcase.include? "percentage"
           amounts_array.each do |transaction_amount|
-            fee = (t_fee.amount / 100) * transaction_amount
+            fee = t_fee.amount.to_percents * transaction_amount
             case t_fee.account.downcase
             when "admin" then admin_fees_sum += fee
             when "reserve" then reserve_fees_sum += fee
@@ -241,8 +241,8 @@ class Account < ActiveRecord::Base
     person.plan_type.fees.each do |fee|
       if fee.event.downcase.eql? "monthly"
         case fee.fee_type.downcase
-          when "percentage(trade credits)" then trade_credits_fees += (fee.amount / 100) * monthly_amount
-          when "percentage(cash)" then cash_fees += (fee.amount / 100) * monthly_amount
+          when "percentage(trade credits)" then trade_credits_fees += fee.amount.to_percents * monthly_amount
+          when "percentage(cash)" then cash_fees += fee.amount.to_percents * monthly_amount
           when "trade credits" then trade_credit_fees += monthly_amount
           when "cash" then cash_fees += monthly amount
         end  
@@ -251,12 +251,12 @@ class Account < ActiveRecord::Base
           # Calculate percentage for each transaction and sum it up.
           when "percentage(trade credits)" then 
             amounts_array.each do |amount|
-              trade_credit_fees += (fee.amount / 100) * amount
+              trade_credit_fees += fee.amount.to_percents * amount
             end
           
           when "percentage(cash)" then
             amounts_array.each do |amount|
-              cash_fees += (fee.amount / 100) * amount
+              cash_fees += fee.amount.to_percents * amount
             end
             
          # Same fee for every transaction, so just fee * transaction number   

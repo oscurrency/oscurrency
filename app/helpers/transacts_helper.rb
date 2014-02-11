@@ -20,9 +20,8 @@ module TransactsHelper
     end
   end
   
-  def paid_fee(transact)
-    fee = transact.paid_fee
-    return "Charged fee: #{fee}" if fee > 0
-    return "No fee charged."
+  def paid_fees(transact)
+    fees = transact.paid_fees
+    "Charged fees: Trade Credits: #{fees[:"trade-credits"]} Cash: #{fees[:cash]}"
   end
 end
