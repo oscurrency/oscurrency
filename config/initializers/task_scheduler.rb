@@ -6,6 +6,7 @@
 # scheduler.cron '0 21 L * *' do
   # begin
     # Account.pay_transaction_cash_fees
+    # Account.pay_monthly_fees
   # rescue => e
     # $stderr.puts '-' * 80
     # $stderr.puts e.message

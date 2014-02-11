@@ -90,6 +90,44 @@ class Account < ActiveRecord::Base
 #     
   # end
   
+  # Monthly fees
+  def self.pay_monthly_fees
+    # Get string for by_month scope.
+    month_string = get_by_month_string(Date.today.month, Date.today.year)
+    admin_account = Account.includes(:person).where('lower(people.name) = ?', "admin")
+    reserve_account = Account.includes(:person).where('lower(people.name) = ?', "reserve")
+    # Go through all accounts and withdraw cash fees.
+    Account.all.each do |account|
+      admin_fees_sum = 0
+      reserve_fees_sum = 0
+      # Sum of all user's transactions for this month.
+      monthly_amount = Exchange.where(:customer_id => person_id).by_month(month_string).sum(:amount)
+      # Montly fees
+      account.person.plan_type.fees.where("lower(event) = ?", "month").each do |m_fee|
+        if m_fee.account.downcase.eql? "admin"
+          case m_fee.fee_type.downcase
+            when "percentage(trade credits)" then admin_fees_sum += (m_fee.amount / 100) * monthly_amount
+            when "percentage(cash)" then #cash_fees += (m_fee.amount / 100) * monthly_amount - stripe here?
+            when "trade credits" then admin_fees_sum += monthly_amount
+            when "cash" then #cash_fees += monthly amount - stripe here?
+          end 
+        elsif m_fee.account.downcase.eql? "reserve"
+          case m_fee.fee_type.downcase
+            when "percentage(trade credits)" then reserve_fees_sum += (m_fee.amount / 100) * monthly_amount
+            when "percentage(cash)" then #cash_fees += (m_fee.amount / 100) * monthly_amount - stripe here?
+            when "trade credits" then reserve_fees_sum += monthly_amount
+            when "cash" then #cash_fees += monthly amount - stripe here?
+          end
+        else
+          raise "Wrong fee account for fee id:#{m_fee.id}. Neither 'admin' nor 'reserve'."
+        end
+        # Trade credits payment.
+        account.withdraw(admin_fees_sum + reserve_fees_sum)
+        admin_account.deposit(admin_fees_sum)
+        reserve_account.deposit(reserve_fees_sum)
+      end
+    end
+  end
   
   # Cash fees are aggregated and submitted to credit card processing in batches. Currently, monthly to Stripe. 
   def self.pay_transaction_cash_fees
@@ -106,7 +144,7 @@ class Account < ActiveRecord::Base
       # Array of amounts of transactions
       amounts_array = user_exchanges.map { |transaction| transaction.amount }
       # user's transaction fees paid in cash
-      account.person.plan_type.fees.where("lower(event) = ? and lower(fee_type) LIKE ?", "transaction", "%cash%") do |t_fee|
+      account.person.plan_type.fees.where("lower(event) = ? and lower(fee_type) LIKE ?", "transaction", "%cash%").each do |t_fee|
         # Percentage cash fees
         if t_fee.fee_type.downcase.include? "percentage"
           amounts_array.each do |transaction_amount|
@@ -127,15 +165,16 @@ class Account < ActiveRecord::Base
           raise "Wrong transaction fee_type for fee id: #{t_fee.id}. Doesn't include 'percentage' and is not eql to 'cash'."
         end
       end
+      # TODO it's just mockup for Stripe.
       # Withdraw summed fees from customer's account and deposit them into admin/reserve accounts.
-      account.withdraw(admin_fees_sum + reserve_fees_sum)
-      admin_account.deposit(admin_fees_sum)
-      reserve_account.deposit(reserve_fees_sum)
+      # account.withdraw(admin_fees_sum + reserve_fees_sum)
+      # admin_account.deposit(admin_fees_sum)
+      # reserve_account.deposit(reserve_fees_sum)
     end
     
   end
   
-  # Post as intetransaction|gers or strings. Year in 4 digit format. month can be month's name.
+  # Post as integers or strings. Year in 4 digit format. month can be month's name.
   def fees_invoice_for_month(month, year)
     month_string = get_by_month_string(month, year)
     trade_credit_fees = 0
