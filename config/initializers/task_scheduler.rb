@@ -2,10 +2,10 @@
 # Lockfile feature only works on OSes that support the flock (man 2 flock) call.
 # scheduler = Rufus::Scheduler.new(:lockfile => ".task-scheduler.lock")
 # 
-# At the end of month on 11:00 pm.
-# scheduler.cron '0 23 L * *' do
+# At the end of month on 21:00 pm - it may take some time.
+# scheduler.cron '0 21 L * *' do
   # begin
-    # Account.calculate_demmurage()
+    # Account.pay_transaction_cash_fees
   # rescue => e
     # $stderr.puts '-' * 80
     # $stderr.puts e.message
