@@ -55,6 +55,7 @@ class Exchange < ActiveRecord::Base
   scope :everyone, :conditions => {}
   scope :everyone_by_group, lambda {|group_id| {:conditions => ["group_id = ?", group_id]}}
   scope :by_month, lambda {|date| {:conditions => ["DATE_TRUNC('month',created_at) = ?", date]}}
+  scope :by_year, lambda {|date| {:conditions => ["DATE_TRUNC('year', created_at) = ?", date]}}
 
   def log_activity
     unless self.group.private_txns?
