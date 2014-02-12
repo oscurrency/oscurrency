@@ -15,7 +15,6 @@ describe Fee do
       @fee.amount = 0
       @fee.should_not be_valid
       @fee.errors[:amount].first.should == "must be greater than 0"
-      
     end
   end
 end
