@@ -28,6 +28,7 @@ describe Transact do
     
   describe "paid fees" do
     it "should calculate fees for transaction" do
+      # 40% * transaction amount, which is 10, + 10 per transaction fee = 14 TC fee.
       @transaction.paid_fees.should == {:"trade-credits" => 14.0, :cash => 0}
     end
   end
