@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe TransactsHelper do
+describe Transact do
   fixtures :fees, :plan_types, :people, :groups, :memberships, :exchanges
   
   before(:each) do
@@ -24,12 +24,12 @@ describe TransactsHelper do
     rescue => e
       p "Exception: #{e.to_s}"
     end
-  end
-  
-  describe "#paid_fees" do
-    it "produces fees summary for transaction." do
-      # 40% * transaction amount, which is 10, + 10 per transaction fee = 14 TC fee.
-      helper.paid_fees(@transaction).should == "Charged fees: Trade Credits: 14.0 Cash: 0"
+  end  
+    
+  describe "paid fees" do
+    it "should calculate fees for transaction" do
+      @transaction.paid_fees.should == {:"trade-credits" => 14.0, :cash => 0}
     end
   end
+  
 end
