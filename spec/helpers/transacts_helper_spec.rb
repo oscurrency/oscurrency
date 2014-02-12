@@ -4,27 +4,23 @@ describe TransactsHelper do
   fixtures :fees, :plan_types, :people, :groups, :memberships, :exchanges
   
   before(:each) do
-    @tc_perc_tran = fees(:tc_perc_tran)
-    @tc_tran = fees(:tc_tran)
-    @plan = plan_types(:transactions)
-    @worker = people(:aaron)
-    @customer = people(:quentin)
+    @fees = [ fees(:tc_perc_tran), fees(:tc_tran) ]
+    @plans = [ plan_types(:transactions) ]
+    @people = [ people(:aaron), people(:quentin) ]
     @group = groups(:one)
     @memberships = [ memberships(:one), memberships(:two), memberships(:three) ]
     @transaction = Transact.find(exchanges(:one).id)
     begin
-      @tc_perc_tran.save!
-      @tc_tran.save!
-      @plan.save!
-      @worker.save!
-      @customer.save!
+      @fees.each do |f|; f.save!; end
+      @plans.each do |p|; p.save!; end
+      @people.each do |pp|; pp.save!; end
       @group.save!
       @memberships.each do |m|; m.save!; end
       @transaction.save! 
     rescue => e
       p "Exception: #{e.to_s}"
     end
-  end
+  end 
   
   describe "#paid_fees" do
     it "produces fees summary for transaction." do

@@ -18,3 +18,10 @@ three:
   person_id: 3
   status: 0
   roles_mask: 1
+  
+four:
+  id: 4
+  group_id: 1
+  person_id: 4
+  status: 0
+  roles_mask: 1
