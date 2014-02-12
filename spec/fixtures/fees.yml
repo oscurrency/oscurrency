@@ -11,8 +11,8 @@ tc_tran:
   event: Transaction
   fee_type: Trade Credits
   amount: 10
-  account: Admin
-  plan_type_id: 1
+  account: Reserve
+  plan_type_id: 1  
 
 tc_perc_monthly:
   id: 3
@@ -27,7 +27,7 @@ tc_monthly:
   event: Monthly
   fee_type: Trade Credits
   amount: 10
-  account: Admin
+  account: Reserve
   plan_type_id: 2
 
 tc_perc_yearly:
@@ -43,6 +43,54 @@ tc_yearly:
   event: Yearly
   fee_type: Trade Credits
   amount: 10
-  account: Admin
+  account: Reserve
   plan_type_id: 3
+  
+cash_perc_tran:
+  id: 7
+  event: Transaction
+  fee_type: Percentage(Cash
+  amount: 40
+  account: Admin
+  plan_type_id: 4
+
+cash_tran:
+  id: 8
+  event: Transaction
+  fee_type: Cash
+  amount: 10
+  account: Reserve
+  plan_type_id: 4
+
+cash_perc_monthly:
+  id: 9
+  event: Monthly
+  fee_type: Percentage(Cash)
+  amount: 40
+  account: Admin
+  plan_type_id: 5
+
+cash_monthly:
+  id: 10
+  event: Monthly
+  fee_type: Cash
+  amount: 10
+  account: Reserve
+  plan_type_id: 5
+
+cash_perc_yearly:
+  id: 11
+  event: Yearly
+  fee_type: Percentage(Cash)
+  amount: 40
+  account: Admin
+  plan_type_id: 6
+  
+cash_yearly:
+  id: 12
+  event: Yearly
+  fee_type: Cash
+  amount: 10
+  account: Reserve
+  plan_type_id: 6
   

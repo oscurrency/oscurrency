@@ -12,3 +12,18 @@ yearly:
   id: 3
   name: "TC Yearly"
   description: "Plan with yearly fees in trade credits"
+  
+cash_tran:
+  id: 4
+  name: "Cash Transactions"
+  description: "Plan with transactions in cash"
+
+cash_mon:
+  id: 5
+  name: "Cash Monthly"
+  description: "Plan with monthly fees in cash"
+
+cash_yearly:
+  id: 6
+  name: "Cash Yearly"
+  description: "Plan with yearly fees in cash"  

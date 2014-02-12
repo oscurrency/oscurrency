@@ -21,3 +21,11 @@ three:
   amount: 10
   group_id: 1
   notes: Quentin working for Buzzard. Tests TC Yearly fees.
+  
+four:
+  id: 4
+  customer_id: 4
+  worker_id: 1
+  amount: 10
+  group_id: 1
+  notes: Quentin working for Kelly. Tests Cash Transactions fess.
