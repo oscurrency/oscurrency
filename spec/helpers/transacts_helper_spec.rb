@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe TransactsHelper do
+describe TransactsHelper, :type => :helper do
   fixtures :fees, :plan_types, :people, :groups, :memberships, :exchanges
   
   before(:each) do
