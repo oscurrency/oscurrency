@@ -1,14 +1,14 @@
-one:
+transactions:
   id: 1
   name: "TC Transactions"
   description: "Plan with transactions in trade credits"
 
-two:
+monthly:
   id: 2
   name: "TC Monthly"
   description: "Plan with monthly fees in trade credits"
 
-three:
+yearly:
   id: 3
   name: "TC Yearly"
   description: "Plan with yearly fees in trade credits"
