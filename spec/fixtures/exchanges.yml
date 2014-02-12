@@ -1,0 +1,23 @@
+one:
+  id: 1
+  customer_id: 1
+  worker_id: 2
+  amount: 10
+  group_id: 1
+  notes: Aaron working for Quentin. Tests TC Transactions fees.
+
+two:
+  id: 2
+  customer_id: 2
+  worker_id: 1
+  amount: 10
+  group_id: 1
+  notes: Quentin working for Aaron. Tests TC Monthly fees.
+  
+three:
+  id: 3
+  customer_id: 3
+  worker_id: 1
+  amount: 10
+  group_id: 1
+  notes: Quentin working for Buzzard. Tests TC Yearly fees.

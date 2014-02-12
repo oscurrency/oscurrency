@@ -12,6 +12,7 @@ quentin:
   connection_notifications: true
   message_notifications: true
   email_verified: true
+  plan_type_id: 1
 
 aaron:
   email: aaron@example.com
@@ -26,6 +27,7 @@ aaron:
   connection_notifications: true
   message_notifications: true
   email_verified: true
+  plan_type_id: 2
 
 buzzard:
   email: buzzard@example.com
@@ -40,6 +42,7 @@ buzzard:
   connection_notifications: true
   message_notifications: true
   email_verified: true
+  plan_type_id: 3
 
 kelly:
   email: kelly@example.com
@@ -53,6 +56,7 @@ kelly:
   deactivated: false
   connection_notifications: true
   message_notifications: true
+  plan_type_id: 1
   
 admin:
   email: admin@example.com
@@ -67,6 +71,7 @@ admin:
   deactivated: false
   connection_notifications: true
   message_notifications: true
+  plan_type_id: 2
 
 deactivated:
   email: deactivated@example.com
@@ -78,6 +83,7 @@ deactivated:
   perishable_token: <%= Authlogic::Random.friendly_token %>
   created_at: <%= 1.day.ago.to_s :db %>
   deactivated: true
+  plan_type_id: 3
 
 email_unverified:
   email: inactive@example.com
@@ -89,4 +95,5 @@ email_unverified:
   perishable_token: <%= Authlogic::Random.friendly_token %>
   created_at: <%= 1.day.ago.to_s :db %>
   email_verified: false 
+  plan_type_id: 3
   
