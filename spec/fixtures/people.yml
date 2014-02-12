@@ -1,4 +1,5 @@
 quentin:
+  id: 1
   email: quentin@example.com
   name: Quentin
   description: I'm Quentin
@@ -15,6 +16,7 @@ quentin:
   plan_type_id: 1
 
 aaron:
+  id: 2
   email: aaron@example.com
   name: Aaron
   description: I'm Aaron
@@ -30,6 +32,7 @@ aaron:
   plan_type_id: 2
 
 buzzard:
+  id: 3
   email: buzzard@example.com
   name: Buzzard
   description: I'm Buzzard
@@ -45,6 +48,7 @@ buzzard:
   plan_type_id: 3
 
 kelly:
+  id: 4
   email: kelly@example.com
   name: Kelly
   description: I'm Kelly
@@ -59,6 +63,7 @@ kelly:
   plan_type_id: 1
   
 admin:
+  id: 5
   email: admin@example.com
   name: admin
   description: I'm the admin!
@@ -74,6 +79,7 @@ admin:
   plan_type_id: 2
 
 deactivated:
+  id: 6
   email: deactivated@example.com
   name: Deactivated Person
   description: I didn't deserve to be deactivated
@@ -86,6 +92,7 @@ deactivated:
   plan_type_id: 3
 
 email_unverified:
+  id: 7
   email: inactive@example.com
   name: Email unverified
   description: Email unverified

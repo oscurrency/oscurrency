@@ -1,4 +1,4 @@
-one:
+tc_perc_tran:
   id: 1
   event: Transaction
   fee_type: Percentage(Trade Credits)
@@ -6,7 +6,7 @@ one:
   account: Admin
   plan_type_id: 1
 
-two:
+tc_tran:
   id: 2
   event: Transaction
   fee_type: Trade Credits
@@ -14,7 +14,7 @@ two:
   account: Admin
   plan_type_id: 1
 
-three:
+tc_perc_monthly:
   id: 3
   event: Monthly
   fee_type: Percentage(Trade Credits)
@@ -22,7 +22,7 @@ three:
   account: Admin
   plan_type_id: 2
 
-four:
+tc_monthly:
   id: 4
   event: Monthly
   fee_type: Trade Credits
@@ -30,7 +30,7 @@ four:
   account: Admin
   plan_type_id: 2
 
-five:
+tc_perc_yearly:
   id: 5
   event: Yearly
   fee_type: Percentage(Trade Credits)
@@ -38,7 +38,7 @@ five:
   account: Admin
   plan_type_id: 3
   
-six:
+tc_yearly:
   id: 6
   event: Yearly
   fee_type: Trade Credits
