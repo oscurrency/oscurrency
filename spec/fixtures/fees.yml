@@ -1,0 +1,48 @@
+one:
+  id: 1
+  event: Transaction
+  fee_type: Percentage(Trade Credits)
+  amount: 40
+  account: Admin
+  plan_type_id: 1
+
+two:
+  id: 2
+  event: Transaction
+  fee_type: Trade Credits
+  amount: 10
+  account: Admin
+  plan_type_id: 1
+
+three:
+  id: 3
+  event: Monthly
+  fee_type: Percentage(Trade Credits)
+  amount: 40
+  account: Admin
+  plan_type_id: 2
+
+four:
+  id: 4
+  event: Monthly
+  fee_type: Trade Credits
+  amount: 10
+  account: Admin
+  plan_type_id: 2
+
+five:
+  id: 5
+  event: Yearly
+  fee_type: Percentage(Trade Credits)
+  amount: 40
+  account: Admin
+  plan_type_id: 3
+  
+six:
+  id: 6
+  event: Yearly
+  fee_type: Trade Credits
+  amount: 10
+  account: Admin
+  plan_type_id: 3
+  
