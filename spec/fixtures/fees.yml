@@ -93,4 +93,67 @@ cash_yearly:
   amount: 10
   account: Reserve
   plan_type_id: 6
-  
+
+mixed_tc_perc:
+  id: 13
+  event: Transaction
+  fee_type: Percentage(Trade Credits)
+  amount: 40
+  account: Admin
+  plan_type_id: 7
+
+mixed_tc_tran:
+  id: 14
+  event: Transaction
+  fee_type: Trade Credits
+  amount: 10
+  account: Reserve
+  plan_type_id: 7
+
+mixed_tc_perc_monthly:
+  id: 15
+  event: Monthly
+  fee_type: Percentage(Trade Credits)
+  amount: 40
+  account: Admin
+  plan_type_id: 7
+
+mixed_tc_monthly:
+  id: 16
+  event: Monthly
+  fee_type: Trade Credits
+  amount: 10
+  account: Reserve
+  plan_type_id: 7
+
+mixed_cash_perc:
+  id: 17
+  event: Transaction
+  fee_type: Percentage(Cash)
+  amount: 40
+  account: Admin
+  plan_type_id: 7
+
+mixed_cash_tran:
+  id: 18
+  event: Transaction
+  fee_type: Cash
+  amount: 10
+  account: Reserve
+  plan_type_id: 7
+
+mixed_cash_perc_monthly:
+  id: 19
+  event: Monthly
+  fee_type: Percentage(Cash)
+  amount: 40
+  account: Admin
+  plan_type_id: 7
+
+mixed_cash_monthly:
+  id: 20
+  event: Monthly
+  fee_type: Cash
+  amount: 10
+  account: Reserve
+  plan_type_id: 7           

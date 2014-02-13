@@ -28,4 +28,12 @@ four:
   worker_id: 1
   amount: 10
   group_id: 1
-  notes: Quentin working for Kelly. Tests Cash Transactions fess.
+  notes: Quentin working for Kelly. Tests Cash Transactions fees.
+
+five:
+  id: 5
+  customer_id: 7
+  worker_id: 1
+  amount: 10
+  group_id: 1
+  notes: Quentin working for Mixed. Tests Fees invoice for month.

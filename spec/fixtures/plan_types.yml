@@ -27,3 +27,8 @@ cash_yearly:
   id: 6
   name: "Cash Yearly"
   description: "Plan with yearly fees in cash"  
+
+mixed_tc_tran_mon:
+  id: 7
+  name: "Mixed Monthly TC"
+  description: "Plan with per transaction fee and with monthly fee. All in TC."
