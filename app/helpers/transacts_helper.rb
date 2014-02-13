@@ -19,4 +19,9 @@ module TransactsHelper
       link_to counterparty.name, counterparty
     end
   end
+  
+  def paid_fees(transact)
+    fees = transact.paid_fees
+    "Charged fees: Trade Credits: #{fees[:"trade-credits"]} Cash: #{fees[:cash]}"
+  end
 end

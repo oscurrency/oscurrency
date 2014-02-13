@@ -55,6 +55,7 @@ class Exchange < ActiveRecord::Base
   scope :everyone, :conditions => {}
   scope :everyone_by_group, lambda {|group_id| {:conditions => ["group_id = ?", group_id]}}
   scope :by_month, lambda {|date| {:conditions => ["DATE_TRUNC('month',created_at) = ?", date]}}
+  scope :by_year, lambda {|date| {:conditions => ["DATE_TRUNC('year', created_at) = ?", date]}}
 
   def log_activity
     unless self.group.private_txns?
@@ -163,8 +164,37 @@ class Exchange < ActiveRecord::Base
           # this should not happen anymore
           raise "no group specified"
         else
+          customer_account = customer.account(group)
           worker.account(group).deposit(amount)
-          customer.account(group).withdraw(amount)
+          customer_account.withdraw(amount)
+          # Pay trade credits immediately.
+          admin_fees_sum = 0
+          admin_account = Account.includes(:person).where('lower(people.name) = ?', "admin")
+          reserve_account = Account.includes(:person).where('lower(people.name) = ?', "reserve")
+          reserve_fees_sum = 0
+          customer.plan_type.fees.where("lower(event) = ? and lower(fee_type) LIKE ?", "transaction", "%trade credits%").each do |fee|
+            # Percentage trade credits fees.
+            if fee.fee_type.downcase.include? "percentage"
+              fee = fee.amount.to_percents * amount
+              case fee.account.downcase
+              when "admin" then admin_fees_sum += fee
+              when "reserve" then reserve_fees_sum += fee
+              end
+            # Per trade trade credits fees.
+            elsif fee.fee_type.downcase.eql? "trade credits"
+                fee += fee.amount
+                case fee.account.downcase
+                when "admin" then admin_fees_sum += fee
+                when "reserve" then reserve_fees_sum += fee
+                end
+            # Error?
+            else
+              raise "Wrong trade credits fee_type for fee id: #{fee.id}. Doesn't include 'percentage' and is not eql to 'trade credits'."
+            end
+          end
+          customer_account.withdraw(admin_fees_sum + reserve_fees_sum)
+          admin_account.deposit(admin_fees_sum)
+          reserve_account.deposit(reserve_fees_sum)
         end
       end
     rescue

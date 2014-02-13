@@ -148,6 +148,7 @@ class Person < ActiveRecord::Base
   validates :business_name, :length => { :maximum => 100 }, :presence => true, :if => lambda { |p| p.org }
   validates :legal_business_name, :length => { :maximum => 100 }
   validates :business_type, :presence => true, :if => lambda { |p| p.org }
+  # validates :plan_type_id, :presence => true
   #  validates_presence_of     :password,              :if => :password_required?
   #  validates_presence_of     :password_confirmation, :if => :password_required?
   #  validates_length_of       :password, :within => 4..MAX_PASSWORD,
@@ -241,7 +242,7 @@ class Person < ActiveRecord::Base
 
   ## Message methods
 
-  def received_messages(page = 1, text)
+  def received_messages(page = 1, text = "")
     _received_messages.search_by(text).paginate(:page => page, :per_page => MESSAGES_PER_PAGE)
   end
 

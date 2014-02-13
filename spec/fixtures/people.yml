@@ -1,4 +1,5 @@
 quentin:
+  id: 1
   email: quentin@example.com
   name: Quentin
   description: I'm Quentin
@@ -12,8 +13,10 @@ quentin:
   connection_notifications: true
   message_notifications: true
   email_verified: true
+  plan_type_id: 1
 
 aaron:
+  id: 2
   email: aaron@example.com
   name: Aaron
   description: I'm Aaron
@@ -26,8 +29,10 @@ aaron:
   connection_notifications: true
   message_notifications: true
   email_verified: true
+  plan_type_id: 2
 
 buzzard:
+  id: 3
   email: buzzard@example.com
   name: Buzzard
   description: I'm Buzzard
@@ -40,8 +45,10 @@ buzzard:
   connection_notifications: true
   message_notifications: true
   email_verified: true
+  plan_type_id: 3
 
 kelly:
+  id: 4
   email: kelly@example.com
   name: Kelly
   description: I'm Kelly
@@ -53,8 +60,10 @@ kelly:
   deactivated: false
   connection_notifications: true
   message_notifications: true
+  plan_type_id: 4
   
 admin:
+  id: 5
   email: admin@example.com
   name: admin
   description: I'm the admin!
@@ -68,7 +77,40 @@ admin:
   connection_notifications: true
   message_notifications: true
 
+reserve:
+  id: 6
+  email: reserve@example.com
+  name: reserve  
+  description: I'm the fee collector!(Reserve account)
+  password_salt: <%= salt = Authlogic::Random.hex_token %>
+  crypted_password: <%= Authlogic::CryptoProviders::Sha512.encrypt("benrocks" + salt) %>
+  persistence_token: <%= Authlogic::Random.hex_token %>
+  perishable_token: <%= Authlogic::Random.friendly_token %>
+  admin: true
+  created_at: <%= 5.days.ago.to_s :db %>
+  deactivated: false
+  connection_notifications: true
+  message_notifications: true
+
+mixed_test:
+  id: 7
+  email: mixed@mixed.com
+  name: mixed
+  description: Person with mixed TC monthly plan.
+  description: I'm the fee collector!(Reserve account)
+  password_salt: <%= salt = Authlogic::Random.hex_token %>
+  crypted_password: <%= Authlogic::CryptoProviders::Sha512.encrypt("benrocks" + salt) %>
+  persistence_token: <%= Authlogic::Random.hex_token %>
+  perishable_token: <%= Authlogic::Random.friendly_token %>
+  admin: false
+  created_at: <%= 5.days.ago.to_s :db %>
+  deactivated: false
+  connection_notifications: false
+  message_notifications: false
+  plan_type_id: 7
+
 deactivated:
+  id: 8
   email: deactivated@example.com
   name: Deactivated Person
   description: I didn't deserve to be deactivated
@@ -80,6 +122,7 @@ deactivated:
   deactivated: true
 
 email_unverified:
+  id: 9
   email: inactive@example.com
   name: Email unverified
   description: Email unverified
