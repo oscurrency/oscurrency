@@ -51,3 +51,12 @@ reserves:
   group_id: 1
   paid: 0
   earned: 0
+
+mixed:
+  id: 7
+  name: mixed
+  balance: 100
+  person_id: 7
+  group_id: 1
+  paid: 0
+  earned: 0  
