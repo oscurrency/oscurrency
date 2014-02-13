@@ -272,7 +272,7 @@ class Account < ActiveRecord::Base
       end
     end
     # Nice hash for user.
-    return {:"trade_credits" => trade_credit_fees, :cash => cash_fees}  
+    return {:"trade-credits" => trade_credit_fees, :cash => cash_fees}  
   end
   
   def self.get_by_month_string(month, year)
