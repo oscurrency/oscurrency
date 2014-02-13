@@ -234,7 +234,7 @@ class Account < ActiveRecord::Base
   
   # Post as integers or strings. Year in 4 digit format. month can be month's name.
   def fees_invoice_for_month(month, year)
-    month_string = get_by_month_string(month, year)
+    month_string = Account.get_by_month_string(month, year)
     trade_credit_fees = 0
     cash_fees = 0    
     # User exchanges for given month.
@@ -243,14 +243,14 @@ class Account < ActiveRecord::Base
     amounts_array = user_exchanges.map{ |transaction| transaction.amount }
     # Sum of transictions for given month.
     monthly_amount = user_exchanges.sum(:amount)
-    
+
     person.plan_type.fees.each do |fee|
       if fee.event.downcase.eql? "monthly"
         case fee.fee_type.downcase
-          when "percentage(trade credits)" then trade_credits_fees += fee.amount.to_percents * monthly_amount
+          when "percentage(trade credits)" then trade_credit_fees += fee.amount.to_percents * monthly_amount
           when "percentage(cash)" then cash_fees += fee.amount.to_percents * monthly_amount
           when "trade credits" then trade_credit_fees += monthly_amount
-          when "cash" then cash_fees += monthly amount
+          when "cash" then cash_fees += monthly_amount
         end  
       elsif fee.event.downcase.eql? "transaction"
         case fee.fee_type.downcase
@@ -270,10 +270,9 @@ class Account < ActiveRecord::Base
           when "cash" then cash_fees += fee.amount * amounts_array.count
         end 
       end
-      # Nice hash for user.
-      return {:"trade_credits" => trade_credits_fees, :cash => cash_fees}  
     end
-    
+    # Nice hash for user.
+    return {:"trade_credits" => trade_credit_fees, :cash => cash_fees}  
   end
   
   def self.get_by_month_string(month, year)
