@@ -55,22 +55,23 @@ class Transact < ExchangeAndFee
   def paid_fees
     tc_transaction_fee = 0
     cash_transaction_fee = 0
-    customer = Person.find(customer_id)
-    customer.plan_type.fees.each do |fee|
-      if fee.event.downcase.eql? "transaction"
-        if fee.fee_type.downcase.include? "percentage"
-          fee_paid = fee.amount.to_percents * amount 
-          if fee.fee_type.downcase.include? "cash"
-            cash_transaction_fee += fee_paid
-          elsif fee.fee_type.downcase.include? "trade credits"
-            tc_transaction_fee += fee_paid
+    if customer.plan_type
+      customer.plan_type.fees.each do |fee|
+        if fee.event.downcase.eql? "transaction"
+          if fee.fee_type.downcase.include? "percentage"
+            fee_paid = fee.amount.to_percents * amount
+            if fee.fee_type.downcase.include? "cash"
+              cash_transaction_fee += fee_paid
+            elsif fee.fee_type.downcase.include? "trade credits"
+              tc_transaction_fee += fee_paid
+            else
+              raise "Wrong fee_type for fee id #{fee.id} - includes percentage, but does not include neither cash nor trade credits."
+            end
           else
-            raise "Wrong fee_type for fee id #{fee.id} - includes percentage, but does not include neither cash nor trade credits."
-          end
-        else
-          case fee.fee_type.downcase
-          when "cash" then cash_transaction_fee += fee.amount
-          when "trade credits" then tc_transaction_fee += fee.amount
+            case fee.fee_type.downcase
+            when "cash" then cash_transaction_fee += fee.amount
+            when "trade credits" then tc_transaction_fee += fee.amount
+            end
           end
         end
       end
