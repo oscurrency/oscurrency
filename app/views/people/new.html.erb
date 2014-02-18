@@ -72,7 +72,13 @@
     <%= f.control_group :accept_agreement do %>
       <%= f.check_box :accept_agreement, label: member_agreement_label.html_safe  %> 
     <% end %>
-
+	
+	<div id="stripe_data">
+		<%= f.text_field :credit_card, label: t('people.stripe.credit_card'), placeholder: "XXXX XXXX XXXX XXXX" %>
+		<%= f.text_field :expire, label: t('people.stripe.expiration'), placeholder: "MM/YYYY", :maxlength => 7 %>
+		<%= f.text_field :cvc, label: t('people.stripe.cvc') %>
+	</div>
+    
     <%= f.actions do %>
       <% f.primary t('people.new.signup_button') %>
     <% end %>

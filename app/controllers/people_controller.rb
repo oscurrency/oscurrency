@@ -57,11 +57,22 @@ class PeopleController < ApplicationController
   end
 
   def create
-    @person = Person.new(params[:person])
+    person = params[:person]
+    @person = Person.new(person)
     @person.email_verified = false if global_prefs.email_verifications?
+    
+    #Try stripe
+    stripe_ret = StripeOps.create_customer(person[:credit_card], person[:expire], person[:cvc], person[:name], person[:email])
+    if stripe_ret.kind_of?(Stripe::Customer)
+      @person.stripe_id = stripe_ret[:id]
+    else
+      @person.errors.add(:stripe, stripe_ret)
+    end
+    
     @person.save do |result|
       respond_to do |format|
-        if result
+        if result        
+          
           if global_prefs.can_send_email? && !global_prefs.new_member_notification.blank?
             PersonMailerQueue.registration_notification(@person)
           end
@@ -78,6 +89,7 @@ class PeopleController < ApplicationController
           @body = "register single-col"
           @all_categories = Category.find(:all, :order => "parent_id, name").sort_by { |a| a.long_name }
           @all_neighborhoods = Neighborhood.find(:all, :order => "parent_id, name").sort_by { |a| a.long_name }
+          flash[:error] = @person.errors.join(",")
           format.html { render :action => 'new' }
         end
       end
