@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 
 source 'https://rubygems.org'
+source 'https://code.stripe.com'
 ruby "1.9.3"
 gem 'rails', '3.2.16'
 
@@ -11,6 +12,7 @@ gem 'pg'
 gem "unicorn"
 gem "girl_friday"
 gem "exception_notification", :git => "https://github.com/smartinez87/exception_notification.git"
+gem "stripe"
 
 group :assets do
   gem "sass-rails"
