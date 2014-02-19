@@ -73,6 +73,12 @@ class ApplicationController < ActionController::Base
     def logged_in?
       !!current_person
     end
+    
+    def credit_card_required
+      if logged_in? and current_person.credit_card_required?
+        redirect_to credit_card_path
+      end
+    end
 
     def login_required
       unless current_person

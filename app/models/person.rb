@@ -461,6 +461,10 @@ class Person < ActiveRecord::Base
     reset_perishable_token!
     after_transaction { PersonMailerQueue.email_verification(self) }
   end
+  
+  def credit_card_required?
+    self.plan_type.fees.map{ |fee| fee.fee_type if fee.fee_type.downcase.include? "cash" }.any? and self.stripe_id.nil?
+  end
 
   protected
 

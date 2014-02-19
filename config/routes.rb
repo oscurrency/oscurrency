@@ -114,6 +114,7 @@ Oscurrency::Application.routes.draw do
   match '/signup' => 'people#new', :as => :signup
   match '/login' => 'person_sessions#new', :as => :login
   match '/logout' => 'person_sessions#destroy', :as => :logout
+  match '/credit_card' => 'person_sessions#credit_card', :as => :credit_card
   match '/refreshblog' => 'feed_posts#refresh_blog', :as => :refreshblog
   match '/about' => 'home#about', :as => :about
   match '/practice' => 'home#practice', :as => :practice
