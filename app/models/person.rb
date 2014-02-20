@@ -161,7 +161,7 @@ class Person < ActiveRecord::Base
 
   # XXX just doing jquery validation
   #validates_acceptance_of :accept_agreement, :accept => true, :message => "Please accept the agreement to complete registration", :on => :create
-
+  validate :credit_card_is_required_if_monetary_fee_plan_was_choosed
   before_create :check_config_for_deactivation
   before_create :set_language_and_default_group
   after_create :create_address
@@ -174,6 +174,22 @@ class Person < ActiveRecord::Base
   after_update :log_activity_description_changed
   before_destroy :destroy_activities, :destroy_feeds
 
+  # If monetary fee plan was choosed return false, so message "Credit card required" will be added to errors
+  # and stripe will proceed with checking card. If stripe will succeed, it will try to save record,
+  # so validation will be checked once again and then should pass.
+  # If trade credits or free fee plan was choosed return true, so no credit card is needed.
+  def credit_card_is_required_if_monetary_fee_plan_was_choosed
+     if self.have_monetary_fee_plan?
+       if self.stripe_id.nil?
+         errors.add(:credit_card, "Credit card required!")
+         return false
+       else
+         return true
+       end
+     else
+       return true
+     end
+  end
 
   # Return the first admin created.
   # We suggest using this admin as the primary administrative contact.
@@ -462,11 +478,16 @@ class Person < ActiveRecord::Base
     after_transaction { PersonMailerQueue.email_verification(self) }
   end
   
+  def have_monetary_fee_plan?
+    self.plan_type.fees.map{ |fee| fee.fee_type if fee.fee_type.downcase.include? "cash" }.any?
+  end
+  
   def credit_card_required?
-    self.plan_type.fees.map{ |fee| fee.fee_type if fee.fee_type.downcase.include? "cash" }.any? and # only for persons with monetary fee plans
+    self.have_monetary_fee_plan? and # only for persons with monetary fee plans
     self.stripe_id.nil? and # Customer not created yet
     self.requires_credit_card # Admin can override it to false so person won't need to enter credit card data
   end
+  
 
   protected
 
