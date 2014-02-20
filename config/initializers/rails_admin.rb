@@ -516,9 +516,12 @@ end
         label "Disabled"
       end
       field :email_verified
+      field :requires_credit_card
       field :phone
       field :admin
       field :org
+      field :plan_type
+      field :stripe_id
       field :mailchimp_subscribed
       field :openid_identifier
       sort_by :last_logged_in_at
@@ -534,6 +537,7 @@ end
         label "Disabled"
       end
       field :email_verified
+      field :requires_credit_card
       field :phone
       field :admin
       field :org
@@ -545,6 +549,7 @@ end
       field :business_type
       field :activity_status
       field :plan_type
+      field :stripe_id
       field :support_contact
     end
 
@@ -555,6 +560,7 @@ end
       field :password_confirmation
       field :deactivated
       field :email_verified
+      field :requires_credit_card
       field :phone
       field :phoneprivacy do
         label "Share Phone?"
@@ -568,6 +574,7 @@ end
       field :business_type
       field :activity_status
       field :plan_type
+      # field :stripe_id not really appropriate to edit this. 
       field :support_contact
       field :description, :text do
         #ckeditor true
@@ -598,9 +605,12 @@ end
         label "Disabled"
       end
       field :email_verified
+      field :requires_credit_card
       field :phone
       field :admin
       field :org
+      field :plan_type
+      field :stripe_id
       field :openid_identifier
       sort_by :last_logged_in_at
     end
@@ -612,6 +622,7 @@ end
       field :password_confirmation
       field :deactivated
       field :email_verified
+      field :requires_credit_card
       field :phone
       field :phoneprivacy do
         label "Share Phone?"
@@ -625,6 +636,7 @@ end
       field :business_type
       field :activity_status
       field :plan_type
+      # field :stripe_id not really appropriate to edit this. 
       field :support_contact
       field :description, :text do
         #ckeditor true

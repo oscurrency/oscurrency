@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140112071748) do
+ActiveRecord::Schema.define(:version => 20140220071550) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -273,6 +273,16 @@ ActiveRecord::Schema.define(:version => 20140112071748) do
 
   add_index "feeds", ["person_id", "activity_id"], :name => "index_feeds_on_person_id_and_activity_id"
 
+  create_table "fees", :force => true do |t|
+    t.string   "event"
+    t.string   "fee_type"
+    t.integer  "amount"
+    t.string   "account"
+    t.integer  "plan_type_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
   create_table "forums", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -471,6 +481,8 @@ ActiveRecord::Schema.define(:version => 20140112071748) do
     t.string   "time_zone"
     t.string   "date_style"
     t.integer  "posts_per_page",           :default => 25
+    t.string   "stripe_id"
+    t.boolean  "requires_credit_card",     :default => true
   end
 
   add_index "people", ["admin"], :name => "index_people_on_admin"

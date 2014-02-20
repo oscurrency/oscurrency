@@ -463,7 +463,9 @@ class Person < ActiveRecord::Base
   end
   
   def credit_card_required?
-    self.plan_type.fees.map{ |fee| fee.fee_type if fee.fee_type.downcase.include? "cash" }.any? and self.stripe_id.nil?
+    self.plan_type.fees.map{ |fee| fee.fee_type if fee.fee_type.downcase.include? "cash" }.any? and # only for persons with monetary fee plans
+    self.stripe_id.nil? and # Customer not created yet
+    self.requires_credit_card # Admin can override it to false so person won't need to enter credit card data
   end
 
   protected
