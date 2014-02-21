@@ -185,10 +185,11 @@ class Account < ActiveRecord::Base
     end
   end
   
-  # Cash fees are aggregated and submitted to credit card processing in batches. Currently, monthly to Stripe. 
+  # Cash fees are aggregated and submitted to credit card processing in batches. Currently, weekly to Stripe. 
   def self.pay_transaction_cash_fees
-    # Get string for by_month scope.
-    month_string = get_by_month_string(Date.today.month, Date.today.year)
+    today = Date.today
+    start_week = today.beginning_of_week
+    end_week = today.end_of_week
     admin_account = Account.includes(:person).where('lower(people.name) = ?', "admin").first
     reserve_account = Account.includes(:person).where('lower(people.name) = ?', "reserve").first
     # Go through all accounts and withdraw cash fees.
@@ -196,7 +197,7 @@ class Account < ActiveRecord::Base
       admin_fees_sum = 0
       reserve_fees_sum = 0
       # user's exchanges
-      user_exchanges = Exchange.where(:customer_id => account.person_id).by_month(month_string)
+      user_exchanges = Exchange.where(:customer_id => account.person_id).by_week(start_week, end_week)
       # Array of amounts of transactions
       amounts_array = user_exchanges.map { |transaction| transaction.amount }
       # user's transaction fees paid in cash
@@ -224,10 +225,11 @@ class Account < ActiveRecord::Base
         end
       end
       # TODO it's just mockup for Stripe.
-      # Withdraw summed fees from customer's account and deposit them into admin/reserve accounts.
-      account.withdraw(admin_fees_sum + reserve_fees_sum)
-      admin_account.deposit(admin_fees_sum)
-      reserve_account.deposit(reserve_fees_sum)
+      #StripeOps.charge(admin_fees_sum + reserve_fees_sum, account.person.stripe_id, "[OSCurrency] transaction fees sum for week #{start_week}-#{end_week}")
+      # account.withdraw(admin_fees_sum + reserve_fees_sum)
+      # XXX Bank accounts!
+      #admin_account.deposit(admin_fees_sum)
+      #reserve_account.deposit(reserve_fees_sum)
     end
     
   end
