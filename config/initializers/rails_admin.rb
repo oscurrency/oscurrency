@@ -469,11 +469,7 @@ end
     label_plural "Fee plans"
     list do
       field :name
-      field :event
-      field :pay_type do
-        label "Type"
-      end
-      field :amount
+      field :description
       sort_by :name
     end
 
@@ -483,7 +479,7 @@ end
   end
 
   config.model Fee do
-    visible false
+    visible true
     field :event, :enum do
       enum do
         ['Transaction', 'Monthly', 'Yearly']
@@ -491,7 +487,7 @@ end
     end
     field :fee_type, :enum do
       enum do
-        ['Percentage(Trade Credits)', 'Percentage(Cash)' 'Trade Credits', 'Cash']
+        ['Percentage(Trade Credits)', 'Percentage(Cash)', 'Trade Credits', 'Cash']
       end
     end
     field :amount
