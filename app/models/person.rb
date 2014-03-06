@@ -166,9 +166,9 @@ class Person < ActiveRecord::Base
   before_save :update_group_letter
   before_validation :prepare_email, :handle_nil_description
   #after_create :connect_to_admin
-
   before_update :set_old_description
   after_update :log_activity_description_changed
+  after_update :change_requests_and_offers_activity
   before_destroy :destroy_activities, :destroy_feeds
 
 
@@ -510,6 +510,17 @@ class Person < ActiveRecord::Base
   def log_activity_description_changed
     unless @old_description == description or description.blank?
       add_activities(:item => self, :person => self)
+    end
+  end
+
+  def change_requests_and_offers_activity
+    if self.deactivated 
+      self.reqs.biddable.current.each do |req|
+        req.destroy
+      end
+      self.offers.active.each do |offer|
+        offer.destroy
+      end
     end
   end
 
