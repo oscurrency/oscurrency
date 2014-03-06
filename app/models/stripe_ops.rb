@@ -60,6 +60,17 @@ class StripeOps
     all_charges
   end
   
+  def self.refund_charge(charge_id)
+    begin
+      Stripe::Charge.retrieve(charge_id)
+    rescue => e  
+      stripe_response = handle_error(e)
+    else
+      Charge.find_by_stripe_id(charge_id).update_attribute(:status, 'refunded')
+      "Charge refunded"
+    end
+  end
+  
   private
   
   def self.handle_error(e)

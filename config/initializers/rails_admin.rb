@@ -2,6 +2,7 @@ unless Rails.env == 'test'
 require Rails.root.join('lib', 'rails_admin_send_broadcast_email.rb')
 require Rails.root.join('lib', 'rails_admin_add_to_mailchimp_list.rb')
 require Rails.root.join('lib', 'rails_admin_list_scope.rb')
+require Rails.root.join('lib', 'rails_admin_refund_money.rb')
 
 RailsAdmin.config do |config|
 module RailsAdmin
@@ -11,6 +12,9 @@ module RailsAdmin
         RailsAdmin::Config::Actions.register(self)
       end
       class AddToMailchimpList < RailsAdmin::Config::Actions::Base
+        RailsAdmin::Config::Actions.register(self)
+      end
+      class RefundMoney < RailsAdmin::Config::Actions::Base
         RailsAdmin::Config::Actions.register(self)
       end
     end
@@ -33,6 +37,7 @@ end
     new
     send_broadcast_email
     add_to_mailchimp_list
+    refund_money
     show
     edit
     delete
@@ -499,9 +504,7 @@ end
   end
   
   config.model Charge do
-    visible true
     label 'Charges'
-    
     list do
       scope do
         joins(:person).where( people: { deactivated:false} )
