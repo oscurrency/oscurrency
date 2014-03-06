@@ -130,10 +130,9 @@ class Account < ActiveRecord::Base
       account.withdraw(admin_tc_fees_sum + reserve_tc_fees_sum)
       admin_account.deposit(admin_tc_fees_sum)
       reserve_account.deposit(reserve_tc_fees_sum)
-      # STRIPE
-      # account pay admin_cash_fees_sum + reserve_cash_fees_sum
-      # admin-account deposit admin_cash_fees_sum
-      # reserve-account deposit reserve_cash_fees_sum
+      # Stripe cash payments.
+      StripeOps.charge(admin_cash_fees_sum + reserve_cash_fees_sum, account.person.stripe_id, 
+      "[OSCurrency] yearly fees sum for #{Date.today.year}.")
     end
     
   end
@@ -178,10 +177,10 @@ class Account < ActiveRecord::Base
       account.withdraw(admin_tc_fees_sum + reserve_tc_fees_sum)
       admin_account.deposit(admin_tc_fees_sum)
       reserve_account.deposit(reserve_tc_fees_sum)
-      # STRIPE
-      # account pay admin_cash_fees_sum + reserve_cash_fees_sum
-      # admin-account deposit admin_cash_fees_sum
-      # reserve-account deposit reserve_cash_fees_sum
+      # Stripe cash payments.
+      StripeOps.charge(admin_cash_fees_sum + reserve_cash_fees_sum, account.person.stripe_id, 
+      "[OSCurrency] monthly fees sum for #{Date.today.strftime("%B %Y")}.")
+   
     end
   end
   
@@ -224,10 +223,12 @@ class Account < ActiveRecord::Base
           end
         end
       end
-      # TODO it's just mockup for Stripe.
-      #StripeOps.charge(admin_fees_sum + reserve_fees_sum, account.person.stripe_id, "[OSCurrency] transaction fees sum for week #{start_week}-#{end_week}")
-      # account.withdraw(admin_fees_sum + reserve_fees_sum)
-      # XXX Bank accounts!
+      # Stripe cash payments.
+      StripeOps.charge(admin_fees_sum + reserve_fees_sum, account.person.stripe_id, 
+      "[OSCurrency] transaction fees sum for week #{start_week}-#{end_week}.")
+      
+      # XXX Tests try to hit there XXX
+      #account.withdraw(admin_fees_sum + reserve_fees_sum)
       #admin_account.deposit(admin_fees_sum)
       #reserve_account.deposit(reserve_fees_sum)
     end
