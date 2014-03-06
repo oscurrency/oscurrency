@@ -39,7 +39,7 @@ end
     export
   end
 
-  config.included_models = [Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,PlanType, ExchangeDeleted, TimeZone, Fee]
+  config.included_models = [Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,PlanType, ExchangeDeleted, TimeZone, Fee, Charge]
 
   config.default_items_per_page = 100
 
@@ -479,7 +479,7 @@ end
   end
 
   config.model Fee do
-    visible false
+    visible true
     field :event, :enum do
       enum do
         ['Transaction', 'Monthly', 'Yearly']
@@ -497,7 +497,33 @@ end
       end
     end
   end
-
+  
+  config.model Charge do
+    visible true
+    label 'Charges'
+    
+    list do
+      scope do
+        joins(:person).where( people: { deactivated:false} )
+      end
+      
+      field :person do
+        label "Billed person"
+        searchable [{Person => :email}]
+        queryable true
+      end
+      field :amount
+      field :description
+      field :status do
+        label "State"
+      end
+      field :created_at do
+        label "Date"
+      end
+    end
+    
+  end
+  
   config.model Person do
     object_label_method do
       :display_name

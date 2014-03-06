@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140220071550) do
+ActiveRecord::Schema.define(:version => 20140306124618) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(:version => 20140220071550) do
     t.decimal  "earned",          :precision => 8, :scale => 2, :default => 0.0
     t.decimal  "reserve_percent", :precision => 8, :scale => 7, :default => 0.0
     t.boolean  "reserve",                                       :default => false
+    t.decimal  "paid_fees",       :precision => 8, :scale => 2, :default => 0.0
   end
 
   create_table "activities", :force => true do |t|
@@ -162,6 +163,16 @@ ActiveRecord::Schema.define(:version => 20140220071550) do
 
   add_index "categories_reqs", ["category_id"], :name => "index_categories_reqs_on_category_id"
   add_index "categories_reqs", ["req_id", "category_id"], :name => "index_categories_reqs_on_req_id_and_category_id"
+
+  create_table "charges", :force => true do |t|
+    t.string   "stripe_id"
+    t.string   "description"
+    t.float    "amount"
+    t.string   "status"
+    t.integer  "person_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
 
   create_table "client_applications", :force => true do |t|
     t.string   "name"

@@ -34,8 +34,30 @@ class StripeOps
     rescue => e
       stripe_response = handle_error(e)
     else
+      charge_params = {
+        :stripe_id => stripe_response[:id],
+        :person_id => Person.find_by_stripe_id(stripe_id).id,
+        :amount => amount,
+        :description => description,
+        :status => 'paid'
+      }
+      Charge.create(charge_params)
       stripe_response
     end
+  end
+  
+  def self.all_charges
+    all_charges = Array.new
+    charges = Stripe::Charge.all
+    charges.each do |charge|
+      all_charges << [ 
+                      charge[:id], 
+                      charge[:amount], 
+                      Person.find_by_stripe_id(charge[:customer]).email,
+                      charge[:description],
+                      charge[:refunded] ]
+    end
+    all_charges
   end
   
   private

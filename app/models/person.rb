@@ -136,6 +136,7 @@ class Person < ActiveRecord::Base
   has_many :offers
   has_many :reqs
   has_many :bids
+  has_many :charges
   has_many :invitations, :order => 'created_at DESC'
   belongs_to :default_group, :class_name => "Group", :foreign_key => "default_group_id"
   belongs_to :sponsor, :class_name => "Person", :foreign_key => "sponsor_id"
@@ -143,6 +144,7 @@ class Person < ActiveRecord::Base
   belongs_to :business_type
   belongs_to :activity_status
   belongs_to :plan_type
+  
 
   validates :name, :presence => true, :length => { :maximum => MAX_NAME }
   validates :description, :length => { :maximum => MAX_DESCRIPTION }

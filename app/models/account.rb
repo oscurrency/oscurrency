@@ -226,7 +226,6 @@ class Account < ActiveRecord::Base
       # Stripe cash payments.
       StripeOps.charge(admin_fees_sum + reserve_fees_sum, account.person.stripe_id, 
       "[OSCurrency] transaction fees sum for week #{start_week}-#{end_week}.")
-      
       # XXX Tests try to hit there XXX
       #account.withdraw(admin_fees_sum + reserve_fees_sum)
       #admin_account.deposit(admin_fees_sum)
