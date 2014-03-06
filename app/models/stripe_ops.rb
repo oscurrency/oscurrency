@@ -46,9 +46,9 @@ class StripeOps
     end
   end
   
-  def self.all_charges
+  def self.all_charges_for_user(stripe_id)
     all_charges = Array.new
-    charges = Stripe::Charge.all
+    charges = Stripe::Charge.all(:customer => stripe_id )
     charges.each do |charge|
       all_charges << [ 
                       charge[:id], 
