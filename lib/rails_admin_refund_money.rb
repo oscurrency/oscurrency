@@ -39,21 +39,22 @@ module RailsAdmin
               respond_to do |format|
                 format.html { render @action.template_name }
               end
-            elsif request.post?
+            elsif request.post? and params[:amount].present?
               amount = params[:amount]              
-              if amount.present?
-                # Replace "," with "." for number calculations. "14,25".to_f => 14, not 14.25.
-                amount.gsub!(/,/, '.') if amount.present?
-                amount = amount.to_f
-              end
+              # Replace "," with "." for number calculations. "14,25".to_f => 14, not 14.25.
+              amount.gsub!(/,/, '.')
+              amount = amount.to_f
               # 0.50 is Stripe's minimum amount and certainly we don't want any negative or too big numbers.
-              if amount.present? and amount >= 0.50 and amount <= @object.amount                
+              if amount >= 0.50 and amount <= @object.amount                
                 flash[:alert] = StripeOps.refund_charge(@object.stripe_id, amount)
                 redirect_to back_or_index
               else
                 flash[:error] = "The amount you want to refund is not correct. Minimum is 0.50"
                 redirect_to :back
               end
+            else
+              flash[:error] = "Amount can't be blank."
+              redirect_to :back
             end
           end
          end
