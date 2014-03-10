@@ -60,9 +60,9 @@ class StripeOps
     all_charges
   end
   
-  def self.refund_charge(charge_id)
+  def self.refund_charge(charge_id, amount)
     begin
-      Stripe::Charge.retrieve(charge_id)
+      Stripe::Charge.retrieve(charge_id).refund(:amount => amount.to_cents)
     rescue => e  
       stripe_response = handle_error(e)
     else

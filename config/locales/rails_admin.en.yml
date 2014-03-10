@@ -88,7 +88,9 @@ en:
       export: "export"
       exported: "exported"
       refund_money:
-        menu: "Refund all money"
+        title: "Refund money"
+        breadcrumb: "Refund money"
+        menu: "Refund money"
       send_broadcast_email:
         menu: "Send Now!"
       add_to_mailchimp_list:
