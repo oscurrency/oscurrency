@@ -3,6 +3,7 @@ require Rails.root.join('lib', 'rails_admin_send_broadcast_email.rb')
 require Rails.root.join('lib', 'rails_admin_add_to_mailchimp_list.rb')
 require Rails.root.join('lib', 'rails_admin_list_scope.rb')
 require Rails.root.join('lib', 'rails_admin_refund_money.rb')
+require Rails.root.join('lib', 'rails_admin_dispute_link.rb')
 
 RailsAdmin.config do |config|
 module RailsAdmin
@@ -15,6 +16,9 @@ module RailsAdmin
         RailsAdmin::Config::Actions.register(self)
       end
       class RefundMoney < RailsAdmin::Config::Actions::Base
+        RailsAdmin::Config::Actions.register(self)
+      end
+      class DisputeLink < RailsAdmin::Config::Actions::Base
         RailsAdmin::Config::Actions.register(self)
       end
     end
@@ -38,6 +42,7 @@ end
     send_broadcast_email
     add_to_mailchimp_list
     refund_money
+    dispute_link
     show
     edit
     delete

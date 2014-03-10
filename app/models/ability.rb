@@ -17,7 +17,7 @@ class Ability
     can [:read,:create,:update,:destroy], Address
     can [:read,:create,:update,:destroy], State
     can [:read,:update], TimeZone
-    can [:read, :refund_money], Charge
+    can [:read, :refund_money, :dispute_link], Charge
     can [:read,:create], Person
     can :update, Person do |target_person|
       target_person == person || person.admin?

@@ -131,6 +131,7 @@ Oscurrency::Application.routes.draw do
   match '/oauth/scopes' => 'transacts#scopes', :as => :scopes
   match '/oauth/revoke' => 'oauth#revoke', :as => :revoke
   match '/oauth' => 'oauth#index', :as => :oauth
+  match '/stripe_callback' => 'stripe#handle_callback'
   match '/about_user' => 'transacts#about_user', :as => :about_user
   match '/user_info' => 'transacts#user_info', :as => :user_info
   match '/wallet' => 'transacts#wallet', :as => :wallet
