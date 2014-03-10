@@ -492,6 +492,7 @@ end
     end
     field :amount
     field :account, :enum do
+      label "Deposit Account"
       enum do
         ['Reserve', 'Admin']
       end
