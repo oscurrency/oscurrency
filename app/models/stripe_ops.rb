@@ -66,8 +66,11 @@ class StripeOps
     rescue => e  
       stripe_response = handle_error(e)
     else
-      Charge.find_by_stripe_id(charge_id).update_attribute(:status, 'refunded')
-      "Charge refunded"
+      charge = Charge.find_by_stripe_id(charge_id)
+      status = 'partially refunded'
+      status = 'refunded' if charge.amount == amount 
+      Charge.find_by_stripe_id(charge_id).update_attribute(:status, status)
+      "Charge #{status}."
     end
   end
   

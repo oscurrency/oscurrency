@@ -10,7 +10,7 @@ module RailsAdmin
       class RefundMoney < RailsAdmin::Config::Actions::Base      
         
         register_instance_option :visible? do
-          authorized? && bindings[:object].status != 'refunded'
+          authorized? and !bindings[:object].status.include?("refunded")
         end
 
         register_instance_option :member? do
