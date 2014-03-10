@@ -45,14 +45,14 @@ class StripeOps
       stripe_response
     end
   end
-  
-  def self.all_charges_for_user(stripe_id)
+  # Data from the Stripe. For db see Charge#all_charges_for_person
+  def self.all_charges_for_person(stripe_id)
     all_charges = Array.new
-    charges = Stripe::Charge.all(:customer => stripe_id )
+    charges = Stripe::Charge.all(:customer => stripe_id)
     charges.each do |charge|
       all_charges << [ 
                       charge[:id], 
-                      charge[:amount], 
+                      charge[:amount].to_dollars, 
                       Person.find_by_stripe_id(charge[:customer]).email,
                       charge[:description],
                       charge[:refunded] ]
