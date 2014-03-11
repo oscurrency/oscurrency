@@ -151,7 +151,7 @@ describe Person do
     end
 
     it "should destroy connected offers and requests" do
-      group = created_group_id(@person)
+      group = created_group(@person)
       @person.default_group_id = group.id
       @person.save
       create_request_like(@person, group)
@@ -165,6 +165,19 @@ describe Person do
 
       @person.reqs.biddable.current.should be_empty
       @person.offers.active.should be_empty
+    end
+
+    it "should plan type to Closed after deactivation" do
+      @person.deactivated = true
+      @person.save
+      @person.plan_type.name.should eq('Closed')
+
+      plan_type = create_plan_type
+      @person.plan_type_id = plan_type.id
+      @person.save
+      @person.deactivated = true
+      @person.save
+      @person.plan_type.name.should eq('Closed')
     end
   end
 
@@ -257,7 +270,7 @@ describe Person do
       offer
     end
 
-    def created_group_id(person)
+    def created_group(person)
       group = Group.new({
         :name => "test group",
         :description => "test group description"
@@ -278,5 +291,15 @@ describe Person do
       record.valid?
       record.save! if options[:save]
       record
+    end
+
+    def create_plan_type
+      plan_type = PlanType.new({
+        :name => 'Plan type name',
+        :description => 'plan type description'
+        })
+      plan_type.valid?
+      plan_type.save
+      plan_type
     end
 end
