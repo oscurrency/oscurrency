@@ -68,6 +68,7 @@ group :development, :test do
   gem "opentransact"
   gem 'annotate'
   gem 'therubyracer'
+  gem "rspec-rails"
 end
 
 group :development do
@@ -88,7 +89,6 @@ group :test do
   gem "cucumber-rails"
   gem "database_cleaner"
   gem "guard-spork"
-  gem "rspec-rails" # :lib => false unless File.directory?(File.join(Rails.root, 'vendor/plugins/rspec-rails'))
   gem "spork"
 end
 gem 'remotipart'
