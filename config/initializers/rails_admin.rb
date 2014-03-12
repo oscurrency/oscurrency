@@ -39,7 +39,7 @@ end
     export
   end
 
-  config.included_models = [Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,PlanType, ExchangeDeleted, TimeZone]
+  config.included_models = [Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,FeePlan, ExchangeDeleted, TimeZone]
 
   config.default_items_per_page = 100
 
@@ -464,7 +464,7 @@ end
     end
   end
 
-  config.model PlanType do
+  config.model FeePlan do
     list do
       field :name
       sort_by :name
