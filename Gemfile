@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 
 source 'https://rubygems.org'
+source 'https://code.stripe.com'
 ruby "1.9.3"
 gem 'rails', '3.2.16'
 
@@ -11,6 +12,7 @@ gem 'pg'
 gem "unicorn"
 gem "girl_friday"
 gem "exception_notification", :git => "https://github.com/smartinez87/exception_notification.git"
+gem "stripe"
 
 group :assets do
   gem "sass-rails"
@@ -56,7 +58,7 @@ gem 'valid_email', :require => 'valid_email/email_validator'
 gem "calendar_helper"
 gem "gibbon", :git => "git://github.com/amro/gibbon.git"
 gem "bootstrap_form", "~> 0.3.2"
-gem "rufus-scheduler"
+gem "stripe"
 
 group :development, :test do
   gem 'debugger'

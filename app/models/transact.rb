@@ -55,12 +55,11 @@ class Transact < ExchangeAndFee
   def paid_fees
     tc_transaction_fee = 0
     cash_transaction_fee = 0
-    customer = Person.find(customer_id)
-    unless customer.plan_type.blank?
+    if customer.plan_type
       customer.plan_type.fees.each do |fee|
         if fee.event.downcase.eql? "transaction"
           if fee.fee_type.downcase.include? "percentage"
-            fee_paid = fee.amount.to_percents * amount 
+            fee_paid = fee.amount.to_percents * amount
             if fee.fee_type.downcase.include? "cash"
               cash_transaction_fee += fee_paid
             elsif fee.fee_type.downcase.include? "trade credits"
@@ -76,8 +75,8 @@ class Transact < ExchangeAndFee
           end
         end
       end
-      return {:"trade-credits" => tc_transaction_fee ,:cash => cash_transaction_fee}
-   end
+    end
+    return {:"trade-credits" => tc_transaction_fee ,:cash => cash_transaction_fee}
   end
 
   protected

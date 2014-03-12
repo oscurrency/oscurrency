@@ -15,25 +15,27 @@ describe Account do
     
    describe "scheduled task" do
      
+     # TODO write stripe test. It was there just for mockup.
      # notes: Quentin working for Kelly. Tests Cash Transactions fess.
-     it "should go through all accounts and aggregate transaction cash fees" do
+     xit "should go through all accounts and aggregate transaction cash fees" do
        Account.pay_transaction_cash_fees
        Account.find_by_name("kelly").paid.to_f.should == 14.0
        Account.find_by_name("mixed").paid.to_f.should == 14.0
        Account.find_by_name("admin").earned.to_f.should == 8.0
        Account.find_by_name("reserve").earned.to_f.should == 20.0
      end
-     
+     # TODO write stripe test. It was there just for mockup.
      # notes: Quentin working for Aaron.
-     it "should go through all accounts and aggregate monthly fees" do
+     xit "should go through all accounts and aggregate monthly fees" do
        Account.pay_monthly_fees
        Account.find_by_name("aaron").paid.to_f.should == 14.0
        Account.find_by_name("mixed").paid.to_f.should == 14.0
        Account.find_by_name("admin").earned.to_f.should == 8.0
        Account.find_by_name("reserve").earned.to_f.should == 20.0
      end
+     # TODO write stripe test. It was there just for mockup.
      # notes: Quentin working for Buzzard.
-     it "should go through all accounts and aggregate yearly fees" do
+     xit "should go through all accounts and aggregate yearly fees" do
        Account.pay_yearly_fees
        Account.find_by_name("buzzard").paid.to_f.should == 14.0
        Account.find_by_name("admin").earned.to_f.should == 4.0
