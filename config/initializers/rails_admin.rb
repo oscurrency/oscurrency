@@ -39,7 +39,7 @@ end
     export
   end
 
-  config.included_models = [RecurringFee,RecurringStripeFee,FixedTransactionFee,PercentTransactionFee,Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,FeePlan, ExchangeDeleted, TimeZone]
+  config.included_models = [RecurringFee,RecurringStripeFee,FixedTransactionFee,PercentTransactionFee,FixedTransactionStripeFee,PercentTransactionStripeFee,Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,FeePlan, ExchangeDeleted, TimeZone]
 
   config.default_items_per_page = 100
 
@@ -497,6 +497,14 @@ end
   config.model PercentTransactionFee do
     field :percent
     field :recipient
+  end
+
+  config.model FixedTransactionStripeFee do
+    field :amount
+  end
+
+  config.model PercentTransactionStripeFee do
+    field :percent
   end
 
   config.model Person do

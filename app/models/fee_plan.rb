@@ -8,11 +8,15 @@ class FeePlan < ActiveRecord::Base
   has_many :recurring_stripe_fees, :dependent => :destroy, :inverse_of => :fee_plan
   has_many :fixed_transaction_fees, :dependent => :destroy, :inverse_of => :fee_plan
   has_many :percent_transaction_fees, :dependent => :destroy, :inverse_of => :fee_plan
+  has_many :fixed_transaction_stripe_fees, :dependent => :destroy, :inverse_of => :fee_plan
+  has_many :percent_transaction_stripe_fees, :dependent => :destroy, :inverse_of => :fee_plan
 
   accepts_nested_attributes_for :recurring_fees
   accepts_nested_attributes_for :recurring_stripe_fees
   accepts_nested_attributes_for :fixed_transaction_fees
   accepts_nested_attributes_for :percent_transaction_fees
+  accepts_nested_attributes_for :fixed_transaction_stripe_fees
+  accepts_nested_attributes_for :percent_transaction_stripe_fees
 
   default_scope :order => 'name ASC'
 end
