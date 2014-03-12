@@ -39,7 +39,7 @@ end
     export
   end
 
-  config.included_models = [RecurringFee,Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,FeePlan, ExchangeDeleted, TimeZone]
+  config.included_models = [RecurringFee,RecurringStripeFee,Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,FeePlan, ExchangeDeleted, TimeZone]
 
   config.default_items_per_page = 100
 
@@ -479,6 +479,14 @@ end
       end
     end
     field :recipient
+  end
+
+  config.model RecurringStripeFee do
+    field :plan, :enum do
+      enum do
+        Stripe::Plan.all.map(&:id)
+      end
+    end
   end
 
   config.model Person do

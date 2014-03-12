@@ -11,6 +11,7 @@ class Ability
     if person.admin?
       can :dashboard
       can [:read,:create,:destroy], Fee
+      can [:read,:create,:destroy], StripeFee
     end
 
     # need these for rails_admin
