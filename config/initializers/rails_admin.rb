@@ -39,7 +39,7 @@ end
     export
   end
 
-  config.included_models = [Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,FeePlan, ExchangeDeleted, TimeZone]
+  config.included_models = [RecurringFee,Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,FeePlan, ExchangeDeleted, TimeZone]
 
   config.default_items_per_page = 100
 
@@ -469,11 +469,16 @@ end
       field :name
       sort_by :name
     end
+  end
 
-    edit do
-      field :name
-      field :description
+  config.model RecurringFee do
+    field :amount
+    field :interval, :enum do
+      enum do
+        ['month','year']
+      end
     end
+    field :recipient
   end
 
   config.model Person do
