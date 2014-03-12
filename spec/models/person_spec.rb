@@ -150,22 +150,38 @@ describe Person do
       @person.should be_active
     end
 
-    it "should destroy connected offers and requests" do
+    it "should hide and show connected requests after deactivation and then activation of user" do
       group = created_group_id(@person)
       @person.default_group_id = group.id
       @person.save
       create_request_like(@person, group)
-      create_offer_like(@person, group)
 
-      @person.reqs.biddable.current.should_not be_empty
-      @person.offers.active.should_not be_empty
-
+      Req.custom_search(nil, group, true, 1, 25, nil).should_not be_empty
       @person.deactivated = true
       @person.save
 
-      @person.reqs.biddable.current.should be_empty
-      @person.offers.active.should be_empty
+      Req.custom_search(nil, group, true, 1, 25, nil).should be_empty
+      @person.deactivated = false
+      @person.save      
+      Req.custom_search(nil, group, true, 1, 25, nil).should_not be_empty
     end
+
+    it "should hide and show connected offers after deactivation and then activation of user" do
+      group = created_group_id(@person)
+      @person.default_group_id = group.id
+      @person.save
+      create_offer_like(@person, group)
+
+      Offer.custom_search(nil, group, true, 1, 25, nil).should_not be_empty
+      @person.deactivated = true
+      @person.save
+
+      Offer.custom_search(nil, group, true, 1, 25, nil).should be_empty
+      @person.deactivated = false
+      @person.save      
+      Offer.custom_search(nil, group, true, 1, 25, nil).should_not be_empty
+    end
+
   end
 
   describe "mostly active" do
