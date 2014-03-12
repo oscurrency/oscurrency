@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140312170140) do
+ActiveRecord::Schema.define(:version => 20140312173006) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -279,6 +279,19 @@ ActiveRecord::Schema.define(:version => 20140312170140) do
   end
 
   add_index "feeds", ["person_id", "activity_id"], :name => "index_feeds_on_person_id_and_activity_id"
+
+  create_table "fees", :force => true do |t|
+    t.integer  "fee_plan_id"
+    t.string   "type"
+    t.integer  "recipient_id"
+    t.decimal  "percent",      :precision => 8, :scale => 7, :default => 0.0
+    t.decimal  "amount",       :precision => 8, :scale => 2, :default => 0.0
+    t.string   "interval"
+    t.datetime "created_at",                                                  :null => false
+    t.datetime "updated_at",                                                  :null => false
+  end
+
+  add_index "fees", ["fee_plan_id"], :name => "index_fees_on_fee_plan_id"
 
   create_table "forums", :force => true do |t|
     t.string   "name"
