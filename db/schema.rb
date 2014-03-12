@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140112071748) do
+ActiveRecord::Schema.define(:version => 20140312170140) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -253,6 +253,13 @@ ActiveRecord::Schema.define(:version => 20140112071748) do
     t.string   "notes"
   end
 
+  create_table "fee_plans", :force => true do |t|
+    t.string   "name",        :limit => 100, :null => false
+    t.string   "description"
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
+  end
+
   create_table "feed_posts", :force => true do |t|
     t.string   "feedid"
     t.string   "title"
@@ -465,7 +472,7 @@ ActiveRecord::Schema.define(:version => 20140112071748) do
     t.integer  "business_type_id"
     t.string   "title"
     t.integer  "activity_status_id"
-    t.integer  "plan_type_id"
+    t.integer  "fee_plan_id"
     t.integer  "support_contact_id"
     t.boolean  "mailchimp_subscribed",     :default => false
     t.string   "time_zone"
@@ -497,13 +504,6 @@ ActiveRecord::Schema.define(:version => 20140112071748) do
   end
 
   add_index "photos", ["parent_id"], :name => "index_photos_on_parent_id"
-
-  create_table "plan_types", :force => true do |t|
-    t.string   "name",        :limit => 100, :null => false
-    t.string   "description"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
-  end
 
   create_table "posts", :force => true do |t|
     t.integer  "blog_id"
