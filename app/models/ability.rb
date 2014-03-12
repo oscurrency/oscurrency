@@ -40,8 +40,8 @@ class Ability
       person.admin?
     end
 
-    can :read, PlanType
-    can [:create,:update,:destroy], PlanType do |pt|
+    can :read, FeePlan
+    can [:create,:update,:destroy], FeePlan do |pt|
       person.admin?
     end
 
