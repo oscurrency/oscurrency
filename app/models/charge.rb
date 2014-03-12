@@ -15,6 +15,6 @@ class Charge < ActiveRecord::Base
   end
   
   def dispute_link
-    "http://www.google.pl"
+    "https://manage.stripe.com/" + Rails.configuration.stripe[:mode] + "/payments/" + self.stripe_id
   end
 end
