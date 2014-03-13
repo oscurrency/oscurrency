@@ -41,7 +41,6 @@ describe Fee do
     @e = @g.exchange_and_fees.build(amount: 2.0)
     @e.worker = @p
     @e.customer = @p2
-    @e.group = @g
     @e.notes = 'Generic'
     @e.save!
     account_after_payment = @p.account(@g)
