@@ -327,8 +327,6 @@ GEM
     ruby-hmac (0.4.0)
     ruby-openid (2.2.2)
     rubyzip (0.9.9)
-    rufus-scheduler (3.0.5)
-      tzinfo
     sass (3.2.5)
     sass-rails (3.2.5)
       railties (~> 3.2.0)
@@ -452,7 +450,6 @@ DEPENDENCIES
   rmagick
   rspec-rails
   ruby-openid
-  rufus-scheduler
   sass-rails
   spork
   sqlite3
