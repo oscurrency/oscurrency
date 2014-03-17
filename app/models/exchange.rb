@@ -18,7 +18,7 @@ class Exchange < ActiveRecord::Base
   include ActionView::Helpers::NumberHelper
   acts_as_paranoid
   
-  attr_accessor  :offer_count
+  attr_accessor  :offer_count, :force_exchange
   
   belongs_to :customer, :class_name => "Person", :foreign_key => "customer_id"
   belongs_to :worker, :class_name => "Person", :foreign_key => "worker_id"
@@ -31,7 +31,7 @@ class Exchange < ActiveRecord::Base
   validate :group_has_a_currency_and_includes_both_counterparties_as_members
   validate :amount_is_positive
   validate :worker_is_not_customer
-  validate :customer_has_enough_money
+  validate :customer_has_enough_money?, unless: "self.force_exchange"
 
   attr_accessible :amount, :group_id
   
@@ -56,12 +56,13 @@ class Exchange < ActiveRecord::Base
   scope :everyone, :conditions => {}
   scope :everyone_by_group, lambda {|group_id| {:conditions => ["group_id = ?", group_id]}}
   scope :by_month, lambda {|date| {:conditions => ["DATE_TRUNC('month',created_at) = ?", date]}}
-
+   
   def log_activity
     unless self.group.private_txns?
       add_activities(:item => self, :person => self.worker, :group => self.group)
     end
   end
+
 
   # memo is a method for displaying a transaction's note in the admin interface
   # previously, a txn created by an admin set metadata.name to 'admin transfer'.
@@ -217,7 +218,7 @@ class Exchange < ActiveRecord::Base
     number_with_precision(decimal, precision: 2)
   end
   
-  def customer_has_enough_money
+  def customer_has_enough_money?
     customers_account = self.customer.account(self.group)
     return true if customers_account.credit_limit.nil? #unlimited credit limit
     balance_after_exchange = customers_account.balance - self.amount

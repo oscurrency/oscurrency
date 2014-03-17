@@ -30,7 +30,53 @@ end
   config.actions do
     dashboard
     index
-    new
+    new do
+      controller do
+        proc do
+          if request.get? # NEW
+            @object = @abstract_model.new
+            @authorization_adapter && @authorization_adapter.attributes_for(:new, @abstract_model).each do |name, value|
+              @object.send("#{name}=", value)
+            end
+            if object_params = params[@abstract_model.to_param]
+              @object.set_attributes(@object.attributes.merge(object_params))
+            end
+            respond_to do |format|
+              format.html { render @action.template_name }
+              format.js { render @action.template_name, layout: false }
+            end
+
+          elsif request.post? # CREATE
+
+            @modified_assoc = []
+            @object = @abstract_model.new
+            satisfy_strong_params!
+            sanitize_params_for!(request.xhr? ? :modal : :create)
+
+            @object.set_attributes(params[@abstract_model.param_key])
+            @authorization_adapter && @authorization_adapter.attributes_for(:create, @abstract_model).each do |name, value|
+              @object.send("#{name}=", value)
+            end
+            # Custom code for forcing Exchanges
+            if @object.kind_of?(Exchange)
+              @object.worker_id = params[:exchange][:worker_id]
+              @object.force_exchange = params[:exchange][:force_exchange]
+            end
+
+            if @object.save
+              @auditing_adapter && @auditing_adapter.create_object(@object, @abstract_model, _current_user)
+              respond_to do |format|
+                format.html { redirect_to_on_success }
+                format.js { render json: {id: @object.id.to_s, label: @model_config.with(object: @object).object_label} }
+              end
+            else
+              handle_save_error
+            end
+
+          end          
+        end
+      end
+    end
     send_broadcast_email
     add_to_mailchimp_list
     show
@@ -308,6 +354,14 @@ end
   end
 
   config.model Exchange do
+    configure :force_exchange do
+      pretty_value do
+        help "Check it to force exchanges when customer does not have enough money and can't take big enough credit."
+        %{<div class="exchange_force_exchange">
+        <input id="exchange_force_exchange" name="exchange[force_exchange]" type="checkbox" value=true />
+        </div>}.html_safe
+      end
+    end
     list do
       field :created_at
       field :customer do
@@ -342,6 +396,7 @@ end
         end
       end
       field :notes, :text
+      field :force_exchange
       #field :metadata
     end
   end
