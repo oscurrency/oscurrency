@@ -39,7 +39,7 @@ end
     export
   end
 
-  config.included_models = [Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,PlanType, ExchangeDeleted, TimeZone, Fee]
+  config.included_models = [RecurringFee,RecurringStripeFee,FixedTransactionFee,PercentTransactionFee,FixedTransactionStripeFee,PercentTransactionStripeFee,Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,FeePlan, ExchangeDeleted, TimeZone]
 
   config.default_items_per_page = 100
 
@@ -464,39 +464,48 @@ end
     end
   end
 
-  config.model PlanType do
-    label "Fee plan"
-    label_plural "Fee plans"
+  config.model FeePlan do
     list do
       field :name
       field :description
       sort_by :name
     end
+  end
 
-    edit do
-      exclude_fields :people
+  config.model RecurringFee do
+    field :amount
+    field :interval, :enum do
+      enum do
+        ['month','year']
+      end
+    end
+    field :recipient
+  end
+
+  config.model RecurringStripeFee do
+    field :plan, :enum do
+      enum do
+        Stripe::Plan.all.map(&:id)
+      end
     end
   end
 
-  config.model Fee do
-    visible true
-    field :event, :enum do
-      enum do
-        ['Transaction', 'Monthly', 'Yearly']
-      end
-    end
-    field :fee_type, :enum do
-      enum do
-        ['Percentage(Trade Credits)', 'Percentage(Cash)', 'Trade Credits', 'Cash']
-      end
-    end
+  config.model FixedTransactionFee do
     field :amount
-    field :account, :enum do
-      label "Deposit Account"
-      enum do
-        ['Reserve', 'Admin']
-      end
-    end
+    field :recipient
+  end
+
+  config.model PercentTransactionFee do
+    field :percent
+    field :recipient
+  end
+
+  config.model FixedTransactionStripeFee do
+    field :amount
+  end
+
+  config.model PercentTransactionStripeFee do
+    field :percent
   end
 
   config.model Person do

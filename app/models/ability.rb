@@ -10,7 +10,8 @@ class Ability
 
     if person.admin?
       can :dashboard
-      can [:read,:create,:update,:destroy], Fee
+      can [:read,:create,:destroy], Fee
+      can [:read,:create,:destroy], StripeFee
     end
 
     # need these for rails_admin
@@ -41,8 +42,8 @@ class Ability
       person.admin?
     end
 
-    can :read, PlanType
-    can [:create,:update,:destroy], PlanType do |pt|
+    can :read, FeePlan
+    can [:create,:update,:destroy], FeePlan do |pt|
       person.admin?
     end
 

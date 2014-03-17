@@ -23,7 +23,8 @@ class Person < ActiveRecord::Base
   attr_accessible :password, :password_confirmation, :as => :admin
   attr_accessible :email, :password, :password_confirmation, :name
   attr_accessible :business_name, :legal_business_name, :business_type_id
-  attr_accessible :title, :activity_status_id, :plan_type_id, :support_contact_id
+  attr_accessible :title, :activity_status_id, :support_contact_id
+  attr_accessible :fee_plan_id
   attr_accessible :description, :connection_notifications
   attr_accessible :message_notifications
   attr_accessible :category_ids, :address_ids, :neighborhood_ids
@@ -140,7 +141,7 @@ class Person < ActiveRecord::Base
   belongs_to :support_contact, :class_name => "Person", :foreign_key => "support_contact_id"
   belongs_to :business_type
   belongs_to :activity_status
-  belongs_to :plan_type
+  belongs_to :fee_plan
 
   validates :name, :presence => true, :length => { :maximum => MAX_NAME }
   validates :description, :length => { :maximum => MAX_DESCRIPTION }

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140112071748) do
+ActiveRecord::Schema.define(:version => 20140312192533) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(:version => 20140112071748) do
     t.decimal  "earned",          :precision => 8, :scale => 2, :default => 0.0
     t.decimal  "reserve_percent", :precision => 8, :scale => 7, :default => 0.0
     t.boolean  "reserve",                                       :default => false
+    t.decimal  "paid_fees",       :precision => 8, :scale => 2, :default => 0.0
   end
 
   create_table "activities", :force => true do |t|
@@ -163,6 +164,16 @@ ActiveRecord::Schema.define(:version => 20140112071748) do
   add_index "categories_reqs", ["category_id"], :name => "index_categories_reqs_on_category_id"
   add_index "categories_reqs", ["req_id", "category_id"], :name => "index_categories_reqs_on_req_id_and_category_id"
 
+  create_table "charges", :force => true do |t|
+    t.string   "stripe_id"
+    t.string   "description"
+    t.float    "amount"
+    t.string   "status"
+    t.integer  "person_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
   create_table "client_applications", :force => true do |t|
     t.string   "name"
     t.string   "url"
@@ -253,6 +264,13 @@ ActiveRecord::Schema.define(:version => 20140112071748) do
     t.string   "notes"
   end
 
+  create_table "fee_plans", :force => true do |t|
+    t.string   "name",        :limit => 100, :null => false
+    t.string   "description"
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
+  end
+
   create_table "feed_posts", :force => true do |t|
     t.string   "feedid"
     t.string   "title"
@@ -272,6 +290,19 @@ ActiveRecord::Schema.define(:version => 20140112071748) do
   end
 
   add_index "feeds", ["person_id", "activity_id"], :name => "index_feeds_on_person_id_and_activity_id"
+
+  create_table "fees", :force => true do |t|
+    t.integer  "fee_plan_id"
+    t.string   "type"
+    t.integer  "recipient_id"
+    t.decimal  "percent",      :precision => 8, :scale => 7, :default => 0.0
+    t.decimal  "amount",       :precision => 8, :scale => 2, :default => 0.0
+    t.string   "interval"
+    t.datetime "created_at",                                                  :null => false
+    t.datetime "updated_at",                                                  :null => false
+  end
+
+  add_index "fees", ["fee_plan_id"], :name => "index_fees_on_fee_plan_id"
 
   create_table "forums", :force => true do |t|
     t.string   "name"
@@ -465,12 +496,14 @@ ActiveRecord::Schema.define(:version => 20140112071748) do
     t.integer  "business_type_id"
     t.string   "title"
     t.integer  "activity_status_id"
-    t.integer  "plan_type_id"
+    t.integer  "fee_plan_id"
     t.integer  "support_contact_id"
     t.boolean  "mailchimp_subscribed",     :default => false
     t.string   "time_zone"
     t.string   "date_style"
     t.integer  "posts_per_page",           :default => 25
+    t.string   "stripe_id"
+    t.boolean  "requires_credit_card",     :default => true
   end
 
   add_index "people", ["admin"], :name => "index_people_on_admin"
@@ -497,13 +530,6 @@ ActiveRecord::Schema.define(:version => 20140112071748) do
   end
 
   add_index "photos", ["parent_id"], :name => "index_photos_on_parent_id"
-
-  create_table "plan_types", :force => true do |t|
-    t.string   "name",        :limit => 100, :null => false
-    t.string   "description"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
-  end
 
   create_table "posts", :force => true do |t|
     t.integer  "blog_id"
@@ -606,6 +632,19 @@ ActiveRecord::Schema.define(:version => 20140112071748) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  create_table "stripe_fees", :force => true do |t|
+    t.integer  "fee_plan_id"
+    t.string   "type"
+    t.decimal  "percent",     :precision => 8, :scale => 7, :default => 0.0
+    t.decimal  "amount",      :precision => 8, :scale => 2, :default => 0.0
+    t.string   "interval"
+    t.string   "plan"
+    t.datetime "created_at",                                                 :null => false
+    t.datetime "updated_at",                                                 :null => false
+  end
+
+  add_index "stripe_fees", ["fee_plan_id"], :name => "index_stripe_fees_on_fee_plan_id"
 
   create_table "time_zones", :force => true do |t|
     t.string   "time_zone"
