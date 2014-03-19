@@ -470,6 +470,10 @@ end
       field :description
       sort_by :name
     end
+    edit do
+      field :name
+      field :description
+    end
   end
 
   config.model RecurringFee do
@@ -479,14 +483,20 @@ end
         ['month','year']
       end
     end
+    field :percent
     field :recipient
   end
 
   config.model RecurringStripeFee do
-    field :plan, :enum do
+    field :amount
+    field :interval, :enum do
       enum do
-        Stripe::Plan.all.map(&:id)
-      end
+        ['month','year']
+      end      
+    end
+    field :percent
+    list do
+      field :plan
     end
   end
 
@@ -554,7 +564,7 @@ end
       field :legal_business_name
       field :business_type
       field :activity_status
-      field :plan_type
+      field :fee_plan
       field :support_contact
     end
 
@@ -577,7 +587,7 @@ end
       field :legal_business_name
       field :business_type
       field :activity_status
-      field :plan_type
+      field :fee_plan
       field :support_contact
       field :description, :text do
         #ckeditor true
