@@ -92,7 +92,11 @@ class Person < ActiveRecord::Base
     def by_newest
       order("created_at DESC")
     end
-
+    
+    def with_stripe_plans
+      where('people.stripe_id IS NOT NULL AND people.fee_plan_id IS NOT NULL')
+    end
+    
   end
 
   extend Scopes

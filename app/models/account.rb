@@ -183,53 +183,43 @@ class Account < ActiveRecord::Base
       # # reserve-account deposit reserve_cash_fees_sum
     # end
   # end
-#   
-  # # Cash fees are aggregated and submitted to credit card processing in batches. Currently, monthly to Stripe. 
-  # def self.pay_transaction_cash_fees
-    # # Get string for by_month scope.
-    # month_string = get_by_month_string(Date.today.month, Date.today.year)
-    # admin_account = Account.includes(:person).where('lower(people.name) = ?', "admin").first
-    # reserve_account = Account.includes(:person).where('lower(people.name) = ?', "reserve").first
-    # # Go through all accounts and withdraw cash fees.
-    # Account.all.each do |account|
-      # admin_fees_sum = 0
-      # reserve_fees_sum = 0
-      # # user's exchanges
-      # user_exchanges = Exchange.where(:customer_id => account.person_id).by_month(month_string)
-      # # Array of amounts of transactions
-      # amounts_array = user_exchanges.map { |transaction| transaction.amount }
-      # # user's transaction fees paid in cash
-      # unless account.person.plan_type.nil? or account.person.plan_type.fees.blank? 
-        # account.person.plan_type.fees.where("lower(event) = ? and lower(fee_type) LIKE ?", "transaction", "%cash%").each do |t_fee|
-          # # Percentage cash fees
-          # if t_fee.fee_type.downcase.include? "percentage"
-            # amounts_array.each do |transaction_amount|
-              # fee = t_fee.amount.to_percents * transaction_amount
-              # case t_fee.account.downcase
-              # when "admin" then admin_fees_sum += fee
-              # when "reserve" then reserve_fees_sum += fee
-              # end
-            # end
-          # # Per trade cash fees
-          # elsif t_fee.fee_type.downcase.eql? "cash"
-            # fee = t_fee.amount * amounts_array.count
-            # case t_fee.account.downcase
-            # when "admin" then admin_fees_sum += fee
-            # when "reserve" then reserve_fees_sum += fee
-            # end
-          # else
-            # raise "Wrong transaction fee_type for fee id: #{t_fee.id}. Doesn't include 'percentage' and is not eql to 'cash'."
-          # end
-        # end
-      # end
-      # # TODO it's just mockup for Stripe.
-      # # Withdraw summed fees from customer's account and deposit them into admin/reserve accounts.
-      # account.withdraw(admin_fees_sum + reserve_fees_sum)
-      # admin_account.deposit(admin_fees_sum)
-      # reserve_account.deposit(reserve_fees_sum)
-    # end
-#     
-  # end
+
+  # Cash fees are aggregated and submitted to credit card processing in batches. 
+  # Currently, weekly to Stripe. 
+  def self.pay_transaction_cash_fees
+    week_interval = Date.today.beginning_of_week.strftime("%d %B, %Y") + ' - ' +
+                    Date.today.end_of_week.strftime("%d %B, %Y")
+    desc = "Transaction fees sum for week: #{week_interval}"            
+    Person.with_stripe_plans.each do |person|
+      customer_card = Stripe::Customer.retrieve(person.stripe_id).cards.first.id 
+      # Sum all fees-per-transaction amounts
+      fees_sum = person.fee_plan.fixed_transaction_stripe_fees.sum(:amount)
+      # Take number of transactions
+      transactions_count = person.transactions.where(:customer_id => person.id).count
+      unless fees_sum.zero? || transactions_count.zero?
+        # For each transaction take a fee:
+        Stripe::Charge.create(
+          :amount => (fees_sum * transactions_count).to_cents,
+          :currency => "usd",
+          :card => customer_card,
+          :description => desc
+        )
+      end
+      # Sum all percentage-fees-per-transaction percentages
+      fees_perc_sum = (person.fee_plan.percent_transaction_stripe_fees.sum(:percent)).to_percents
+      unless fees_perc_sum.zero? 
+        # For each transaction take a fee:
+        person.transactions.where(:customer_id => person.id).each do |transaction|
+          Stripe::Charge.create(
+            :amount => (fees_perc_sum * transaction.amount).to_cents,
+            :currency => "usd",
+            :card => customer_card,
+            :description => desc
+          )
+        end
+      end
+    end
+  end
   
   # Post as integers or strings. Year in 4 digit format. month can be month's name.
   def fees_invoice_for_month(month, year)
