@@ -6,6 +6,6 @@ class RenamePlanTypesToFeePlans < ActiveRecord::Migration
 
   def down
     rename_column :people, :fee_plan_id, :plan_type_id
-    renaem_table :fee_plans, :plan_types
+    rename_table :fee_plans, :plan_types
   end
 end
