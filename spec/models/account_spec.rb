@@ -16,7 +16,7 @@ describe Account do
    describe "scheduled task" do
      
      # notes: Quentin working for Kelly. Tests Cash Transactions fess.
-     it "should go through all accounts and aggregate transaction cash fees" do
+     xit "should go through all accounts and aggregate transaction cash fees" do
        Account.pay_transaction_cash_fees
        Account.find_by_name("kelly").paid.to_f.should == 14.0
        Account.find_by_name("mixed").paid.to_f.should == 14.0
@@ -25,7 +25,7 @@ describe Account do
      end
      
      # notes: Quentin working for Aaron.
-     it "should go through all accounts and aggregate monthly fees" do
+     xit "should go through all accounts and aggregate monthly fees" do
        Account.pay_monthly_fees
        Account.find_by_name("aaron").paid.to_f.should == 14.0
        Account.find_by_name("mixed").paid.to_f.should == 14.0
@@ -33,7 +33,7 @@ describe Account do
        Account.find_by_name("reserve").earned.to_f.should == 20.0
      end
      # notes: Quentin working for Buzzard.
-     it "should go through all accounts and aggregate yearly fees" do
+     xit "should go through all accounts and aggregate yearly fees" do
        Account.pay_yearly_fees
        Account.find_by_name("buzzard").paid.to_f.should == 14.0
        Account.find_by_name("admin").earned.to_f.should == 4.0
@@ -44,7 +44,7 @@ describe Account do
    
    describe "fees invoice for month" do
      
-     it "should return fees sums in trade credits and cash" do
+     xit "should return fees sums in trade credits and cash" do
        # notes: Quentin working for Mixed.
        fees = Account.find_by_name("mixed").fees_invoice_for_month(Date.today.month, Date.today.year)
        # 10 per transaction + 10 monthly + 40% per transaction + 40% from sum of all transactions in the month

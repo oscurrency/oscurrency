@@ -43,7 +43,7 @@ class Ability
     end
 
     can :read, FeePlan
-    can [:create,:update,:destroy], FeePlan do |pt|
+    can [:create,:update,:destroy], FeePlan do |fp|
       person.admin?
     end
 

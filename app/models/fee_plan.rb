@@ -36,7 +36,7 @@ class FeePlan < ActiveRecord::Base
 
   def apply_transaction_fees(txn)
     percent_transaction_fees.each do |fee|
-        e=txn.group.exchanges.build(amount: txn.amount*(fee.percent/100))
+        e=txn.group.exchanges.build(amount: txn.amount*fee.to_percents)
         e.metadata = txn.metadata
         e.customer = txn.worker
         e.worker = fee.recipient
