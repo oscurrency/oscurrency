@@ -4,6 +4,8 @@ class FeePlan < ActiveRecord::Base
   validates_length_of :description,  :maximum => 255
 
   has_many :people, :dependent => :restrict
+  has_many :fees
+  has_many :stripe_fees
   has_many :recurring_fees, :dependent => :destroy, :inverse_of => :fee_plan
   has_many :recurring_stripe_fees, :dependent => :destroy, :inverse_of => :fee_plan
   has_many :fixed_transaction_fees, :dependent => :destroy, :inverse_of => :fee_plan
@@ -53,11 +55,13 @@ class FeePlan < ActiveRecord::Base
   end
   
   def contains_stripe_fees?
-    self.fixed_transaction_stripe_fees.any?   ||
-    self.percent_transaction_stripe_fees.any? ||
-    self.recurring_stripe_fees.any?
+    self.stripe_fees.any?
   end
   
+  def all_fees
+    return @all if @all
+    @all ||= self.fees + self.stripe_fees
+  end
   
   def subscribe_payers_to_stripe(recurring_stripe_fee_id)
     self.people.subscribed_to_stripe.each do |person|

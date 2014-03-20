@@ -2,22 +2,22 @@
 <% unless fee_plan.blank? %>
 	<p> Name: <%= fee_plan.name %> </p>
 	<p> Description: <%= fee_plan.description %> </p>
-	<% unless fee_plan.fees.blank? %>
+	<% unless fee_plan.all_fees.blank? %>
 		<b> Fees in this plan: </b>
 		<table class="table table-striped table-bordered table-hover">
 			<thead>
-				<th> Event </th>
 				<th> Type </th>
+				<th> Percent </th>
 				<th> Amount </th>
-				<th> Account </th>
+				<th> Interval </th>
 			</thead>
 			<tbody>
-				<% fee_plan.fees.each do |fee| %>
+				<% fee_plan.all_fees.each do |fee| %>
 					<tr>
-						<td> <%= fee.event %> </td>
-						<td> <%= fee.fee_type %> </td>
+						<td> <%= fee.type.underscore.humanize %> </td>
+						<td> <%= fee.percent %> </td>
 						<td> <%= fee.amount %> </td>
-						<td> <%= fee.account %> </td>
+						<td> <%= fee.interval %> </td>
 					</tr>
 				<% end %>
 			</tbody>

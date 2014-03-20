@@ -490,11 +490,7 @@ class Person < ActiveRecord::Base
   end
   
   def have_monetary_fee_plan?
-    unless self.plan_type.blank? or self.plan_type.fees.blank?
-      self.plan_type.fees.map{ |fee| fee.fee_type if fee.fee_type.downcase.include? "cash" }.any?
-    else 
-      return false
-    end
+    self.fee_plan.contains_stripe_fees?
   end
   
   def credit_card_required?
