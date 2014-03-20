@@ -62,7 +62,7 @@ class StripeOps
   
   def self.refund_charge(charge_id, amount)
     begin
-      Stripe::Charge.retrieve(charge_id).refund(:amount => amount.to_cents)
+      stripe_response = Stripe::Charge.retrieve(charge_id).refund(:amount => amount.to_cents)
     rescue => e  
       stripe_response = handle_error(e)
     else
@@ -71,6 +71,28 @@ class StripeOps
       status = 'refunded' if charge.amount == amount 
       Charge.find_by_stripe_id(charge_id).update_attribute(:status, status)
       "Charge #{status}."
+    end
+  end
+  
+  def self.create_stripe_plan(amount, interval, name)
+    begin
+      stripe_response = Stripe::Plan.create(
+        :amount => amount.to_cents,
+        :interval => interval,
+        :currency => 'usd',
+        :id => name,
+        :name => name
+      )
+    rescue => e
+      stripe_response = handle_error(e)
+    end
+  end
+  
+  def self.subscribe_to_plan(customer_id, plan_name)
+    begin
+      stripe_ret = Stripe::Customer.retrieve(customer_id).subscriptions.create(plan_name)
+    rescue => e
+      stripe_response = handle_error(e)
     end
   end
   

@@ -58,4 +58,11 @@ class FeePlan < ActiveRecord::Base
     self.recurring_stripe_fees.any?
   end
   
+  
+  def subscribe_payers_to_stripe(recurring_stripe_fee_id)
+    self.people.subscribed_to_stripe.each do |person|
+      StripeOps.subscribe_to_plan(person.stripe_id, recurring_stripe_fee_id)
+    end
+  end
+  
 end

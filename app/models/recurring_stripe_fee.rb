@@ -3,19 +3,17 @@ class RecurringStripeFee < StripeFee
   belongs_to :fee_plan, :inverse_of => :recurring_stripe_fees
   # Consistency
   before_create :retrieve_interval_and_amount
+  # Create recurring plan on Stripe.
   after_create :create_stripe_plan
+  # Subscribe everyone to pay the new fee.
+  after_create :subscribe_people_with_fee_plan
+  # Destroy the plan on Stripe, so customers are unsubscribed.
   after_destroy :destroy_stripe_plan
   
   
   def create_stripe_plan
     plan_name = create_plan_id
-    Stripe::Plan.create(
-      :amount => self.amount.to_cents,
-      :interval => self.interval,
-      :currency => 'usd',
-      :id => plan_name,
-      :name => plan_name
-    )
+    StripeOps.create_stripe_plan(self.amount, self.interval, plan_name)
     self.update_attribute(:plan, plan_name)
   end
   
@@ -24,9 +22,11 @@ class RecurringStripeFee < StripeFee
   end
   
   def retrieve_interval_and_amount
-    stripe_plan = Stripe::Plan.retrieve(self.plan)
-    self.interval = stripe_plan.interval
-    self.amount = stripe_plan.amount.to_dollars
+    unless self.plan.blank?
+      stripe_plan = Stripe::Plan.retrieve(self.plan)
+      self.interval = stripe_plan.interval
+      self.amount = stripe_plan.amount.to_dollars
+    end
   end
   
   private
@@ -37,5 +37,9 @@ class RecurringStripeFee < StripeFee
     else
       "#{self.interval.capitalize}ly: #{self.amount}$"
     end
+  end
+  
+  def subscribe_people_with_fee_plan
+    self.fee_plan.subscribe_payers_to_stripe(self.plan)
   end
 end

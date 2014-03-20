@@ -9,7 +9,6 @@ class StripeController < ApplicationController
         process_charge(object["charge"], object["status"], type, object["amount"])
       # In development and test, well, whatever.
       else
-        binding.pry
         process_charge(object["charge"], object["status"], type, object["amount"])
       end
     end

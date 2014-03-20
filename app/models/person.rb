@@ -99,6 +99,10 @@ class Person < ActiveRecord::Base
       where('people.stripe_id IS NOT NULL AND people.fee_plan_id IS NOT NULL')
     end
     
+    def subscribed_to_stripe
+      where('people.stripe_id IS NOT NULL')
+    end
+    
   end
 
   extend Scopes
