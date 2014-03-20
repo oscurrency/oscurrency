@@ -15,6 +15,10 @@ describe Account do
     
    describe "scheduled task" do
      
+<<<<<<< HEAD
+=======
+     # TODO write stripe test. It was there just for mockup.
+>>>>>>> 074799a2a4550f805855c4c299c1afac7edd7b34
      # notes: Quentin working for Kelly. Tests Cash Transactions fess.
      xit "should go through all accounts and aggregate transaction cash fees" do
        Account.pay_transaction_cash_fees
@@ -23,7 +27,11 @@ describe Account do
        Account.find_by_name("admin").earned.to_f.should == 8.0
        Account.find_by_name("reserve").earned.to_f.should == 20.0
      end
+<<<<<<< HEAD
      
+=======
+     # TODO write stripe test. It was there just for mockup.
+>>>>>>> 074799a2a4550f805855c4c299c1afac7edd7b34
      # notes: Quentin working for Aaron.
      xit "should go through all accounts and aggregate monthly fees" do
        Account.pay_monthly_fees
@@ -32,6 +40,10 @@ describe Account do
        Account.find_by_name("admin").earned.to_f.should == 8.0
        Account.find_by_name("reserve").earned.to_f.should == 20.0
      end
+<<<<<<< HEAD
+=======
+     # TODO write stripe test. It was there just for mockup.
+>>>>>>> 074799a2a4550f805855c4c299c1afac7edd7b34
      # notes: Quentin working for Buzzard.
      xit "should go through all accounts and aggregate yearly fees" do
        Account.pay_yearly_fees
@@ -44,7 +56,11 @@ describe Account do
    
    describe "fees invoice for month" do
      
+<<<<<<< HEAD
      xit "should return fees sums in trade credits and cash" do
+=======
+     it "should return fees sums in trade credits and cash" do
+>>>>>>> 074799a2a4550f805855c4c299c1afac7edd7b34
        # notes: Quentin working for Mixed.
        fees = Account.find_by_name("mixed").fees_invoice_for_month(Date.today.month, Date.today.year)
        # 10 per transaction + 10 monthly + 40% per transaction + 40% from sum of all transactions in the month

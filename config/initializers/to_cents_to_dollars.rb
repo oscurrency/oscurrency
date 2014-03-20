@@ -1,6 +1,6 @@
-class Numeric  
+class Numeric
   def to_cents
-    (self * 100).round
+    (self.round(2) * 100).to_i
   end
   def to_dollars
     self.to_f / 100

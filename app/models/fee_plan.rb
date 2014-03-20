@@ -51,4 +51,11 @@ class FeePlan < ActiveRecord::Base
         e.save!
     end
   end
+  
+  def contains_stripe_fees?
+    self.fixed_transaction_stripe_fees.any?   ||
+    self.percent_transaction_stripe_fees.any? ||
+    self.recurring_stripe_fees.any?
+  end
+  
 end

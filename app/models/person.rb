@@ -18,6 +18,8 @@ class Person < ActiveRecord::Base
 
   #  attr_accessor :password, :verify_password, :new_password, :password_confirmation
   attr_accessor :sorted_photos, :accept_agreement
+  attr_accessor :credit_card, :expire, :cvc #stripe data - virtual, won't be stored in db.
+  attr_accessible :stripe_id
   attr_accessible *attribute_names, :as => :admin
   attr_accessible :address_ids, :as => :admin
   attr_accessible :password, :password_confirmation, :as => :admin
@@ -139,6 +141,7 @@ class Person < ActiveRecord::Base
   has_many :offers
   has_many :reqs
   has_many :bids
+  has_many :charges
   has_many :invitations, :order => 'created_at DESC'
   belongs_to :default_group, :class_name => "Group", :foreign_key => "default_group_id"
   belongs_to :sponsor, :class_name => "Person", :foreign_key => "sponsor_id"
@@ -153,6 +156,7 @@ class Person < ActiveRecord::Base
   validates :business_name, :length => { :maximum => 100 }, :presence => true, :if => lambda { |p| p.org }
   validates :legal_business_name, :length => { :maximum => 100 }
   validates :business_type, :presence => true, :if => lambda { |p| p.org }
+
   # validates :fee_plan_id, :presence => true
   #  validates_presence_of     :password,              :if => :password_required?
   #  validates_presence_of     :password_confirmation, :if => :password_required?
@@ -164,7 +168,7 @@ class Person < ActiveRecord::Base
 
   # XXX just doing jquery validation
   #validates_acceptance_of :accept_agreement, :accept => true, :message => "Please accept the agreement to complete registration", :on => :create
-
+  validate :credit_card_is_required_if_monetary_fee_plan_was_choosed
   before_create :check_config_for_deactivation
   before_create :set_language_and_default_group
   after_create :create_address
@@ -177,6 +181,22 @@ class Person < ActiveRecord::Base
   after_update :log_activity_description_changed
   before_destroy :destroy_activities, :destroy_feeds
 
+  # If monetary fee plan was choosed return false, so message "Credit card required" will be added to errors
+  # and stripe will proceed with checking card. If stripe will succeed, it will try to save record,
+  # so validation will be checked once again and then should pass.
+  # If trade credits or free fee plan was choosed return true, so no credit card is needed.
+  def credit_card_is_required_if_monetary_fee_plan_was_choosed
+     if self.have_monetary_fee_plan?
+       if self.stripe_id.nil?
+         errors.add(:credit_card, "Credit card required!")
+         return false
+       else
+         return true
+       end
+     else
+       return true
+     end
+  end
 
   # Return the first admin created.
   # We suggest using this admin as the primary administrative contact.
@@ -464,6 +484,21 @@ class Person < ActiveRecord::Base
     reset_perishable_token!
     after_transaction { PersonMailerQueue.email_verification(self) }
   end
+  
+  def have_monetary_fee_plan?
+    unless self.plan_type.blank? or self.plan_type.fees.blank?
+      self.plan_type.fees.map{ |fee| fee.fee_type if fee.fee_type.downcase.include? "cash" }.any?
+    else 
+      return false
+    end
+  end
+  
+  def credit_card_required?
+    self.have_monetary_fee_plan? and # only for persons with monetary fee plans
+    self.stripe_id.nil? and # Customer not created yet
+    self.requires_credit_card # Admin can override it to false so person won't need to enter credit card data
+  end
+  
 
   protected
 
