@@ -22,7 +22,8 @@ module TransactsHelper
   
   def paid_fees(transact)
     fees = transact.paid_fees
-    "Charged fees: Trade Credits: #{fees[:"trade-credits"]} Cash: #{fees[:cash]}"
+    unless fees.blank?
+      "Charged fees: Trade Credits: #{fees[:"trade-credits"]} Cash: #{fees[:cash]}$"
+    end
   end
-
 end
