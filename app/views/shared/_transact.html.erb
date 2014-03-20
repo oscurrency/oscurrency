@@ -12,11 +12,7 @@
   	<%= counterparty_action(transact) %><%= counterparty_link(cp, @group, defined? ajaxified) %>) <%= t('shared.transact.for')%> <%= link_to h(transact.metadata.name), transact.metadata %>
   </p>
   <p>
-<<<<<<< HEAD
-  	
-=======
-  	<%= paid_fees(transact) %>
->>>>>>> 074799a2a4550f805855c4c299c1afac7edd7b34
+	<%= paid_fees(transact) %>
   </p>
   <p class="meta published">
     <%= transact.created_at.strftime(current_datetime_format) %>

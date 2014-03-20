@@ -59,7 +59,6 @@ class FeePlan < ActiveRecord::Base
   end
   
   def all_fees
-    return @all if @all
     @all ||= self.fees + self.stripe_fees
   end
   

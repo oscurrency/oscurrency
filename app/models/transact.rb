@@ -52,33 +52,21 @@ class Transact < ExchangeAndFee
     results.as_json
   end
   
-  # def paid_fees
-    # tc_transaction_fee = 0
-    # cash_transaction_fee = 0
-    # customer = Person.find(customer_id)
-    # unless customer.plan_type.blank?
-      # customer.plan_type.fees.each do |fee|
-        # if fee.event.downcase.eql? "transaction"
-          # if fee.fee_type.downcase.include? "percentage"
-            # fee_paid = fee.amount.to_percents * amount 
-            # if fee.fee_type.downcase.include? "cash"
-              # cash_transaction_fee += fee_paid
-            # elsif fee.fee_type.downcase.include? "trade credits"
-              # tc_transaction_fee += fee_paid
-            # else
-              # raise "Wrong fee_type for fee id #{fee.id} - includes percentage, but does not include neither cash nor trade credits."
-            # end
-          # else
-            # case fee.fee_type.downcase
-            # when "cash" then cash_transaction_fee += fee.amount
-            # when "trade credits" then tc_transaction_fee += fee.amount
-            # end
-          # end
-        # end
-      # end
-      # return {:"trade-credits" => tc_transaction_fee ,:cash => cash_transaction_fee}
-   # end
-  # end
+  def paid_fees 
+    tc_transaction_fee = 0
+    cash_transaction_fee = 0
+    customers_plan = Person.find(customer_id).fee_plan
+    
+    if customers_plan
+      cash_fees_sum = customers_plan.fixed_transaction_stripe_fees.sum(:amount)
+      cash_fees_perc_sum = customers_plan.percent_transaction_stripe_fees.sum(:percent).to_percents
+      cash_transaction_fee = cash_fees_sum + (cash_fees_perc_sum * amount)
+      tc_fees_sum = customers_plan.fixed_transaction_fees.sum(:amount)
+      tc_fees_perc_sum = customers_plan.percent_transaction_fees.sum(:percent).to_percents
+      tc_transaction_fee = tc_fees_sum + (tc_fees_perc_sum * amount)
+    end
+    {:"trade-credits" => tc_transaction_fee, :cash => cash_transaction_fee }
+  end
 
   protected
 
