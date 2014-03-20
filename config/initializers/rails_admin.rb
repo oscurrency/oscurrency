@@ -644,7 +644,7 @@ end
       field :legal_business_name
       field :business_type
       field :activity_status
-      field :plan_type
+      field :fee_plan
       field :support_contact
       field :description, :text do
         #ckeditor true

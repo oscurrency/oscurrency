@@ -41,7 +41,7 @@
 	    </div>
 	  </div>
 	  <div class="control-group">
-	  	<%= f.collection_select(:plan_type_id, PlanType.order(&:name), :id, :name, {:prompt => t( 'people.new.select_plan') } )%>
+	  	<%= f.collection_select(:fee_plan_id, FeePlan.order(&:name), :id, :name, {:prompt => t( 'people.new.select_plan') } )%>
 	  </div>
 </div>
 <div class="span5">
