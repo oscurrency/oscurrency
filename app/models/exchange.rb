@@ -157,7 +157,7 @@ class Exchange < ActiveRecord::Base
       self.metadata.save
     end
   end
-
+  # XXX NEEDS REDO XXX
   def calculate_account_balances
     begin
       Account.transaction do
@@ -168,37 +168,10 @@ class Exchange < ActiveRecord::Base
           customer_account = customer.account(group)
           worker.account(group).deposit(amount)
           customer_account.withdraw(amount)
-          # Pay trade credits immediately.
-          admin_fees_sum = 0
-          admin_account = Account.includes(:person).where('lower(people.name) = ?', "admin")
-          reserve_account = Account.includes(:person).where('lower(people.name) = ?', "reserve")
-          reserve_fees_sum = 0
-          customer.plan_type.fees.where("lower(event) = ? and lower(fee_type) LIKE ?", "transaction", "%trade credits%").each do |fee|
-            # Percentage trade credits fees.
-            if fee.fee_type.downcase.include? "percentage"
-              fee = fee.amount.to_percents * amount
-              case fee.account.downcase
-              when "admin" then admin_fees_sum += fee
-              when "reserve" then reserve_fees_sum += fee
-              end
-            # Per trade trade credits fees.
-            elsif fee.fee_type.downcase.eql? "trade credits"
-                fee += fee.amount
-                case fee.account.downcase
-                when "admin" then admin_fees_sum += fee
-                when "reserve" then reserve_fees_sum += fee
-                end
-            # Error?
-            else
-              raise "Wrong trade credits fee_type for fee id: #{fee.id}. Doesn't include 'percentage' and is not eql to 'trade credits'."
-            end
-          end
-          customer_account.withdraw(admin_fees_sum + reserve_fees_sum)
-          admin_account.deposit(admin_fees_sum)
-          reserve_account.deposit(reserve_fees_sum)
         end
       end
-    rescue
+    rescue => e
+      raise e.to_s
       false
     end
   end
@@ -218,6 +191,8 @@ class Exchange < ActiveRecord::Base
           end
         end
       end
+    rescue => e
+      raise e.to_s
     end
     send_suspend_payment_notification_to_worker
   end

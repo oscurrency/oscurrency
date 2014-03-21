@@ -13,7 +13,6 @@ quentin:
   connection_notifications: true
   message_notifications: true
   email_verified: true
-  plan_type_id: 1
 
 aaron:
   id: 2
@@ -29,7 +28,6 @@ aaron:
   connection_notifications: true
   message_notifications: true
   email_verified: true
-  plan_type_id: 2
 
 buzzard:
   id: 3
@@ -45,7 +43,6 @@ buzzard:
   connection_notifications: true
   message_notifications: true
   email_verified: true
-  plan_type_id: 3
 
 kelly:
   id: 4
@@ -60,7 +57,6 @@ kelly:
   deactivated: false
   connection_notifications: true
   message_notifications: true
-  plan_type_id: 4
   
 admin:
   id: 5
@@ -107,7 +103,6 @@ mixed_test:
   deactivated: false
   connection_notifications: false
   message_notifications: false
-  plan_type_id: 7
 
 deactivated:
   id: 8
