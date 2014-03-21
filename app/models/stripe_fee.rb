@@ -3,29 +3,28 @@ class StripeFee < ActiveRecord::Base
   attr_readonly :fee_plan
   validates :fee_plan, presence: true
   
+  
+  def self.transaction_stripe_fees_sum_for(person, interval)
+    today = Date.today
+    fees_sum = person.fee_plan.fixed_transaction_stripe_fees.sum(:amount)
+    perc_fees_sum = person.fee_plan.percent_transaction_stripe_fees.sum(:percent).to_percents
+    time_start = today.method("beginning_of_#{interval}").call
+    time_end = today.method("end_of_#{interval}").call
+    transactions = person.transactions.where(:customer_id => person.id).by_time(time_start, time_end)
+    cash_fees_sum = fees_sum * transactions.count
+    transactions.each do |transaction|
+      cash_fees_sum += perc_fees_sum * transaction.amount
+    end
+    cash_fees_sum
+  end
+  
   # Cash fees are aggregated and submitted to credit card processing in batches. 
   # Currently, weekly to Stripe. 
-  def self.apply_stripe_transaction_fees
-    week_interval = Date.today.beginning_of_week.strftime("%d %B, %Y") + ' - ' +
-                    Date.today.end_of_week.strftime("%d %B, %Y")
-    desc = "Transaction fees sum for week: #{week_interval}"            
+  def self.apply_stripe_transaction_fees(interval)
+    desc = "#{interval}ly transaction fees sum"            
     Person.with_stripe_plans.each do |person|
-      # Sum all fees-per-transaction amounts
-      fees_sum = person.fee_plan.fixed_transaction_stripe_fees.sum(:amount)
-      # Take number of transactions
-      transactions_count = person.transactions.where(:customer_id => person.id).count
-      unless fees_sum.zero? || transactions_count.zero?
-        # For each transaction take a fee:
-        StripeOps.charge((fees_sum * transactions_count), person.stripe_id, desc)
-      end
-      # Sum all percentage-fees-per-transaction percentages
-      fees_perc_sum = (person.fee_plan.percent_transaction_stripe_fees.sum(:percent)).to_percents
-      unless fees_perc_sum.zero? 
-        # For each transaction take a fee:
-        person.transactions.where(:customer_id => person.id).each do |transaction|
-          StripeOps.charge((fees_perc_sum * transaction.amount), person.stripe_id, desc)
-        end
-      end
+      amount_to_charge = StripeFee.transaction_stripe_fees_sum_for(person, interval)
+      StripeOps.charge(amount_to_charge, person.stripe_id, desc) unless amount_to_charge.zero?
     end
   end
 

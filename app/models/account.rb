@@ -86,52 +86,18 @@ class Account < ActiveRecord::Base
     end
   end
   
-  # Post as integers or strings. Year in 4 digit format. month can be month's name.
-  def fees_invoice_for_month(month, year)
-    month_string = Account.get_by_month_string(month, year)
-    trade_credit_fees = 0
-    cash_fees = 0    
-    # User exchanges for given month.
-    user_exchanges = Exchange.where(:customer_id => person_id).by_month(month_string)
-    # Array of amounts of transactions.
-    amounts_array = user_exchanges.map{ |transaction| transaction.amount }
-    # Sum of transictions for given month.
-    monthly_amount = user_exchanges.sum(:amount)
-
-    person.plan_type.fees.each do |fee|
-      if fee.event.downcase.eql? "monthly"
-        case fee.fee_type.downcase
-          when "percentage(trade credits)" then trade_credit_fees += fee.amount.to_percents * monthly_amount
-          when "percentage(cash)" then cash_fees += fee.amount.to_percents * monthly_amount
-          when "trade credits" then trade_credit_fees += monthly_amount
-          when "cash" then cash_fees += monthly_amount
-        end  
-      elsif fee.event.downcase.eql? "transaction"
-        case fee.fee_type.downcase
-          # Calculate percentage for each transaction and sum it up.
-          when "percentage(trade credits)" then 
-            amounts_array.each do |amount|
-              trade_credit_fees += fee.amount.to_percents * amount
-            end
-          
-          when "percentage(cash)" then
-            amounts_array.each do |amount|
-              cash_fees += fee.amount.to_percents * amount
-            end
-            
-         # Same fee for every transaction, so just fee * transaction number   
-          when "trade credits" then trade_credit_fees += fee.amount * amounts_array.count
-          when "cash" then cash_fees += fee.amount * amounts_array.count
-        end 
-      end
-    end
+  def fees_invoice_for(interval)
+    # All transaction fees aggregated for whole month for the customer.
+    cash_transaction_fees = Charge.all_charges_for(person_id, interval)
+    tc_transaction_fees = Fee.transaction_tc_fees_sum_for(person, interval)
+    # Take month fees too.
+    recurring_tc_fees = person.fee_plan.recurring_fees.where(:interval => interval)
+    recurring_cash_fees = person.fee_plan.recurring_stripe_fees.where(:interval => interval)
     # Nice hash for user.
-    return {:"trade-credits" => trade_credit_fees, :cash => cash_fees}  
-  end
-  
-  def self.get_by_month_string(month, year)
-    month = Date::MONTHNAMES.index(month.capitalize) if month.kind_of? String and month.to_i.zero?
-    "#{year.to_i}-#{month.to_i}-01"
+    return {:transactions => {:"trade-credits" => tc_transaction_fees, 
+                              :cash => cash_transaction_fees},
+            :"#{interval}" => {:"trade-credits" => recurring_tc_fees,
+                       :cash => recurring_cash_fees} }  
   end
 
   private

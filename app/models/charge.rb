@@ -2,12 +2,18 @@ class Charge < ActiveRecord::Base
   attr_accessible :stripe_id, :description, :amount, :status, :person_id
   
   validates_inclusion_of :status, :in => ['pending', 'paid', 'refunded', 'partially refunded', 'disputed']
-  belongs_to :person
   validates_presence_of [:stripe_id, :description, :amount, :status, :person_id]
   
+  belongs_to :person
+  
+  scope :by_time, lambda {|time_start, time_end| {:conditions => ["created_at BETWEEN ? AND ?", time_start, time_end] } }
+  
   # Data from db. For Stripe see StripeOps#all_charges_for_person
-  def self.all_charges_for_person(person_id)
-    Charge.find_all_by_person_id(2)
+  def self.all_charges_for(person_id, interval)
+    today = Date.today
+    time_start = today.method("beginning_of_#{interval}").call
+    time_end = today.method("beginning_of_#{interval}").call
+    Charge.where(:person_id => person_id).by_time(time_start, time_end)
           .map{ |c| [c.amount, 
                      c.status, 
                      c.description, 
