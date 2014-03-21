@@ -41,9 +41,6 @@ class PersonSessionsController < ApplicationController
   end
   
   def credit_card
-    # If customer is redirected here from other page.
-    # If it was JS request, then flash[:notice] won't work, but the main purpose of this is to not
-    # invoke Stripe on redirect - less call to API.
     flash[:notice] = "You were redirected here because you need to enter credit card details to pay fees described in your fees plan. " + 
                      "You won't be able to take any actions until then."
     errors = Array.new

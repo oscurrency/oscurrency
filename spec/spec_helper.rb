@@ -1,4 +1,6 @@
 require 'rubygems'
+require 'stripe_mock'
+require 'stripe_mock_helper.rb'
 require 'spork'
 
 Spork.prefork do
@@ -39,7 +41,7 @@ RSpec.configure do |config|
   # Custom matchers includes
   config.include(CustomModelMatchers)
 
-  config.global_fixtures = :accounts, :client_applications, :conversations, :exchanges, :feeds, :forums, :neighborhoods, :oauth_nonces, :oauth_tokens, :offers, :people, :posts, :preferences, :topics, :fees, :plan_types, :memberships
+  config.global_fixtures = :accounts, :charges, :client_applications, :conversations, :feeds, :forums, :neighborhoods, :oauth_nonces, :oauth_tokens, :offers, :people, :posts, :preferences, :topics, :memberships
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
@@ -92,6 +94,17 @@ RSpec.configure do |config|
   end
 end
 
+end
+
+Spec::Runner.configure do |config|
+  config.before(:all) do
+      StripeMock.start 
+      # Creates test_cus_1 customer which is used in fixtures for quentin.
+      StripeOps.create_customer(4242424242424242, '06/50', 5432, 'quentin', 'quentin@example.com')
+      # Switch to true for debugging mode
+      StripeMock.toggle_debug(false)
+  end
+  config.after(:all) { StripeMock.stop }
 end
 
 Spork.each_run do

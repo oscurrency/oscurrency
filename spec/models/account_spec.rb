@@ -1,59 +1,52 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require 'spec_helper'
 
 describe Account do
-  fixtures :fees, :plan_types, :people, :accounts, :groups, :memberships, :exchanges
+  fixtures :people
   
-  describe "get month string method" do
-    
-    it "should return valid month string based on month name." do
-      Account.get_by_month_string("January", 1996).should == "1996-1-01"
-      Account.get_by_month_string("JANUARY", 1996).should == "1996-1-01"
-      Account.get_by_month_string("january", 1996).should == "1996-1-01"
-    end
-    
+  before(:each) do
+    @p = people(:quentin)
+    @p2 = people(:aaron)
+    @p3 = people(:kelly)
+    @valid_attributes = {
+      :name => "value for name",
+      :description => "value for description",
+      :mode => Group::PUBLIC,
+      :unit => "value for unit",
+      :asset => "coins",
+      :adhoc_currency => true
+    }
+    @g = Group.new(@valid_attributes)
+    @g.owner = @p
+    @g.save!
+    Membership.request(@p2,@g,false)
+    Membership.request(@p3,@g,false)
+    @pref = Preference.first
+    @pref.default_group_id = @g.id
+    @pref.save!
+    @fee_plan = FeePlan.new(name: 'test')
+    @fee_plan.save!
+    @p.fee_plan = @fee_plan
+    @p.save!
+    @e = @g.exchange_and_fees.build(amount: 10.0)
+    @e.worker = @p
+    @e.customer = @p2
+    @e.notes = 'Generic'
   end
-    
-   describe "scheduled task" do
-     
-     # TODO write stripe test. It was there just for mockup.
-     # notes: Quentin working for Kelly. Tests Cash Transactions fess.
-     xit "should go through all accounts and aggregate transaction cash fees" do
-       Account.pay_transaction_cash_fees
-       Account.find_by_name("kelly").paid.to_f.should == 14.0
-       Account.find_by_name("mixed").paid.to_f.should == 14.0
-       Account.find_by_name("admin").earned.to_f.should == 8.0
-       Account.find_by_name("reserve").earned.to_f.should == 20.0
-     end
-     # TODO write stripe test. It was there just for mockup.
-     # notes: Quentin working for Aaron.
-     xit "should go through all accounts and aggregate monthly fees" do
-       Account.pay_monthly_fees
-       Account.find_by_name("aaron").paid.to_f.should == 14.0
-       Account.find_by_name("mixed").paid.to_f.should == 14.0
-       Account.find_by_name("admin").earned.to_f.should == 8.0
-       Account.find_by_name("reserve").earned.to_f.should == 20.0
-     end
-     # TODO write stripe test. It was there just for mockup.
-     # notes: Quentin working for Buzzard.
-     xit "should go through all accounts and aggregate yearly fees" do
-       Account.pay_yearly_fees
-       Account.find_by_name("buzzard").paid.to_f.should == 14.0
-       Account.find_by_name("admin").earned.to_f.should == 4.0
-       Account.find_by_name("reserve").earned.to_f.should == 10.0
-     end
-     
-   end
-   
-   describe "fees invoice for month" do
-     
-     it "should return fees sums in trade credits and cash" do
-       # notes: Quentin working for Mixed.
-       fees = Account.find_by_name("mixed").fees_invoice_for_month(Date.today.month, Date.today.year)
-       # 10 per transaction + 10 monthly + 40% per transaction + 40% from sum of all transactions in the month
-       fees[:"trade-credits"].should == 28.0
-       fees[:cash].to_f.should == 28.0
-     end
-     
-   end
+  
+  ['month', 'year'].each do |interval|
+   it "should be able to generate #{interval}ly invoice for itself" do
+      FixedTransactionFee.new(fee_plan: @fee_plan, amount: 1, recipient: @p3).save!
+      PercentTransactionFee.new(fee_plan: @fee_plan, percent: 10, recipient: @p3).save!
+      FixedTransactionStripeFee.new(fee_plan: @fee_plan, amount: 1).save!
+      PercentTransactionStripeFee.new(fee_plan: @fee_plan, percent: 10).save!
+      RecurringFee.new(fee_plan: @fee_plan, amount: 1, recipient: @p3, interval: interval).save!
+      RecurringStripeFee.new(fee_plan: @fee_plan, amount: 1, interval: interval).save!
+      @e.save!
+      StripeFee.apply_stripe_transaction_fees(interval)
+      fees_hash = { :transactions => { :"trade-credits" => 2, :cash => 2 },
+                    :"#{interval}" => {:"trade-credits" => 1, :cash => 1 } }
+      @p.account(@g).fees_invoice_for(interval).should == fees_hash  
+    end
+  end
  
 end

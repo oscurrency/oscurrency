@@ -23,15 +23,15 @@ class StripeController < ApplicationController
   def process_charge(charge_id, charge_status, charge_type, amount)
     charge = Charge.find_by_stripe_id(charge_id)
     unless charge.blank?
-      if type.include? "created"
+      if charge_type.include? "created"
         # Someone disputed charge.
         charge.update_attribute(:status, "disputed")
-      elsif status.eql? "lost"
+      elsif charge_status.eql? "lost"
         status = "partially refunded"
-        status = "refunded" if charge.amount == amount 
+        status = "refunded" if charge.amount == amount.to_dollars 
         # Dispute is lost, cash is refunded via Stripe automatically.
         charge.update_attribute(:status, status)
-      elsif status.eql? "won"
+      elsif charge_status.eql? "won"
         # Dispute is won, cash is returned to us.
         charge.update_attribute(:status, "paid")
       end
