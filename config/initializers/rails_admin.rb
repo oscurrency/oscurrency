@@ -50,7 +50,6 @@ end
   end
 
   config.included_models = [Charge,RecurringFee,RecurringStripeFee,FixedTransactionFee,PercentTransactionFee,FixedTransactionStripeFee,PercentTransactionStripeFee,Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,FeePlan, ExchangeDeleted, TimeZone]
-
   config.default_items_per_page = 100
 
   config.model State do
