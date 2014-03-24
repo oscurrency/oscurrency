@@ -12,7 +12,7 @@ class Charge < ActiveRecord::Base
   def self.all_charges_for(person_id, interval)
     today = Date.today
     time_start = today.method("beginning_of_#{interval}").call
-    time_end = today.method("beginning_of_#{interval}").call
+    time_end = today.method("end_of_#{interval}").call
     Charge.where(:person_id => person_id).by_time(time_start, time_end)
           .map{ |c| [c.amount, 
                      c.status, 

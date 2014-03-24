@@ -13,7 +13,7 @@ quentin:
   connection_notifications: true
   message_notifications: true
   email_verified: true
-
+  stripe_id: cus_3hWJmupHA8S9PY
 aaron:
   id: 2
   email: aaron@example.com

@@ -90,7 +90,7 @@ class StripeOps
   
   def self.subscribe_to_plan(customer_id, plan_name)
     begin
-      stripe_ret = Stripe::Customer.retrieve(customer_id).subscriptions.create(plan_name)
+      stripe_ret = Stripe::Customer.retrieve(customer_id).subscriptions.create(:plan => plan_name)
     rescue => e
       stripe_response = handle_error(e)
     end
