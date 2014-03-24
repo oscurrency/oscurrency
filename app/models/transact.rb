@@ -59,10 +59,10 @@ class Transact < ExchangeAndFee
     
     if customers_plan
       cash_fees_sum = customers_plan.fixed_transaction_stripe_fees.sum(:amount)
-      cash_fees_perc_sum = customers_plan.percent_transaction_stripe_fees.sum(:percent).to_percents
+      cash_fees_perc_sum = customers_plan.percent_transaction_stripe_fees.sum(:percent)
       cash_transaction_fee = cash_fees_sum + (cash_fees_perc_sum * amount)
       tc_fees_sum = customers_plan.fixed_transaction_fees.sum(:amount)
-      tc_fees_perc_sum = customers_plan.percent_transaction_fees.sum(:percent).to_percents
+      tc_fees_perc_sum = customers_plan.percent_transaction_fees.sum(:percent)
       tc_transaction_fee = tc_fees_sum + (tc_fees_perc_sum * amount)
     end
     {:"trade-credits" => tc_transaction_fee, :cash => cash_transaction_fee }
