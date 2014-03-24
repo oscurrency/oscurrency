@@ -113,5 +113,4 @@ describe StripeFee do
       end  
     end 
   end
-  
 end
