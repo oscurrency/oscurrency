@@ -31,6 +31,14 @@ describe Fee do
     fee.should_not be_valid
   end
   
+  it "should convert percent number to percents before saving" do
+    @fee_plan = FeePlan.new(name: 'test')
+    fee = Fee.new(fee_plan: @fee_plan, percent: 10, recipient: @p3)
+    fee.percent.to_f.should == 10.0
+    fee.save!
+    fee.percent.to_f.should == 0.1
+  end
+  
   describe 'trade credits fee' do
     before(:each) do
       @fee_plan = FeePlan.new(name: 'test')
