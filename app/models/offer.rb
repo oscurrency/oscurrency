@@ -15,7 +15,6 @@ class Offer < ActiveRecord::Base
 
   extend Scopes
 
-  attr_accessible :group_id, :person_id, :name, :expiration_date, :total_available
   before_create :set_available_count
 
   validates :expiration_date, :total_available, :presence => true

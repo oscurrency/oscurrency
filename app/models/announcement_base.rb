@@ -5,8 +5,7 @@ module AnnouncementBase
 
   included do
 
-    attr_protected :created_at, :updated_at
-    attr_accessible :person_id
+    attr_protected :person_id, :created_at, :updated_at
     attr_readonly :group_id
 
     belongs_to :person

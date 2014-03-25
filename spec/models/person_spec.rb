@@ -251,8 +251,8 @@ describe Person do
         :name => 'test req',
         :due_date => DateTime.now+1,
         })
-      request.update_attributes(:person_id => person.id,
-        :group_id => group.id)
+      request.person_id = person.id
+      request.group_id = group.id
       request.valid?
       request.save!
       request
@@ -262,11 +262,11 @@ describe Person do
       offer = Offer.new({
         :description => 'test offer description',
         :total_available => 1,
-        :person_id => person.id,
         :group_id => group.id,
         :name => 'test offer',
-        :expiration_date => DateTime.now + 1
+        :expiration_date => DateTime.now + 1.day
         })
+      offer.person_id = person.id
       
       offer.valid?
       offer.save!
