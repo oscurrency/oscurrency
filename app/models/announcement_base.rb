@@ -46,7 +46,6 @@ module AnnouncementBase
 
     def for_active_person
       joins(:person)
-      .select("reqs.*, people.deactivated")
       .where(:people => {:deactivated => false})
     end
 
