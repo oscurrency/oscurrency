@@ -55,7 +55,7 @@ class Transact < ExchangeAndFee
   def paid_fees 
     tc_transaction_fee = 0
     cash_transaction_fee = 0
-    customers_plan = Person.find(customer_id).fee_plan
+    customers_plan = Person.find(worker_id).fee_plan
     
     if customers_plan
       cash_fees_sum = customers_plan.fixed_transaction_stripe_fees.sum(:amount)
