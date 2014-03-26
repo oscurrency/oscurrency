@@ -157,7 +157,7 @@ class Exchange < ActiveRecord::Base
       self.metadata.save
     end
   end
-  # XXX NEEDS REDO XXX
+
   def calculate_account_balances
     begin
       Account.transaction do
@@ -165,9 +165,8 @@ class Exchange < ActiveRecord::Base
           # this should not happen anymore
           raise "no group specified"
         else
-          customer_account = customer.account(group)
           worker.account(group).deposit(amount)
-          customer_account.withdraw(amount)
+          customer.account(group).withdraw(amount)
         end
       end
     rescue => e
