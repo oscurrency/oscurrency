@@ -70,7 +70,7 @@ group :development, :test do
   gem "opentransact"
   gem 'annotate'
   gem 'therubyracer'
-  gem "rspec-rails"
+  gem "rspec-rails", "~> 2.14"
 end
 
 group :development do
