@@ -14,10 +14,15 @@ class Charge < ActiveRecord::Base
     time_start = today.method("beginning_of_#{interval}").call
     time_end = today.method("end_of_#{interval}").call
     Charge.where(:person_id => person_id).by_time(time_start, time_end)
-          .map{ |c| [c.amount, 
-                     c.status, 
-                     c.description, 
-                     c.created_at.strftime("%B %d, %Y %H:%M")] }
+          .map{ |c| {:amount => c.amount, 
+                     :status => c.status, 
+                     :desc => c.description, 
+                     :created_at => c.created_at.strftime("%B %d, %Y %H:%M")} }
+  end
+  
+  def self.charges_sum_for(person_id, interval)
+    charges = Charge.all_charges_for(person_id, interval)
+    charges.map{ |c| c[:amount] }.sum
   end
   
   def dispute_link
