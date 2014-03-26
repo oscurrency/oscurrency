@@ -12,7 +12,6 @@ gem 'pg'
 gem "unicorn"
 gem "girl_friday"
 gem "exception_notification", :git => "https://github.com/smartinez87/exception_notification.git"
-gem "stripe"
 
 group :assets do
   gem "sass-rails"
@@ -94,6 +93,7 @@ group :test do
   gem "database_cleaner"
   gem "guard-spork"
   gem "spork"
+  gem "stripe_tester"
 end
 gem 'remotipart'
 
