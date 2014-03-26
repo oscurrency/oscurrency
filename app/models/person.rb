@@ -490,7 +490,7 @@ class Person < ActiveRecord::Base
   end
   
   def have_monetary_fee_plan?
-    self.fee_plan.contains_stripe_fees?
+    self.fee_plan.contains_stripe_fees? unless self.fee_plan.nil?
   end
   
   def credit_card_required?
