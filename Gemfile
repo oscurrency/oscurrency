@@ -93,7 +93,6 @@ group :test do
   gem "database_cleaner"
   gem "guard-spork"
   gem "spork"
-  gem "stripe_tester"
 end
 gem 'remotipart'
 

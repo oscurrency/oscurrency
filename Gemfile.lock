@@ -353,7 +353,6 @@ GEM
       mime-types (~> 1.25)
       multi_json (>= 1.0.4, < 2)
       rest-client (~> 1.4)
-    stripe_tester (0.1.0)
     systemu (2.5.2)
     texticle (2.0.3)
       activerecord (~> 3.0)
@@ -457,7 +456,6 @@ DEPENDENCIES
   spork
   sqlite3
   stripe
-  stripe_tester
   texticle
   therubyracer
   uglifier
