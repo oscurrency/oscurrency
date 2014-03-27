@@ -82,7 +82,7 @@ class ApplicationController < ActionController::Base
       else return true
       end
     end
-    # Checks if user's credit card is valid <-- TODO.
+ 
     # Checks if user entered credit card data, or if admin allowed him not to.
     # Even if admin allowed him not to put credit card data, he has to submit it
     # to create offer.
