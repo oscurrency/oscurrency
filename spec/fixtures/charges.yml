@@ -3,5 +3,5 @@ two_dollars:
   description: test
   amount: 2
   status: paid
-  person_id: 1 #quentin
+  person_id: 2 #aaron
   

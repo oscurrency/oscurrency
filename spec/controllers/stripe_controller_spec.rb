@@ -4,7 +4,6 @@ describe StripeController do
   fixtures :people, :charges
   StripeTester.webhook_url = "http://localhost:3000/stripe_callback"
   before(:each) do
-    @p = people(:quentin)
     @charge = charges(:two_dollars)
   end
   
