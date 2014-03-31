@@ -4,5 +4,6 @@ namespace :fees do
     FeePlan.all.each do |p|
       p.apply_recurring_fees(ENV['INTERVAL'])
     end
+    StripeFee.apply_stripe_transaction_fees(ENV['INTERVAL'])
   end
 end
