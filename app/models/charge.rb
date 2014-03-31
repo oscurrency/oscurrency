@@ -6,7 +6,7 @@ class Charge < ActiveRecord::Base
   
   belongs_to :person
   
-  scope :by_time, lambda {|time_start, time_end| {:conditions => ["created_at BETWEEN ? AND ?", time_start, time_end] } }
+  scope :by_time, lambda {|time_start, time_end| {:conditions => ["created_at BETWEEN ? AND ?", time_start, time_end+1.day] } }
   
   # Data from db. For Stripe see StripeOps#all_charges_for_person
   def self.all_charges_for(person_id, interval)
