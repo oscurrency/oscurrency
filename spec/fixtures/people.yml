@@ -13,7 +13,7 @@ quentin:
   connection_notifications: true
   message_notifications: true
   email_verified: true
-  stripe_id: <%= StripeOps.create_customer(4242424242424242, '06/50', 5432, 'quentin', 'quentin@example.com')[:id] %>
+  stripe_id: test_cus_1
 aaron:
   id: 2
   email: aaron@example.com

@@ -38,7 +38,7 @@ gem "aws-s3"
 gem "fog"
 gem "carrierwave"
 gem "rmagick", :require => 'RMagick'
-gem "json", '1.7.7'
+gem "json", '~> 1.8.1'
 gem "geokit-rails3"
 
 gem "will_paginate"
@@ -57,7 +57,7 @@ gem 'valid_email', :require => 'valid_email/email_validator'
 gem "calendar_helper"
 gem "gibbon", :git => "git://github.com/amro/gibbon.git"
 gem "bootstrap_form", "~> 0.3.2"
-gem "stripe"
+gem "stripe", '~> 1.10.1'
 
 group :development, :test do
   gem 'debugger'
@@ -93,6 +93,7 @@ group :test do
   gem "database_cleaner"
   gem "guard-spork"
   gem "spork"
+  gem 'stripe-ruby-mock','~> 1.10.1.6'
 end
 gem 'remotipart'
 

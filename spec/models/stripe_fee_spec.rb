@@ -108,7 +108,7 @@ describe StripeFee do
         @e.save!
         StripeFee.apply_stripe_transaction_fees(interval)
         desc = "#{interval}ly transaction fees sum"
-        StripeOps.all_charges_for_person(@p.stripe_id).first.should include desc
+        StripeOps.all_charges_for_person(@p.stripe_id).last.should include desc
         Charge.all_charges_for(@p.id, interval).last[:desc].should == desc
       end  
     end 

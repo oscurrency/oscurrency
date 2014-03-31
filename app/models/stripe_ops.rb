@@ -15,7 +15,6 @@ class StripeOps
    rescue => e
      stripe_response = handle_error(e)
    else
-     Person.find_by_email(email).update_attribute(:stripe_id, stripe_response[:id])
      stripe_response
    end
   end
