@@ -27,6 +27,15 @@ RSpec.configure do |config|
   # config.mock_with :flexmock
   # config.mock_with :rr
   config.mock_with :rspec
+  
+  config.before(:all) do
+      StripeMock.start 
+      # Creates test_cus_1 customer which is used in fixtures for quentin.
+      StripeOps.create_customer(4242424242424242, '06/50', 5432, 'quentin', 'quentin@example.com')
+      # Switch to true for debugging mode
+      StripeMock.toggle_debug(false)
+  end
+  config.after(:all) { StripeMock.stop }
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
@@ -94,17 +103,6 @@ RSpec.configure do |config|
   end
 end
 
-end
-
-Spec::Runner.configure do |config|
-  config.before(:all) do
-      StripeMock.start 
-      # Creates test_cus_1 customer which is used in fixtures for quentin.
-      StripeOps.create_customer(4242424242424242, '06/50', 5432, 'quentin', 'quentin@example.com')
-      # Switch to true for debugging mode
-      StripeMock.toggle_debug(false)
-  end
-  config.after(:all) { StripeMock.stop }
 end
 
 Spork.each_run do
