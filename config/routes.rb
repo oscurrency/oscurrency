@@ -89,6 +89,8 @@ Oscurrency::Application.routes.draw do
       get :su
       get :unsu
       get :invite
+      get :fees_invoice
+      post :fees_invoice
       post :send_invite
       get :common_contacts
     end

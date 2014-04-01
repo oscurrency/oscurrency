@@ -206,6 +206,21 @@ class PeopleController < ApplicationController
       end
     end
   end
+  
+  def fees_invoice
+    # Do not allow other person seeing other people fees.
+    if current_person.id == params[:id].to_i
+      @interval = params[:interval]
+      @interval = 'week' unless ['week', 'month', 'year'].include? @interval
+      @all_fees = current_person.account(current_person.default_group).fees_invoice_for(@interval)
+      respond_to do |format|
+        format.html
+      end
+    else
+      flash[:error] = "You can't view other people fees invoices."
+      redirect_to fees_invoice_person_path(current_user)
+    end
+  end
 
   def common_contacts
     @person = Person.find(params[:id])
