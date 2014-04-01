@@ -13,7 +13,7 @@ describe ApplicationController do
   # Required for logging in
   include Authlogic::TestCase
   
-  fixtures :people
+  fixtures :people, :fee_plans, :stripe_fees
 
   # Logging in.
   before(:each) do
