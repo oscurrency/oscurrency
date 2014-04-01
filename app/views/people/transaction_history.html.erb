@@ -1,5 +1,5 @@
-<%= form_tag fees_invoice_person_path  do |f| %>
-	Get fees invoice for <%= select_tag "interval", options_for_select(["week", "month", "year"], "week")  %>
+<%= form_tag transaction_history_person_path  do |f| %>
+	Get fees invoice for <%= select_tag "interval", options_for_select(["week", "month", "year"], @interval || "week")  %>
 	<%= submit_tag "Submit" %>
 <% end %>
 <h4> Your fees invoice for current <%= @interval %> </h4>

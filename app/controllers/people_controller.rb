@@ -207,7 +207,7 @@ class PeopleController < ApplicationController
     end
   end
   
-  def fees_invoice
+  def transaction_history
     # Do not allow other person seeing other people fees.
     if current_person.id == params[:id].to_i
       @interval = params[:interval]
