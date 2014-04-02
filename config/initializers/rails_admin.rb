@@ -39,10 +39,10 @@ end
     dashboard
     index
     new
-    send_broadcast_email
-    add_to_mailchimp_list
-    refund_money
-    dispute_link
+ #   send_broadcast_email
+ #   add_to_mailchimp_list
+ #   refund_money
+ #   dispute_link
     show
     edit
     delete
@@ -494,6 +494,7 @@ end
     end
     field :percent
     field :recipient
+    field :fee_plan
   end
 
   config.model RecurringStripeFee do
@@ -512,19 +513,23 @@ end
   config.model FixedTransactionFee do
     field :amount
     field :recipient
+    field :fee_plan
   end
 
   config.model PercentTransactionFee do
     field :percent
     field :recipient
+    field :fee_plan
   end
 
   config.model FixedTransactionStripeFee do
     field :amount
+    field :fee_plan
   end
 
   config.model PercentTransactionStripeFee do
     field :percent
+    field :fee_plan
   end
   
   config.model Charge do
@@ -660,7 +665,7 @@ end
       field :phone
       field :admin
       field :org
-      field :plan_type
+      field :fee_plan
       field :stripe_id
       field :openid_identifier
       sort_by :last_logged_in_at

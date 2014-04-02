@@ -87,7 +87,7 @@ class ApplicationController < ActionController::Base
     # Even if admin allowed him not to put credit card data, he has to submit it
     # to create offer.
     def check_credit_card
-      if logged_in? and current_person.stripe_id.blank?
+      if logged_in? and current_person.stripe_id.blank? and current_person.fee_plan.contains_stripe_fees?
         store_location
         redirect_to credit_card_path
       else return true

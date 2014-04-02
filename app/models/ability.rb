@@ -23,6 +23,11 @@ class Ability
     can :update, Person do |target_person|
       target_person == person || person.admin?
     end
+    can :manage, FixedTransactionFee
+    can :manage, PercentTransactionFee
+    can :manage, RecurringFee
+    can :manage, FixedTransactionStripeFee
+    can :manage, PercentTransactionStripeFee
     can :add_to_mailchimp_list, Person
     can :export, Person
 
