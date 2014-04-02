@@ -47,6 +47,15 @@ describe StripeController do
       post :handle_callback
       Charge.find_by_stripe_id(@charge.stripe_id).status.should == 'paid'
     end
-  
+    
+    it 'should receive invoice event and send email to user' do
+      params = YAML.load_file("#{@webhooks_path}/invoice_created.yml")
+      params["data"]["object"]["customer"] = "test_cus_2"
+      @request.env["RAW_POST_DATA"] = params.to_json
+      post :handle_callback
+      sleep 1 # without it test will fail.
+      PersonMailer.deliveries.should_not be_empty
+    end
+    
   end
 end

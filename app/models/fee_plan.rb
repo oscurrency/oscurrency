@@ -30,6 +30,7 @@ class FeePlan < ActiveRecord::Base
           e=group.exchanges.build(amount: f.amount)
           e.customer = payer
           e.worker = f.recipient
+          e.notes = "#{interval.capitalize}ly recurring fee"
           e.save!
         end
       end
@@ -42,7 +43,7 @@ class FeePlan < ActiveRecord::Base
         e.metadata = txn.metadata
         e.customer = txn.worker
         e.worker = fee.recipient
-        e.notes = 'fee'
+        e.notes = 'Percent transaction fee'
         e.save!
     end
 
@@ -51,6 +52,7 @@ class FeePlan < ActiveRecord::Base
         e.metadata = txn.metadata
         e.customer = txn.worker
         e.worker = fee.recipient
+        e.notes = 'Fixed transaction fee'
         e.save!
     end
   end

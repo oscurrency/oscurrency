@@ -42,6 +42,8 @@ class StripeOps
         :status => 'paid'
       }
       Charge.create(charge_params)
+      msg_desc = description + ": " + amount.to_s + "$"
+      PersonMailerQueue.stripe_notification(Person.find_by_stripe_id(stripe_id), description, msg_desc)
       stripe_response
     end
   end

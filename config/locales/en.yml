@@ -418,6 +418,7 @@ en:
       quantity: "Quantity"
     notify:
       you_have_received_a_payment_of: "You have received a payment of"
+      you_have_been_billed_a_fee: "You have been billed a fee"
       paid_you: "paid you"
       payment_suspended: "Payment suspended: "
       suspended_payment_of: "suspended payment of"

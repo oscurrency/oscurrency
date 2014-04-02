@@ -47,4 +47,11 @@ describe Charge do
     @charge.status.should == "refunded"
   end
   
+  it "should send user an email after transaction" do
+    PersonMailer.deliveries.clear
+    StripeOps.charge(1, @p.stripe_id, 'test charge')
+    sleep 1
+    PersonMailer.deliveries.should_not be_empty
+  end
+  
 end
