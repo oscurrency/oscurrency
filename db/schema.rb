@@ -11,8 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20140306124618) do
+ActiveRecord::Schema.define(:version => 20140312192533) do
   create_table "accounts", :force => true do |t|
     t.string   "name"
     t.decimal  "balance",         :precision => 8, :scale => 2, :default => 0.0
@@ -293,6 +292,9 @@ ActiveRecord::Schema.define(:version => 20140306124618) do
 
   create_table "fees", :force => true do |t|
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c15e314a3a0b725931492ee88f13a40a93c3455b
     t.integer  "fee_plan_id"
     t.string   "type"
     t.integer  "recipient_id"
@@ -305,6 +307,7 @@ ActiveRecord::Schema.define(:version => 20140306124618) do
 
   add_index "fees", ["fee_plan_id"], :name => "index_fees_on_fee_plan_id"
 
+<<<<<<< HEAD
 =======
     t.string   "event"
     t.string   "fee_type"
@@ -316,6 +319,8 @@ ActiveRecord::Schema.define(:version => 20140306124618) do
   end
 
 >>>>>>> 722bee0... User accounts should have a 'requires credit card' flag, defaults to true, can only be changed by admin. - fix #453
+=======
+>>>>>>> c15e314a3a0b725931492ee88f13a40a93c3455b
   create_table "forums", :force => true do |t|
     t.string   "name"
     t.text     "description"

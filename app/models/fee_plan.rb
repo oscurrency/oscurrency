@@ -70,5 +70,4 @@ class FeePlan < ActiveRecord::Base
       StripeOps.subscribe_to_plan(person.stripe_id, recurring_stripe_fee_id)
     end
   end
-
 end

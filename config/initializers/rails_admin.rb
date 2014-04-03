@@ -481,27 +481,6 @@ end
     end
     edit do
       exclude_fields :people
-    end
-  end
-
-  config.model Fee do
-    visible true
-    field :event, :enum do
-      enum do
-        ['Transaction', 'Monthly', 'Yearly']
-      end
-    end
-    field :fee_type, :enum do
-      enum do
-        ['Percentage(Trade Credits)', 'Percentage(Cash)', 'Trade Credits', 'Cash']
-      end
-    end
-    field :amount
-    field :account, :enum do
-      enum do
-        ['Reserve', 'Admin']
-      end
-    end
   end
 
   config.model RecurringFee do
@@ -575,7 +554,9 @@ end
     end
     
   end
-
+    
+  end
+  
   config.model Person do
     object_label_method do
       :display_name

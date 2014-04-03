@@ -86,7 +86,6 @@ class Account < ActiveRecord::Base
     end
   end
   
-
   def fees_invoice_for(interval)
     all_fees = Array.new
     today = Date.today
@@ -120,9 +119,4 @@ class Account < ActiveRecord::Base
     end
   end
   
-  def get_by_month_string(month, year)
-    month = Date::MONTHNAMES.index(month) if month.kind_of? String and month.to_i.zero?
-    "#{year.to_i}-#{month.to_i}-01"
-  end
-
 end

@@ -1,21 +1,34 @@
 require 'spec_helper'
 
 describe Fee do
-  fixtures :fees
-  
-  describe "attributes" do
-    before(:each) do
-      @fee = fees(:tc_perc_tran)
-    end
-    it "should be vaild" do
-      @fee.should be_valid
-    end
-  
-    it "should have amount greater than zero." do
-      @fee.amount = 0
-      @fee.should_not be_valid
-      @fee.errors[:amount].first.should == "must be greater than 0"
-    end
+  fixtures :people
+
+  before(:each) do
+    @p = people(:quentin)
+    @p2 = people(:aaron)
+    @p3 = people(:kelly)
+    @valid_attributes = {
+      :name => "value for name",
+      :description => "value for description",
+      :mode => Group::PUBLIC,
+      :unit => "value for unit",
+      :asset => "coins",
+      :adhoc_currency => true
+    }
+    @g = Group.new(@valid_attributes)
+    @g.owner = @p
+    @g.save!
+    Membership.request(@p2,@g,false)
+    Membership.request(@p3,@g,false)
+
+    @pref = Preference.first
+    @pref.default_group_id = @g.id
+    @pref.save!
+  end
+
+  it "should be associated with a fee plan" do
+    fee = Fee.new(fee_plan: nil)
+    fee.should_not be_valid
   end
   
   it "should convert percent number to percents before saving" do

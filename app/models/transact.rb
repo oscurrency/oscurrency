@@ -52,7 +52,6 @@ class Transact < ExchangeAndFee
     results.as_json
   end
   
-
   def paid_fees 
     tc_transaction_fee = 0
     cash_transaction_fee = 0
