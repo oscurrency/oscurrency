@@ -11,6 +11,17 @@ class StripeController < ApplicationController
       else
         process_charge(object["charge"], object["status"], type, object["amount"])
       end
+    elsif type.include? "invoice"
+      object = event_json["data"]["object"]
+      customer = Person.find_by_stripe_id(object["customer"])
+      unless customer.blank?
+        data = object["lines"]["data"].first
+        amount = data["amount"].to_dollars
+        title = data["plan"]["name"]   
+        interval = data["plan"]["interval"]
+        msg_desc = "You have been billed " + amount.to_s + "$ for your #{interval}ly subscription."
+        PersonMailerQueue.stripe_notification(customer, title, msg_desc)
+      end
     end
     # If Stripe will receive something other than 200
     # it will think as request didn't get to app and will try
