@@ -504,7 +504,7 @@ end
         ['month','year']
       end      
     end
-    field :percent
+    field :fee_plan 
     list do
       field :plan
     end
