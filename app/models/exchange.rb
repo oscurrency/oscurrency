@@ -95,7 +95,6 @@ class Exchange < ActiveRecord::Base
   
   def send_fee_notification_to_worker
     if self.notes && self.notes.include?("fee")
-      binding.pry
       exchange_note = Message.new(:talkable_id => self.metadata.id, :talkable_type => self.metadata.class.to_s)
       subject = I18n.translate('exchanges.notify.you_have_been_billed_a_fee')
       exchange_note.subject =  subject.mb_chars.length > 75 ? subject.mb_chars.slice(0,75).concat("...") : subject 
@@ -103,7 +102,6 @@ class Exchange < ActiveRecord::Base
       exchange_note.sender = Person.find_by_name("admin")
       exchange_note.recipient = self.worker
       exchange_note.exchange = self
-      binding.pry
       exchange_note.save!
     end
   end
