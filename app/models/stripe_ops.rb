@@ -99,6 +99,14 @@ class StripeOps
     end
   end
   
+  def self.retrieve_plan(plan_name)
+    begin
+      stripe_ret = Stripe::Plan.retrieve(plan_name)
+    rescue => e
+      stripe_response = handle_error(e)
+    end
+  end
+  
   private
   
   def self.handle_error(e)
@@ -107,12 +115,9 @@ class StripeOps
       return e.json_body[:error][:message]
     when Stripe::InvalidRequestError
       return e.json_body[:error][:message]
-      # sth, maybe exception notifier?
     when Stripe::AuthenticationError
       e.json_body[:error][:message]
-      # sth
     else
-      # notifier?
       return e.to_s
     end 
 

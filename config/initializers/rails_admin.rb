@@ -39,10 +39,10 @@ end
     dashboard
     index
     new
- #   send_broadcast_email
- #   add_to_mailchimp_list
- #   refund_money
- #   dispute_link
+    send_broadcast_email
+    add_to_mailchimp_list
+    refund_money
+    dispute_link
     show
     edit
     delete
@@ -490,7 +490,6 @@ end
         ['month','year']
       end
     end
-    field :percent
     field :recipient
     field :fee_plan
   end
@@ -515,7 +514,11 @@ end
   end
 
   config.model PercentTransactionFee do
-    field :percent
+    field :percent do
+      pretty_value do
+        (bindings[:object].percent * 100).to_s
+      end
+    end
     field :recipient
     field :fee_plan
   end
@@ -526,7 +529,11 @@ end
   end
 
   config.model PercentTransactionStripeFee do
-    field :percent
+    field :percent do
+      pretty_value do
+        (bindings[:object].percent * 100).to_s
+      end
+    end
     field :fee_plan
   end
 

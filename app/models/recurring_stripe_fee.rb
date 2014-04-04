@@ -1,4 +1,5 @@
 class RecurringStripeFee < StripeFee
+  validates_numericality_of :amount, :greater_than => 0.5, message: "Minimal Stripe fee is 0.5$"
   validates :interval, inclusion: { in: ['month', 'year'], message: "%{value} is not a valid interval." }
   validates_presence_of :fee_plan
   belongs_to :fee_plan, :inverse_of => :recurring_stripe_fees
@@ -25,16 +26,17 @@ class RecurringStripeFee < StripeFee
   end
   
   def destroy_stripe_plan
-    stripe_ret = Stripe::Plan.retrieve(self.plan).delete
-    true if stripe_ret.kind_of? Stripe::Plan
-    false
+    stripe_ret = StripeOps.retrieve_plan(self.plan)
+    stripe_ret.delete if stripe_ret.kind_of? Stripe::Plan
   end
   
   def retrieve_interval_and_amount
     unless self.plan.blank?
-      stripe_plan = Stripe::Plan.retrieve(self.plan)
-      self.interval = stripe_plan.interval
-      self.amount = stripe_plan.amount.to_dollars
+      stripe_plan = StripeOps.retrieve_plan(self.plan)
+      if stripe_plan.kind_of? Stripe::Plan
+        self.interval = stripe_plan.interval
+        self.amount = stripe_plan.amount.to_dollars
+      end
     end
   end
   

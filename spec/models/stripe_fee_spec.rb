@@ -50,7 +50,7 @@ describe StripeFee do
   describe 'recurring fees' do
       
       it 'should have valid interval' do
-        sr_fee = RecurringStripeFee.new(interval: 'month', fee_plan: @fee_plan)
+        sr_fee = RecurringStripeFee.new(interval: 'month', fee_plan: @fee_plan, amount: 1)
         sr_fee.should be_valid
         sr_fee.interval = 'year'
         sr_fee.should be_valid

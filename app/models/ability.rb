@@ -18,13 +18,13 @@ class Ability
       can [:read,:create,:update,:destroy], FixedTransactionStripeFee
       can [:read,:create,:update,:destroy], PercentTransactionStripeFee
       can [:read,:create,:update,:destroy], RecurringStripeFee
+      can [:read, :refund_money, :dispute_link], Charge
     end
 
     # need these for rails_admin
     can [:read,:create,:update,:destroy], Address
     can [:read,:create,:update,:destroy], State
     can [:read,:update], TimeZone
-    can [:read, :refund_money, :dispute_link], Charge
     can [:read,:create], Person
     can :update, Person do |target_person|
       target_person == person || person.admin?
