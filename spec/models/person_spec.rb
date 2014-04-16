@@ -149,6 +149,36 @@ describe Person do
       @person.email_verified = true
       @person.should be_active
     end
+
+    it "should destroy connected offers and requests" do
+      group = created_group(@person)
+      @person.default_group_id = group.id
+      @person.save
+      create_request_like(@person, group)
+      create_offer_like(@person, group)
+
+      @person.reqs.biddable.current.should_not be_empty
+      @person.offers.active.should_not be_empty
+
+      @person.deactivated = true
+      @person.save
+
+      @person.reqs.biddable.current.should be_empty
+      @person.offers.active.should be_empty
+    end
+
+    it "should plan type to Closed after deactivation" do
+      @person.deactivated = true
+      @person.save
+      @person.plan_type.name.should eq('Closed')
+
+      plan_type = create_plan_type
+      @person.plan_type_id = plan_type.id
+      @person.save
+      @person.deactivated = true
+      @person.save
+      @person.plan_type.name.should eq('Closed')
+    end
   end
 
   describe "mostly active" do
@@ -213,6 +243,45 @@ describe Person do
 
   protected
 
+    def create_request_like(person, group)
+      request = Req.new( {
+        :name => 'test req',
+        :due_date => DateTime.now+1,
+        })
+      request.update_attributes(:person_id => person.id,
+        :group_id => group.id)
+      request.valid?
+      request.save!
+      request
+    end
+
+    def create_offer_like(person, group)
+      offer = Offer.new({
+        :description => 'test offer description',
+        :total_available => 1,
+        :person_id => person.id,
+        :group_id => group.id,
+        :name => 'test offer',
+        :expiration_date => DateTime.now + 1
+        })
+      
+      offer.valid?
+      offer.save!
+      offer
+    end
+
+    def created_group(person)
+      group = Group.new({
+        :name => "test group",
+        :description => "test group description"
+        })
+      group.update_attribute(:person_id, person.id)
+
+      group.valid?
+      group.save!
+      group
+    end
+
     def create_person(options = {})
       record = Person.new({ :email => 'quire@example.com',
                             :password => 'quire',
@@ -222,5 +291,15 @@ describe Person do
       record.valid?
       record.save! if options[:save]
       record
+    end
+
+    def create_plan_type
+      plan_type = PlanType.new({
+        :name => 'Plan type name',
+        :description => 'plan type description'
+        })
+      plan_type.valid?
+      plan_type.save
+      plan_type
     end
 end

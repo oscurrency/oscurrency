@@ -157,7 +157,7 @@ class Person < ActiveRecord::Base
   #  validates_uniqueness_of   :identity_url, :allow_nil => true
 
   # XXX just doing jquery validation
-  #validates_acceptance_of :accept_agreement, :accept => true, :message => "Please accept the agreement to complete registration", :on => :create
+  # validates_acceptance_of :accept_agreement, :accept => true, :message => "Please accept the agreement to complete registration", :on => :create
 
   before_create :check_config_for_deactivation
   before_create :set_language_and_default_group
@@ -166,9 +166,10 @@ class Person < ActiveRecord::Base
   before_save :update_group_letter
   before_validation :prepare_email, :handle_nil_description
   #after_create :connect_to_admin
-
   before_update :set_old_description
   after_update :log_activity_description_changed
+  after_update :change_requests_and_offers_activity
+  after_save :set_other_plan_after_deactivation
   before_destroy :destroy_activities, :destroy_feeds
 
 
@@ -513,6 +514,17 @@ class Person < ActiveRecord::Base
     end
   end
 
+  def change_requests_and_offers_activity
+    if self.deactivated 
+      self.reqs.biddable.current.each do |req|
+        req.destroy
+      end
+      self.offers.active.each do |offer|
+        offer.destroy
+      end
+    end
+  end
+
   # Clear out all activities associated with this person.
   def destroy_activities
     Activity.where(:person_id => self.id).each &:destroy
@@ -529,5 +541,16 @@ class Person < ActiveRecord::Base
     #(crypted_password.blank? && identity_url.nil?) || !password.blank? ||
     #!verify_password.nil?
   end
+
+  private
+    def set_other_plan_after_deactivation
+      if self.deactivated?
+        other_plan = PlanType.find_or_create_by_name_and_description(
+          :name => 'Closed', :description => 'Deactivated plan types'
+        )
+        self.update_column(:plan_type_id, other_plan.id)
+        PersonDeactivated.skip_callback(:save, :after, :set_other_plan_after_deactivation)
+      end
+    end
 
 end
