@@ -60,6 +60,19 @@ describe Person do
       p = create_person(:fee_plan_id => nil)
       p.should be_valid
     end
+
+    it "should require an actual fee plan if an enabled fee plan exists" do
+      create_fee_plan(enabled: true)
+      p = create_person(:fee_plan_id => 666)
+      p.errors[:fee_plan_id].should_not be_empty
+    end
+
+    it "should require an enabled fee plan if an enabled fee plan exists" do
+      create_fee_plan(enabled: true)
+      bogus = create_fee_plan(enabled: false)
+      p = create_person(:fee_plan_id => bogus.id)
+      p.errors[:fee_plan_id].should_not be_empty
+    end
   end
 
   describe "activity associations" do
