@@ -4,6 +4,7 @@ Oscurrency::Application.routes.draw do
 
   resources :person_sessions
   resources :password_resets, :only => [:new, :create, :edit, :update]
+  resources :stripe_events, :only => [:create]
   resources :member_preferences
   resources :neighborhoods, :only => [:show]
   resources :invitations, :only => [:edit, :update]
