@@ -48,6 +48,18 @@ describe Person do
       p = create_person(:description => nil)
       p.should be_valid
     end
+
+    it "should require a fee plan if an enabled fee plan exists" do
+      create_fee_plan(enabled: true)
+      p = create_person(:fee_plan_id => nil)
+      p.errors[:fee_plan_id].should_not be_empty
+    end
+
+    it "should not require a fee plan if no enabled fee plans exist" do
+      create_fee_plan(enabled: false)
+      p = create_person(:fee_plan_id => nil)
+      p.should be_valid
+    end
   end
 
   describe "activity associations" do
@@ -221,6 +233,12 @@ describe Person do
                             :description => 'A new person' }.merge(options))
       record.valid?
       record.save! if options[:save]
+      record
+    end
+
+    def create_fee_plan(options = {})
+      record = FeePlan.new({name: 'test'}.merge(options))
+      record.save!
       record
     end
 end
