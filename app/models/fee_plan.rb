@@ -19,6 +19,7 @@ class FeePlan < ActiveRecord::Base
   accepts_nested_attributes_for :percent_transaction_stripe_fees
 
   default_scope :order => 'name ASC'
+  scope :enabled, where(enabled: true)
 
   def apply_recurring_fees(interval)
     group = Preference.first.default_group

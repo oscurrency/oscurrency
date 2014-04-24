@@ -40,6 +40,11 @@
       <%= render :partial => "shared/select_categories", :locals => { :model_name => 'person' } %>
     </div>
   </div>
+<% if FeePlan.enabled.any? %>
+  <div class="control-group">
+    <%= f.collection_select(:fee_plan_id, FeePlan.enabled.order(&:name), :id, :name, {:prompt => 'Fee plan' } )%>
+  </div>
+<%- end -%>
 </div>
 <div class="span5">
   
