@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140424203247) do
+ActiveRecord::Schema.define(:version => 20140425002555) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -492,6 +492,7 @@ ActiveRecord::Schema.define(:version => 20140424203247) do
     t.string   "time_zone"
     t.string   "date_style"
     t.integer  "posts_per_page",           :default => 25
+    t.string   "stripe_customer_token"
   end
 
   add_index "people", ["admin"], :name => "index_people_on_admin"

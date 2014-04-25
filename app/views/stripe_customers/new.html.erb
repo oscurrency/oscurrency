@@ -1,0 +1,42 @@
+<% content_for(:head) do %>
+  <%= javascript_include_tag "//js.stripe.com/v2/" %>
+<%- end -%>
+<script>
+  Stripe.setPublishableKey('<%= Rails.configuration.stripe[:publishable_key] %>');
+</script>
+<div class="span5">
+  <h2>Enter credit card</h2>
+  <%= form_tag stripe_customers_path, id: 'new_stripe_customer' do %>
+    <%= hidden_field_tag(:stripe_card_token) %>
+    <div class="control-group">
+      <div class="controls">
+        <label for="card_number" class="control-label"><%= "Credit Card Number" %></label>
+        <%= text_field_tag :card_number, nil, name: nil %>
+      </div>
+    </div>
+    <div class="control-group">
+      <div class="controls">
+        <label for="card_code" class="control-label"><%= "Security Code on Card (CVV)" %></label>
+        <%= text_field_tag :card_code, nil, name: nil %>
+      </div>
+    </div>
+    <div class="control-group">
+      <div class="controls">
+        <label for="card_month" class="control-label"><%= "Card Expiration" %></label>
+        <%= select_month nil, {add_month_numbers: true}, {name: nil, id: "card_month"} %>
+        <%= select_year nil, {start_year: Date.today.year, end_year: Date.today.year+15}, {name: nil, id: "card_year"} %>
+      </div>
+    </div>
+  <div id="stripe_error">
+    <noscript>Javascript is not enabled and is required for this form.</noscript>
+  </div>
+    <div class="form-actions">
+      <%= submit_tag t('stripe_customers.new.subscribe'), :class => 'btn btn-primary' %>
+    </div>
+  <%- end -%>
+</div>
+<div class='span5'>
+  <% @recurring_stripe_fees.each do |fee| %>
+    <%= fee.amount %> per <%= fee.interval %> (<%= fee.plan %>)
+  <%- end -%>
+</div>

@@ -438,6 +438,14 @@ class Person < ActiveRecord::Base
     admin? and num_admins == 1
   end
 
+  def missing_stripe_subscription?
+    fee_plan && fee_plan.has_a_recurring_stripe_fee? && stripe_customer_token.blank?
+  end
+
+  def verified?
+    !missing_stripe_subscription?
+  end
+
   def active?
     not deactivated? and (Person.global_prefs.email_verifications? ? email_verified? : true)
   end

@@ -1,3 +1,8 @@
+<ul>
+  <% @person_session.errors[:base].each do |msg| %>
+    <li><%= msg %></li>
+  <% end %>
+</ul>
   <%= bootstrap_form_for @person_session, :html => {:class => 'form-signin'} do |f| -%>
     <h2 class="form-signin-heading"><%= t('sessions.new.header') %></h2>
 <span id="standard">

@@ -174,6 +174,44 @@ describe Person do
       @person.email_verified = true
       @person.should be_active
     end
+
+    describe "stripe subscriptions" do
+      it "should return false for verified? if a required stripe subscription is invalid" do
+        # pretending the fee plan has a RecurringStripeFee
+        class FeePlan
+          def has_a_recurring_stripe_fee?
+            true
+          end
+        end
+        fee_plan = create_fee_plan(enabled: true)
+        @person.fee_plan = fee_plan
+        @person.should_not be_verified
+      end
+
+      it "should return true for verified? if stripe subscription is valid" do
+        # pretending the fee plan has a RecurringStripeFee
+        class FeePlan
+          def has_a_recurring_stripe_fee?
+            true
+          end
+        end
+        fee_plan = create_fee_plan(enabled: true)
+        @person.fee_plan = fee_plan
+        @person.stripe_customer_token = "abc123"
+        @person.should be_verified
+      end
+
+      it "should return true for verified? if stripe subscription not required" do
+        class FeePlan
+          def has_a_recurring_stripe_fee?
+            false
+          end
+        end
+        fee_plan = create_fee_plan(enabled: true) # this fee plan does not have a RecurringStripeFee
+        @person.fee_plan = fee_plan
+        @person.should be_verified
+      end
+    end
   end
 
   describe "mostly active" do

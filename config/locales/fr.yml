@@ -577,6 +577,10 @@ fr:
     edit:
       header: "Mettre à jour votre mot de passe"
 
+  stripe_customers:
+    new:
+      subscribe: "Subscribe"
+
   shared:
     minifeed:
       activity: "Activité"
@@ -737,6 +741,7 @@ fr:
   notice_topic_updated: "Le sujet a été mis à jour"
   notice_transfer_succeeded: "Le transfert a reussi"
   notice_login_required: "You must be logged in to view this page"
+  notice_payment_required: "Please update your payment information to access the site"
   notice_connection_accepted: "Accepted connection with"
   notice_connection_declined: "Declined connection with"
   notice_bid_requires_membership: "Making a bid requires group membership."

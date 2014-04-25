@@ -71,22 +71,25 @@ class ApplicationController < ActionController::Base
     end
 
     def logged_in?
-      !!current_person
+      current_person && current_person.verified?
     end
 
     def login_required
-      unless current_person
-        store_location
-        flash[:notice] = t('notice_login_required')
-        redirect_to login_url
+      unless logged_in?
+        access_denied
         return false
       end
     end
 
     def access_denied
       store_location
-      flash[:notice] = t('notice_login_required')
-      redirect_to login_url
+      if current_person && !current_person.verified?
+        flash[:notice] = t('notice_payment_required')
+        redirect_to stripe_verify_url
+      else
+        flash[:notice] = t('notice_login_required')
+        redirect_to login_url
+      end
       return false
     end
 

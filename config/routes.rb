@@ -4,6 +4,7 @@ Oscurrency::Application.routes.draw do
 
   resources :person_sessions
   resources :password_resets, :only => [:new, :create, :edit, :update]
+  resources :stripe_customers, :only => [:new, :create]
   resources :stripe_events, :only => [:create]
   resources :member_preferences
   resources :neighborhoods, :only => [:show]
@@ -115,6 +116,7 @@ Oscurrency::Application.routes.draw do
   match '/signup' => 'people#new', :as => :signup
   match '/login' => 'person_sessions#new', :as => :login
   match '/logout' => 'person_sessions#destroy', :as => :logout
+  match '/stripe_verify' => 'stripe_customers#new', :as => :stripe_verify
   match '/refreshblog' => 'feed_posts#refresh_blog', :as => :refreshblog
   match '/about' => 'home#about', :as => :about
   match '/practice' => 'home#practice', :as => :practice

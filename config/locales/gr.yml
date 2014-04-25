@@ -636,6 +636,10 @@ gr:
     edit:
       header: "Επεξεργασία Κωδικού Πρόσβασης"
 
+  stripe_customers:
+    new:
+      subscribe: "Subscribe"
+
   shared:
     minifeed:
       activity: "Δραστηριότητα"
@@ -798,6 +802,7 @@ gr:
   notice_topic_updated: "Το θέμα ενημερώθηκε επιτυχώς."
   notice_transfer_succeeded: "Επιτυχής μεταφορά."
   notice_login_required: "Πρέπει να συνδεθείτε για να δείτε αυτή τη σελίδα"
+  notice_payment_required: "Please update your payment information to access the site"
   notice_connection_accepted: "Έγινε αποδεκτή η σύνδεση με"
   notice_connection_declined: "Δεν έγινε αποδεκτή η σύνδεση με"
   notice_bid_requires_membership: "Για να κάνετε δήλωση χρειάζεται συμμετοχή σε ομάδα."

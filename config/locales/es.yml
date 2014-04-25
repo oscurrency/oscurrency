@@ -510,6 +510,10 @@ es:
     edit:
       header: "Modificar tu contraseña"
 
+  stripe_customers:
+    new:
+      subscribe: "Subscribe"
+
   shared:
     minifeed:
       activity: "Actividades" 
@@ -715,6 +719,7 @@ es:
   notice_topic_updated: "El tema ha sido actualizado."
   notice_transfer_succeeded: "Pago realizado."
   notice_login_required: "Necesitas entrar para ver está información."
+  notice_payment_required: "Please update your payment information to access the site"
   notice_connection_accepted: "Conexión aceptada con"
   notice_connection_declined: "Conexión rechazada con"
   notice_bid_requires_membership: "Para realizar una oferta debes ser miembro del grupo."

@@ -2,7 +2,7 @@ class HomeController < ApplicationController
   skip_before_filter :require_activation
   
   def index
-    if logged_in?
+    if current_person
       redirect_to group_path(current_person.default_group)
     else
       @body = "blog"
