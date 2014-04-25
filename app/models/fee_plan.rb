@@ -2,6 +2,7 @@ class FeePlan < ActiveRecord::Base
   validates_presence_of	:name
   validates_length_of :name,  :maximum => 100
   validates_length_of :description,  :maximum => 255
+  validate :does_not_include_bogus_recurring_stripe_fee
 
   has_many :people, :dependent => :restrict
   has_many :recurring_fees, :dependent => :destroy, :inverse_of => :fee_plan
@@ -20,6 +21,23 @@ class FeePlan < ActiveRecord::Base
 
   default_scope :order => 'name ASC'
   scope :enabled, where(enabled: true)
+
+  def does_not_include_bogus_recurring_stripe_fee
+    if has_a_recurring_stripe_fee?
+      if enabled?
+        recurring_stripe_fees.each do |stripe_fee|
+          stripe_plan = Stripe::Plan.retrieve(stripe_fee.plan)
+        end
+      end
+    end
+  rescue Stripe::InvalidRequestError => e
+    Rails.logger.info "does_not_include_bogus_recurring_stripe_fee: #{e.message}"
+    errors.add(:enabled, "cannot be set with stripe plan that does not exist")
+  end
+
+  def has_a_recurring_stripe_fee?
+    recurring_stripe_fees.any?
+  end
 
   def apply_recurring_fees(interval)
     group = Preference.first.default_group
