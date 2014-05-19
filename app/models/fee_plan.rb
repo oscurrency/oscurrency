@@ -22,6 +22,32 @@ class FeePlan < ActiveRecord::Base
   default_scope :order => 'name ASC'
   scope :enabled, where(enabled: true)
 
+  class << self
+    def apply_fees(interval)
+      Rails.logger.info "Applying per-#{interval} fees"
+      FeePlan.enabled.each do |p|
+        p.apply_recurring_fees(interval)
+      end
+    end
+
+    def daily_check_for_recurring_fees(time)
+      matched_intervals = []
+      # if day is last day of month
+      if time.day == Date.new(time.year,time.month,-1).day
+        matched_intervals << 'month'
+        apply_fees('month')
+      end
+      # if day is last day of year
+      if 12 == time.month
+        if time.day == Date.new(time.year,12,-1).day
+          matched_intervals << 'year'
+          apply_fees('year')
+        end
+      end
+      matched_intervals
+    end
+  end
+
   def does_not_include_bogus_recurring_stripe_fee
     if has_a_recurring_stripe_fee?
       if enabled?
