@@ -37,6 +37,8 @@ class Person < ActiveRecord::Base
   attr_accessible :web_site_url
   attr_accessible :org
   attr_accessible :posts_per_page
+  attr_accessible :person_metadata_attributes
+  attr_accessible :id
 
   extend Searchable(:name, :business_name, :description)
 
@@ -142,6 +144,9 @@ class Person < ActiveRecord::Base
   belongs_to :activity_status
   belongs_to :plan_type
 
+  has_many :person_metadata#, :inverse_of => :person
+  accepts_nested_attributes_for :person_metadata, :allow_destroy => true
+
   validates :name, :presence => true, :length => { :maximum => MAX_NAME }
   validates :description, :length => { :maximum => MAX_DESCRIPTION }
   validates :email, :presence => true, :uniqueness => true, :email => true
@@ -169,7 +174,14 @@ class Person < ActiveRecord::Base
   before_update :set_old_description
   after_update :log_activity_description_changed
   before_destroy :destroy_activities, :destroy_feeds
-
+  after_validation do
+    return if(self.person_metadata.empty?)
+    destroy_array = []
+    self.person_metadata.each do |metadata|
+      destroy_array << metadata if metadata.value.nil?
+    end
+    self.person_metadata.destroy(destroy_array)
+  end
 
   # Return the first admin created.
   # We suggest using this admin as the primary administrative contact.
