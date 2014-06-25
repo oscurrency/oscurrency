@@ -31,6 +31,7 @@ class Exchange < ActiveRecord::Base
   validate :group_has_a_currency_and_includes_both_counterparties_as_members
   validate :amount_is_positive
   validate :worker_is_not_customer
+  validate :customer_has_enough_money
 
   attr_accessible :amount, :group_id
   
@@ -214,5 +215,18 @@ class Exchange < ActiveRecord::Base
 
   def nice_decimal(decimal)
     number_with_precision(decimal, precision: 2)
+  end
+  
+  def customer_has_enough_money
+    customers_account = self.customer.account(self.group)
+    return true if customers_account.credit_limit.nil? #unlimited credit limit
+    balance_after_exchange = customers_account.balance - self.amount
+    # Can pay or can take enough credit to pay
+    if balance_after_exchange >= 0 and balance_after_exchange.abs >= customers_account.credit_limit
+      return true
+    else
+      errors.add(:base, "You don't have enough money to pay this offer.")
+      return false
+    end
   end
 end
