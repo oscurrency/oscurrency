@@ -39,7 +39,7 @@ end
     export
   end
 
-  config.included_models = [Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,PlanType, ExchangeDeleted, TimeZone]
+  config.included_models = [Account,Address,State,AccountDeactivated,Preference,Exchange,ForumPost,FeedPost,BroadcastEmail,Person,PersonDeactivated,Category,Neighborhood,Req,Offer,BusinessType,ActivityStatus,PlanType, ExchangeDeleted, TimeZone, SystemMessageTemplate, Message]
 
   config.default_items_per_page = 100
 
@@ -625,6 +625,37 @@ end
         TimeZone::Date_Style.keys
       end
     end
+  end
+
+  config.model SystemMessageTemplate do
+    label "Form"
+    label_plural "Forms"
+
+    list do
+      field :title
+      field :text
+      field :message_type
+      field :lang
+    end
+
+    edit do
+      field :title, :text
+      field :text, :text
+      field :message_type do
+        properties[:collection] = SystemMessageTemplate.select(:message_type).uniq.all.map {|x| x.message_type}
+        partial "select"
+      end
+      field :lang do
+        properties[:collection] = I18n.available_locales.map {|x| x.to_s}
+        partial 'select'
+      end
+    end
+
+  end
+
+  config.model Message do
+    label "Message"
+    label_plural "Messages"
   end
 
 end

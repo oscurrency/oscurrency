@@ -80,10 +80,12 @@ class Preference < ActiveRecord::Base
   class << self
 
     def profile_image version = nil
-      if version
-        Preference.first.default_profile_picture.picture_url(version)
-      else
-        Preference.first.default_profile_picture.picture_url
+      unless Preference.first.default_profile_picture.nil?
+        if version
+          Preference.first.default_profile_picture.picture_url(version)
+        else
+          Preference.first.default_profile_picture.picture_url
+        end
       end
     rescue NoMethodError => e
       # default_profile_picture will be nil the first time profile_image() is called. create it here.
@@ -94,10 +96,12 @@ class Preference < ActiveRecord::Base
     end
 
     def group_image version = nil
-      if version
-        Preference.first.default_group_picture.picture_url(version)
-      else
-        Preference.first.default_group_picture.picture_url
+      unless Preference.first.default_group_picture.nil?
+        if version
+          Preference.first.default_group_picture.picture_url(version)
+        else
+          Preference.first.default_group_picture.picture_url
+        end
       end
     rescue NoMethodError => e
       # default_group_picture will be nil the first time group_image() is called. create it here.
