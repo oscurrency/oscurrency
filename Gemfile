@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 ruby "2.1.5"
 
-gem 'rails', '3.2.16'
+gem 'rails', '4.0'
 
 # Database
 gem 'pg'
@@ -16,8 +16,8 @@ gem "draper"
 
 gem "coffee-rails"
 gem "audited-activerecord"
-gem "rails3_acts_as_paranoid"
-gem "acts_as_tree_rails3"
+gem "acts_as_paranoid"
+gem "acts_as_tree"
 gem "uuid"
 
 # Client side - asset management
@@ -49,7 +49,7 @@ gem "json", '~> 1.8.1'
 gem "rmagick", '~> 2.15.4'
 gem "mini_magick"
 
-gem "geokit-rails3"
+gem "geokit"
 
 gem "dalli"
 gem "redcarpet"
