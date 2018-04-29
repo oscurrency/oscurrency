@@ -69,11 +69,11 @@ gem 'select2-rails'
 
 gem "feed-normalizer"
 gem "texticle"
+  
 
-group :assets do
-  gem "sass-rails"
-  gem "uglifier"
-end
+# Asset group
+gem "sass-rails"
+gem "uglifier"
 
 group :development, :test do
   gem "heroku-api", "= 0.3.18"
