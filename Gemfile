@@ -33,7 +33,7 @@ gem "cancan"
 gem "oauth"
 gem "authlogic"
 gem "ruby-openid", :require => "openid"
-gem "oauth-plugin", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/oauth-plugin-0.4.0.pre7"
+gem "oauth-plugin", '~> 0.4'
 gem "open_id_authentication", :git => "git://github.com/rewritten/open_id_authentication.git"
 
 # Sates
