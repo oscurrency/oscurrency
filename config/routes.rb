@@ -16,7 +16,7 @@ Oscurrency::Application.routes.draw do
   get    "transacts(/:asset)/:id(.:format)"      => "transacts#show",    :as => 'transact'
   post   "transacts(/:asset)(.:format)"          => "transacts#create",  :as => 'transacts'
   #get    "transacts/[:asset]/:id/edit" => "transacts#edit",    :as => 'edit_transact'
-  #put    "transacts/[:asset]/:id"      => "transacts#update",  :as => 'transact'
+  #patch    "transacts/[:asset]/:id"      => "transacts#update",  :as => 'transact'
   delete "transacts(/:asset)/:id(.:format)"      => "transacts#destroy", :as => 'transact'
 
   resources :public_offers, only: [:index, :show], path: '/openoffers'
@@ -69,9 +69,9 @@ Oscurrency::Application.routes.draw do
   resources :photos do
     collection do
       get :default_profile_picture
-      put :update_default_profile_picture
+      patch :update_default_profile_picture
       get :default_group_picture
-      put :update_default_group_picture
+      patch :update_default_group_picture
     end
   end
   resources :messages do
@@ -82,7 +82,7 @@ Oscurrency::Application.routes.draw do
     end
     member do
       get :reply
-      put :undestroy
+      patch :undestroy
     end
   end
   resources :people do
