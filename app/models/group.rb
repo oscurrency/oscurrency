@@ -39,7 +39,7 @@ class Group < ActiveRecord::Base
   has_many :reqs, :conditions => ["biddable = ?",true], :order => "created_at DESC"
   has_many :offers, :order => "created_at DESC"
   has_many :photos, :as => :photoable, :dependent => :destroy, :order => "created_at"
-  has_many :exchanges, :order => "created_at DESC"
+  has_many :exchanges, -> { order("created_at DESC") }
   has_many :exchange_and_fees, :order => "created_at DESC"
   has_many :memberships, :dependent => :destroy
   has_many :accounts, :dependent => :destroy
@@ -55,7 +55,7 @@ class Group < ActiveRecord::Base
   validates_uniqueness_of :name
   validates_uniqueness_of :unit, :allow_nil => true
   validates_uniqueness_of :asset, :allow_nil => true
-  validates_format_of :asset, :with => /^[-\.a-z0-9_]+$/i, :allow_blank => true
+  validates_format_of :asset, :with => /\A[-\.a-z0-9_]+\z/i, :allow_blank => true
   validate :changing_asset_name_only_allowed_if_empty
   after_create :create_owner_membership
   after_create :create_forum

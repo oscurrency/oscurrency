@@ -2,12 +2,12 @@
 
 source 'https://rubygems.org'
 
-ruby "2.1.5"
+ruby "2.3.7"
 
 gem 'rails', '4.0'
 
 # Database
-gem 'pg'
+gem 'pg', '0.21.0'
 gem "unicorn"
 gem "girl_friday"
 gem "exception_notification"
@@ -26,7 +26,7 @@ gem 'bower-rails'
 # Forms
 gem 'remotipart'
 gem 'dynamic_form'
-gem "bootstrap_form", "~> 0.3.2"
+gem "bootstrap_form", "~> 2.0.1"
 
 # Authentication / Authorization
 gem "cancan"
@@ -50,6 +50,7 @@ gem "rmagick", '~> 2.15.4'
 gem "mini_magick"
 
 gem "geokit"
+gem "geokit-rails"
 
 gem "dalli"
 gem "redcarpet"
@@ -67,6 +68,8 @@ gem "stripe", '~> 1.10.1'
 gem 'bootstrap-wysihtml5-rails', '0.3.1.24'
 gem 'select2-rails'
 
+gem 'bootstrap'
+
 gem "feed-normalizer"
 gem "texticle"
   
@@ -74,6 +77,16 @@ gem "texticle"
 # Asset group
 gem "sass-rails"
 gem "uglifier"
+
+# Rails 3->4 bridge
+# FIXME: remove when everything's moved to strong params
+gem 'protected_attributes'
+
+gem 'jquery-ui-rails'
+
+# pin Rake for older rspec
+# see: https://stackoverflow.com/questions/35893584/nomethoderror-undefined-method-last-comment-after-upgrading-to-rake-11
+gem 'rake', '< 11.0'
 
 group :development, :test do
   gem "heroku-api", "= 0.3.18"
@@ -84,7 +97,7 @@ group :development, :test do
   gem "artifice"
   gem "opentransact"
   gem 'annotate'
-  gem 'therubyracer'
+  gem 'mini_racer'
 end
 
 group :debug do
@@ -111,14 +124,17 @@ group :production do
 end
 
 group :test do
-  gem "rspec-rails", "~> 2.14"
+  gem "rspec-rails", "~> 2.14"    # NB: if upgrading, remove Rake pin
   gem "capybara"
   gem "cucumber"
-  gem "cucumber-rails"
+  gem "cucumber-rails", require: false
   gem "database_cleaner"
   gem "guard-spork"
   gem "spork"
   gem 'stripe-ruby-mock','~> 1.10.1.6'
+
+  gem 'test-unit'
+  gem 'fuubar'
 end
 
 

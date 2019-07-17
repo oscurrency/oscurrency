@@ -62,12 +62,14 @@ class Person < ActiveRecord::Base
 
   acts_as_authentic do |c|
     c.crypto_provider = Authlogic::CryptoProviders.const_get(ENV['CRYPTOPROVIDER'].to_sym) unless ENV['CRYPTOPROVIDER'].blank?
-    c.openid_required_fields = ['http://axschema.org/contact/email',
-      'http://axschema.org/namePerson/first',
-      'http://axschema.org/namePerson/last',
-      :fullname,
-      :email
-    ]
+
+    # FIXME: fails?
+    #c.openid_required_fields = ['http://axschema.org/contact/email',
+    #  'http://axschema.org/namePerson/first',
+    #  'http://axschema.org/namePerson/last',
+    #  :fullname,
+    #  :email
+    #]
     c.perishable_token_valid_for = 48.hours
     c.maintain_sessions = false if Rails.env == "test"
   end
@@ -169,8 +171,8 @@ class Person < ActiveRecord::Base
   scope :visible, -> { where(visible: true) }
 
   has_many :connections
-  has_many :contacts, :through => :connections, :conditions => {"connections.status" => Connection::ACCEPTED}
-  has_many :photos, :as => :photoable, :dependent => :destroy, :order => 'created_at'
+  has_many :contacts, ->{ where("connections.status = ?", Connection::ACCEPTED)}, :through => :connections
+  has_many :photos, :as => :photoable, :dependent => :destroy    #, :order => 'created_at' FIXME
   has_many :requested_contacts, :through => :connections, :source => :contact#, :conditions => REQUESTED_AND_ACTIVE
 
   with_options :dependent => :destroy, :order => 'created_at DESC' do |person|
@@ -206,7 +208,7 @@ class Person < ActiveRecord::Base
   has_many :reqs
   has_many :bids
   has_many :charges
-  has_many :invitations, :order => 'created_at DESC'
+  has_many :invitations  #, :order => 'created_at DESC'  FIXME
   belongs_to :default_group, :class_name => "Group", :foreign_key => "default_group_id"
   belongs_to :sponsor, :class_name => "Person", :foreign_key => "sponsor_id"
   belongs_to :support_contact, :class_name => "Person", :foreign_key => "support_contact_id"
@@ -677,7 +679,8 @@ class Person < ActiveRecord::Base
   end
 
   def update_plan_start_date
-    plan_started_at = Time.now if fee_plan_id_changed?
+    # FIXME: not sure why but this causes a comparison of Time vs Bool, which raises on save
+    # plan_started_at = Time.now if fee_plan_id_changed?
   end
 
 end

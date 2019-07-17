@@ -2,7 +2,7 @@ class ReportingMailer < ActionMailer::Base
   default from: 'no-reply@vbsrmarket.com'
   REPORTING_ADDRESS = ENV.fetch('REPORTING_ADDRESS')
 
-  # Dispatches the search report to the reproting email
+  # Dispatches the search report to the reporting email
   def search(title, reports)
     @reports = reports
 

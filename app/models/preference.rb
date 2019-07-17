@@ -63,7 +63,7 @@ class Preference < ActiveRecord::Base
   belongs_to :default_group, :class_name => "Group", :foreign_key => "default_group_id"
 
   # default profile picture and default group picture
-  has_many :photos, :as => :photoable, :dependent => :destroy, :order => 'created_at'
+  has_many :photos, :as => :photoable, :dependent => :destroy   #, :order => 'created_at'  FIXME
 
   # Can we send mail with the present configuration?
   def can_send_email?

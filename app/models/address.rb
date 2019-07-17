@@ -49,7 +49,7 @@ class Address < ActiveRecord::Base
   end
  
   def perform
-    geo = GeoKit::Geocoders::MultiGeocoder.geocode(self.to_s)
+    geo = Geokit::Geocoders::MultiGeocoder.geocode(self.to_s)
     if geo.success
       update_column(:latitude, geo.lat)
       update_column(:longitude, geo.lng)

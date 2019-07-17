@@ -10,9 +10,12 @@
 *= require vrl-theme
 *= require font-awesome/css/font-awesome
 *= require skin
-*= require bootstrap_form
+
+  // FIXME
+ //require bootstrap_form
+
 *= require style
-*= require jquery.ui.datepicker
+*= require jquery-ui
 *= require bootstrap-override
 *= require select2
 *= require simplemde/dist/simplemde.min

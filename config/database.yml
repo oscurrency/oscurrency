@@ -10,8 +10,8 @@ development:
 test:
   #adapter: postgresql
   #database: oscurrency_test
-  adapter: sqlite3
-  database: db/oscurrency_test.sqlite3
+  adapter: postgresql
+  database: oscurrency_test
   hostname: localhost
   username: <%= ENV['PG_USER'] ? ENV['PG_USER'] : 'root' %>
   password: <%= ENV['PG_PWD'] ? ENV['PG_PWD'] : '' %>

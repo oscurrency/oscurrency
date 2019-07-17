@@ -3,8 +3,8 @@
 class ImageUploader < CarrierWave::Uploader::Base
 
   include CarrierWave::RMagick
-  include Sprockets::Helpers::RailsHelper
-  include Sprockets::Helpers::IsolatedHelper
+  # include Sprockets::Helpers::RailsHelper
+  # include Sprockets::Helpers::IsolatedHelper
 
   storage :fog
 

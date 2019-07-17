@@ -11,13 +11,19 @@ Oscurrency::Application.routes.draw do
   resources :posts, :only => [:index]
 
   # XXX in 2.3.x, this was easier -> map.resources :transacts, :as => "transacts/:asset"
-  get    "transacts(/:asset)(.:format)"          => "transacts#index",   :as => 'transacts'
   get    "transacts(/:asset)/new"      => "transacts#new",     :as => 'new_transact'
+
   get    "transacts(/:asset)/:id(.:format)"      => "transacts#show",    :as => 'transact'
-  post   "transacts(/:asset)(.:format)"          => "transacts#create",  :as => 'transacts'
+  # FIXME: as can't be duplicated
+  # delete "transacts(/:asset)/:id(.:format)"      => "transacts#destroy", :as => 'transact'
+
+  get    "transacts(/:asset)(.:format)"          => "transacts#index",   :as => 'transacts'
+  # FIXME: as can't be duplicated
+  # post   "transacts(/:asset)(.:format)"          => "transacts#create",  :as => 'transacts'
+
   #get    "transacts/[:asset]/:id/edit" => "transacts#edit",    :as => 'edit_transact'
   #patch    "transacts/[:asset]/:id"      => "transacts#update",  :as => 'transact'
-  delete "transacts(/:asset)/:id(.:format)"      => "transacts#destroy", :as => 'transact'
+
 
   resources :public_offers, only: [:index, :show], path: '/openoffers'
 
@@ -108,39 +114,40 @@ Oscurrency::Application.routes.draw do
     resources :connections
   end
 
-  match 'people/verify/:id' => 'people#verify_email'
+  get 'people/verify/:id' => 'people#verify_email'
 
   resources :forums do
     resources :topics do
       resources :posts
     end
   end
-  match '/signup' => 'people#new', :as => :signup
-  match '/login' => 'person_sessions#new', :as => :login
-  match '/logout' => 'person_sessions#destroy', :as => :logout
-  match '/credit_card' => 'person_sessions#credit_card', :as => :credit_card
-  match '/refreshblog' => 'feed_posts#refresh_blog', :as => :refreshblog
-  match '/about' => 'home#about', :as => :about
-  match '/practice' => 'home#practice', :as => :practice
-  match '/steps' => 'home#steps', :as => :steps
-  match '/questions' => 'home#questions', :as => :questions
-  match '/contact' => 'home#contact', :as => :contact
-  match '/agreement' => 'home#agreement', :as => :agreement
+
+  get '/signup' => 'people#new', :as => :signup
+  get '/login' => 'person_sessions#new', :as => :login
+  delete '/logout' => 'person_sessions#destroy', :as => :logout
+  get '/credit_card' => 'person_sessions#credit_card', :as => :credit_card
+  get '/refreshblog' => 'feed_posts#refresh_blog', :as => :refreshblog
+  get '/about' => 'home#about', :as => :about
+  get '/practice' => 'home#practice', :as => :practice
+  get '/steps' => 'home#steps', :as => :steps
+  get '/questions' => 'home#questions', :as => :questions
+  get '/contact' => 'home#contact', :as => :contact
+  get '/agreement' => 'home#agreement', :as => :agreement
   resources :oauth_clients
-  match '/oauth/authorize' => 'oauth#authorize', :as => :authorize
-  match '/oauth/token' => 'oauth#token', :as => :token
-  match '/oauth/request_token' => 'oauth#request_token', :as => :request_token
-  match '/oauth/access_token' => 'oauth#access_token', :as => :access_token
-  match '/oauth/test_request' => 'oauth#test_request', :as => :test_request
-  match '/oauth/scopes' => 'transacts#scopes', :as => :scopes
-  match '/oauth/revoke' => 'oauth#revoke', :as => :revoke
-  match '/oauth' => 'oauth#index', :as => :oauth
-  match '/stripe_callback' => 'stripe#handle_callback'
-  match '/about_user' => 'transacts#about_user', :as => :about_user
-  match '/user_info' => 'transacts#user_info', :as => :user_info
-  match '/wallet' => 'transacts#wallet', :as => :wallet
-  match '/.well-known/host-meta' => 'home#host_meta', :as => :host_meta
-  match '/home/show/:id' => 'home#show'
+  get '/oauth/authorize' => 'oauth#authorize', :as => :authorize, via: [:get, :post]
+  get '/oauth/token' => 'oauth#token', :as => :token
+  get '/oauth/request_token' => 'oauth#request_token', :as => :request_token
+  get '/oauth/access_token' => 'oauth#access_token', :as => :access_token
+  get '/oauth/test_request' => 'oauth#test_request', :as => :test_request
+  get '/oauth/scopes' => 'transacts#scopes', :as => :scopes
+  get '/oauth/revoke' => 'oauth#revoke', :as => :revoke
+  get '/oauth' => 'oauth#index', :as => :oauth
+  get '/stripe_callback' => 'stripe#handle_callback'
+  get '/about_user' => 'transacts#about_user', :as => :about_user
+  get '/user_info' => 'transacts#user_info', :as => :user_info
+  get '/wallet' => 'transacts#wallet', :as => :wallet
+  get '/.well-known/host-meta' => 'home#host_meta', :as => :host_meta
+  get '/home/show/:id' => 'home#show'
   root :to => 'home#index'
-  match '/' => 'home#index', :as => :home
+  get '/' => 'home#index', :as => :home
 end

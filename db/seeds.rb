@@ -149,7 +149,7 @@ if preference.nil?
     :default_deactivated_fee_plan_id => deactivated_fee_plan.id)
 
   p = Person.new(:name => "admin", :email => "admin@example.com", :password => "admin", :password_confirmation => "admin", :description => "")
-  p.save!
+  p.save!(validate: false)
   p.admin = true
   p.email_verified = true
   p.fee_plan = plan

@@ -11,6 +11,8 @@
 #
 
 class FeePlan < ActiveRecord::Base
+  attr_accessible :name, :description, :available
+
   validates_presence_of	:name
   validates_length_of :name,  :maximum => 100
   validates_length_of :description,  :maximum => 255

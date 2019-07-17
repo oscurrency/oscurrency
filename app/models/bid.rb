@@ -43,29 +43,29 @@ class Bid < ActiveRecord::Base
   attr_protected :status_id, :state
   attr_protected :group_id
 
-  aasm_column :state
+  aasm.attribute_name :state
 
-  aasm_initial_state :offered
+  aasm.initial_state :offered
 
-  aasm_state :offered
-  aasm_state :accepted, :enter => :trigger_accepted
-  aasm_state :committed, :enter => :trigger_committed
-  aasm_state :completed, :enter => :trigger_completed
-  aasm_state :approved, :enter => :trigger_approved
+  aasm.state :offered
+  aasm.state :accepted, :enter => :trigger_accepted
+  aasm.state :committed, :enter => :trigger_committed
+  aasm.state :completed, :enter => :trigger_completed
+  aasm.state :approved, :enter => :trigger_approved
 
-  aasm_event :accept do
+  aasm.event :accept do
     transitions :to => :accepted, :from => :offered
   end
 
-  aasm_event :commit do
+  aasm.event :commit do
     transitions :to => :committed, :from => :accepted
   end
 
-  aasm_event :complete do
+  aasm.event :complete do
     transitions :to => :completed, :from => :committed
   end
 
-  aasm_event :pay do
+  aasm.event :pay do
     transitions :to => :approved, :from => [:accepted, :committed, :completed]
   end
 
