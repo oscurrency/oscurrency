@@ -57,7 +57,6 @@ class Exchange < ActiveRecord::Base
   before_destroy :delete_calculate_account_balances
 
   scope :by_customer, ->(person_id) { where(customer_id: person_id) }
-  scope :everyone, :conditions => {}
   scope :everyone_by_group, ->(group_id) { where(group_id: group_id) }
   scope :by_time, lambda { |time_start, time_end|
     where('created_at BETWEEN ? AND ?', time_start, time_end + 1.day)
