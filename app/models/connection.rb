@@ -25,9 +25,9 @@ class Connection < ActiveRecord::Base
   REQUESTED = 1
   PENDING   = 2
 
-  scope :accepted, where(:status => ACCEPTED)
-  scope :requested, where(:status => REQUESTED)
-  scope :pending, where(:status => PENDING)
+  scope :accepted, ->{ where(status: ACCEPTED) }
+  scope :requested, ->{ where(status: REQUESTED) }
+  scope :pending, ->{ where(status: PENDING) }
 
   # Accept a connection request (instance method).
   # Each connection is really two rows, so delegate this method

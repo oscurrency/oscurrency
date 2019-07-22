@@ -18,10 +18,13 @@ class Membership < ActiveRecord::Base
   extend ActivityLogger
   extend PreferencesHelper
 
-  scope :with_role, lambda { |role| {:conditions => "roles_mask & #{2**ROLES.index(role.to_s)} > 0"} }
-  scope :active, :include => :person, :conditions => {'people.deactivated' => false}
-  scope :visible, include: :person, conditions: { 'people.visible' => true }
-  scope :listening, :include => [:member_preference, :person], :conditions => {'people.deactivated' => false, 'member_preferences.forum_notifications' => true}
+  scope :with_role, ->(role) { where('roles_mask & ? > 0', 2**ROLES.index(role.to_s)) }
+  scope :active, -> { includes(:person).where(people: { deactivated: false }) }
+  scope :visible, -> { includes(:person).where(people: { visible: true }) }
+  scope :listening, lambda {
+    active.includes(:member_preference)
+          .where(member_preferences: { forum_notifications: true })
+  }
 
   belongs_to :group
   belongs_to :person
