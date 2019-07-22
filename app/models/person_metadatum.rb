@@ -22,8 +22,7 @@ class PersonMetadatum < ActiveRecord::Base
   belongs_to :form_signup_field
 
   def allow_validation
-    var = FormSignupField
-      .find(:first, :conditions => {:key => self.key})
+    var = FormSignupField.find_by_key(key)
     if var.nil?
       mandatory = false
     else

@@ -5,23 +5,23 @@ require 'active_record/fixtures'
 #DATA_DIRECTORY = File.join(RAILS_ROOT, "lib", "tasks", "sample_data")
 
 namespace :db do
-  namespace :demo_data do 
-  
+  namespace :demo_data do
+
     desc "Load demo data"
     task :load => :environment do |t|
       create_demo_people
       make_demo_connections
       make_demo_activities
-      Preference.find(:first).update_attributes(:demo => true)
+      Preference.first.update_attributes(:demo => true)
     end
-      
-    desc "Remove demo data" 
+
+    desc "Remove demo data"
     task :remove => :environment do |t|
       Rake::Task["db:migrate:reset"].invoke
       # Remove images to avoid accumulation.
       system("rm -rf public/photos")
     end
-    
+
     desc "Reload demo data"
     task :reload => :environment do |t|
       Rake::Task["db:demo_data:remove"].invoke
@@ -47,7 +47,7 @@ def create_demo_people
     names.each_with_index do |name, i|
       name.strip!
       person = Person.create!(:email => "#{name.downcase}@example.com",
-                              :password => password, 
+                              :password => password,
                               :password_confirmation => password,
                               :name => name,
                               :description => "#{description} #{name}.")
@@ -72,7 +72,7 @@ def make_demo_activities
                  :content => "The message content.",
                  :sender => people.rand,
                  :recipient => person)
-  forum = Forum.find(:first)
+  forum = Forum.first
   topic = forum.topics.create(:name => "A forum topic",
                               :person => people.rand)
   topic.posts.create(:body => "This is the post body.",

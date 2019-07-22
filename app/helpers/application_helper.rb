@@ -71,7 +71,7 @@ module ApplicationHelper
     categories = menu_element("SkillBank", categories_path)
     people   = menu_element("People", people_path)
     if Forum.count == 1
-      forum = menu_element("Forum", forum_path(Forum.find(:first)))
+      forum = menu_element("Forum", forum_path(Forum.first))
     else
       forum = menu_element("Forums", forums_path)
     end

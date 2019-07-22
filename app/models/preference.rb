@@ -128,12 +128,12 @@ class Preference < ActiveRecord::Base
 
   private
     def decrypt(password)
-      k = LocalEncryptionKey.find(:first)
+      k = LocalEncryptionKey.first
       Crypto::Key.from_local_key_value(k.rsa_private_key).decrypt(password)
     end
 
     def self.encrypt(password)
-      k = LocalEncryptionKey.find(:first)
+      k = LocalEncryptionKey.first
       Crypto::Key.from_local_key_value(k.rsa_public_key).encrypt(password)
     end
 

@@ -1,6 +1,6 @@
 <div class="span8">
   <h2><%= link_to h(@group.name), group_path(@group) %></h2>
-  
+
   <% unless @pending.empty? -%>
     <h3><%= t('groups.members.pending_request') %></h3>
     <%= will_paginate(@pending, :renderer => BootstrapPaginationHelper::LinkRenderer) %>
@@ -12,12 +12,12 @@
                                   :image => :bounded_icon %>
           <% if @group.owner?(current_person) %>
             <div class="accept_or_cancel_membership">
-                <%= link_to image_tag("icons/remove.gif"), 
-                  unsuscribe_membership_path(contact.memberships.find(:first, :conditions => ['group_id = ?',@group])), 
-                  :method => "delete", :title => t('groups.members.cancel_membership'), 
+                <%= link_to image_tag("icons/remove.gif"),
+                  unsuscribe_membership_path(contact.memberships.find_by_group_id(@group)),
+                  :method => "delete", :title => t('groups.members.cancel_membership'),
                 :confirm => t('groups.members.confirm')  %>
-                <%= link_to image_tag("icons/add.gif"), 
-                  suscribe_membership_path(contact.memberships.find(:first, :conditions => ['group_id = ?',@group])), 
+                <%= link_to image_tag("icons/add.gif"),
+                  suscribe_membership_path(contact.memberships.find_by_group_id(@group)),
                   :method => "post", :title => t('groups.members.accept_membership') %>
             </div>
           <% end %>
@@ -41,8 +41,8 @@
                                   :image => :bounded_icon, :vcard => true, :truncate => 24 %>
           <% if can? :unsuscribe, membership %>
             <div class="cancel_membership">
-                <%= link_to image_tag("icons/remove.gif"), 
-                  unsuscribe_membership_path(membership), 
+                <%= link_to image_tag("icons/remove.gif"),
+                  unsuscribe_membership_path(membership),
                   :method => "delete",
                   :title => t('groups.members.cancel_membership'),
                   :confirm => t('groups.members.confirm') %>

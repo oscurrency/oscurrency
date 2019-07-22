@@ -212,14 +212,14 @@ class Membership < ActiveRecord::Base
       mem.add_role('individual')
       mem.save
 
-      if person.accounts.find(:first,:conditions => ["group_id = ?",group.id]).nil?
-        account = Account.new( :name => group.name ) # group name can change
-        account.balance = Account::INITIAL_BALANCE
-        account.person = person
-        account.group = group
-        account.credit_limit = group.default_credit_limit
-        account.save
-      end
+      return unless person.accounts.exists?(group_id: group.id)
+
+      account = Account.new(name: group.name) # group name can change
+      account.balance = Account::INITIAL_BALANCE
+      account.person = person
+      account.group = group
+      account.credit_limit = group.default_credit_limit
+      account.save
     end
 
     def log_activity(membership)
@@ -227,5 +227,4 @@ class Membership < ActiveRecord::Base
       add_activities(:activity => activity, :person => membership.person)
     end
   end
-
 end
