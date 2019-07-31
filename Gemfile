@@ -34,7 +34,7 @@ gem "oauth"
 gem "authlogic"
 gem "ruby-openid", :require => "openid"
 gem "oauth-plugin", '~> 0.4'
-gem "open_id_authentication", :git => "git://github.com/rewritten/open_id_authentication.git"
+gem "open_id_authentication", :git => "https://github.com/rewritten/open_id_authentication.git"
 
 # Sates
 gem "aasm"
@@ -58,7 +58,7 @@ gem 'rails_admin'
 gem "ar_after_transaction"
 gem 'valid_email', :require => 'valid_email/email_validator'
 gem "calendar_helper"
-gem "gibbon", :git => "git://github.com/amro/gibbon.git"
+gem "gibbon", :git => "https://github.com/amro/gibbon.git"
 gem "mustache"
 
 # Payment
