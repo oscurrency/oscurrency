@@ -56,12 +56,13 @@ class Exchange < ActiveRecord::Base
   after_create :send_fee_notification_to_worker
   before_destroy :delete_calculate_account_balances
 
-  scope :by_customer, lambda {|person_id| {:conditions => ["customer_id = ?", person_id]}}
-  scope :everyone, :conditions => {}
-  scope :everyone_by_group, lambda {|group_id| {:conditions => ["group_id = ?", group_id]}}
-  scope :by_time, lambda {|time_start, time_end| {:conditions => ["created_at BETWEEN ? AND ?", time_start, time_end+1.day] } }
-  scope :by_month, lambda {|date| {:conditions => ["DATE_TRUNC('month',created_at) = ?", date]}}
-  scope :by_year, lambda {|date| {:conditions => ["DATE_TRUNC('year', created_at) = ?", date]}}
+  scope :by_customer, ->(person_id) { where(customer_id: person_id) }
+  scope :everyone_by_group, ->(group_id) { where(group_id: group_id) }
+  scope :by_time, lambda { |time_start, time_end|
+    where('created_at BETWEEN ? AND ?', time_start, time_end + 1.day)
+  }
+  scope :by_month, ->(date) { where("DATE_TRUNC('month',created_at) = ?", date) }
+  scope :by_year, ->(date) { where("DATE_TRUNC('year', created_at) = ?", date) }
 
   def log_activity
     unless self.group.private_txns?

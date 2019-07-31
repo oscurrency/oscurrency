@@ -6,9 +6,7 @@ class CategoriesController < ApplicationController
   # GET /categories
   # GET /categories.xml
   def index
-    @top_level_categories = Category.find(:all, :conditions => "parent_id is NULL").sort_by {|a| a.name}
-    @categories = Category.find(:all).sort_by { |a| a.long_name }
-
+    load_categories
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @categories }
@@ -97,11 +95,17 @@ class CategoriesController < ApplicationController
         format.html { redirect_to(categories_url) }
         format.xml  { head :ok }
       else
-        @top_level_categories = Category.find(:all, :conditions => "parent_id is NULL").sort_by {|a| a.name}
-        @categories = Category.find(:all).sort_by { |a| a.long_name }
+        load_categories
         format.html { render :action => "index" }
         format.xml  { render :xml => @category.errors, :status => :unprocessable_entity }
       end
     end
+  end
+
+  private
+
+  def load_categories
+    @top_level_categories = Category.where(parent_id: nil).order(:name)
+    @categories = Category.all.sort_by(&:long_name)
   end
 end

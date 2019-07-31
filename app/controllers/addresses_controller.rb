@@ -2,21 +2,20 @@ class AddressesController < ApplicationController
   before_filter :login_required
   before_filter :credit_card_required
   before_filter :correct_user_required
+  before_action :load_states, only: %i[new edit]
 
   def index
-    @addresses = current_person.addresses.find(:all)
+    @addresses = current_person.addresses
     respond_to do |format|
       format.xml { render :xml => @addresses }
     end
   end
 
   def new
-    @states = State.find(:all, :order => "name").collect {|s| [s.name, s.id]}
     @address = Address.new
   end
 
   def edit
-    @states = State.find(:all, :order => "name").collect {|s| [s.name, s.id]}
     @address = current_person.addresses.find(params[:id])
   end
 
@@ -26,11 +25,11 @@ class AddressesController < ApplicationController
       if current_person.addresses << @address
         redirect_to person_url(current_person)
       else
-        @states = State.find(:all, :order => "name").collect {|s| [s.name, s.id]}
+        load_states
         render :action => :new
       end
     rescue
-      @states = State.find(:all, :order => "name").collect {|s| [s.name, s.id]}
+      load_states
       flash[:error] = t("error_geocoding_failed")
       render :action => :new
     end
@@ -42,11 +41,11 @@ class AddressesController < ApplicationController
       if @address.update_attributes(params[:address])
         redirect_to person_url(current_person)
       else
-        @states = State.find(:all, :order => "name").collect {|s| [s.name, s.id]}
+        load_states
         render :action => :edit
       end
     rescue
-      @states = State.find(:all, :order => "name").collect {|s| [s.name, s.id]}
+      load_states
       flash[:error] = t("error_geocoding_failed")
       render :action => :edit
     end
@@ -80,7 +79,12 @@ class AddressesController < ApplicationController
     end
   end
 
-private
+  private
+
+  def load_states
+    @states ||= State.order(:name).pluck(:name, :id)
+  end
+
   def correct_user_required
     redirect_to home_url unless Person.find(params[:person_id]) == current_person
   end

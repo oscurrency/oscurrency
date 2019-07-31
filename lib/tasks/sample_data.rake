@@ -5,11 +5,11 @@ require 'active_record/fixtures'
 DATA_DIRECTORY = File.join(::Rails.root.to_s, "lib", "tasks", "sample_data")
 
 namespace :db do
-  namespace :sample_data do 
-  
+  namespace :sample_data do
+
     desc "Load sample data"
     task :load => :environment do |t|
-      Rake::Task["install"].invoke      
+      Rake::Task["install"].invoke
       @lipsum = File.open(File.join(DATA_DIRECTORY, "lipsum.txt")).read
       create_people
       make_connections
@@ -18,14 +18,14 @@ namespace :db do
       make_feed
       puts "Completed loading sample data."
     end
-      
-    desc "Remove sample data" 
+
+    desc "Remove sample data"
     task :remove => :environment do |t|
       system("rake db:migrate VERSION=0")
       # Remove images to avoid accumulation.
       system("rm -rf public/photos")
     end
-    
+
     desc "Reload sample data"
     task :reload => :environment do |t|
       Rake::Task["db:sample_data:remove"].invoke
@@ -48,7 +48,7 @@ def create_people
       name.strip!
       full_name = "#{name} #{last_names.pick.capitalize}"
       person = Person.create!(:email => "#{name.downcase}@example.com",
-                              :password => password, 
+                              :password => password,
                               :password_confirmation => password,
                               :name => full_name,
                               :description => @lipsum)
@@ -74,11 +74,11 @@ def make_messages(text)
   senders = Person.find(:all, :limit => 10)
   senders.each do |sender|
     subject = some_text(SMALL_STRING_LENGTH)
-    Message.unsafe_create!(:subject => subject, :content => text, 
+    Message.unsafe_create!(:subject => subject, :content => text,
                            :sender => sender, :recipient => michael,
                            :send_mail => false,
                            :conversation => Conversation.new)
-    Message.unsafe_create!(:subject => subject, :content => text, 
+    Message.unsafe_create!(:subject => subject, :content => text,
                            :sender => michael, :recipient => sender,
                            :send_mail => false,
                            :conversation => Conversation.new)
@@ -86,7 +86,7 @@ def make_messages(text)
 end
 
 def make_forum_posts
-  forum = Forum.find(:first)
+  forum = Forum.first
   people = [default_person] + default_person.contacts
   (1..11).each do |n|
     name = some_text(rand(Topic::MAX_NAME))
@@ -122,7 +122,7 @@ def uploaded_file(filename, content_type)
 end
 
 def default_person
-  Person.find_by_email('michael@example.com')  
+  Person.find_by_email('michael@example.com')
 end
 
 # Return some random text.

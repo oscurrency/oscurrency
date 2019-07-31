@@ -18,10 +18,13 @@ class Membership < ActiveRecord::Base
   extend ActivityLogger
   extend PreferencesHelper
 
-  scope :with_role, lambda { |role| {:conditions => "roles_mask & #{2**ROLES.index(role.to_s)} > 0"} }
-  scope :active, :include => :person, :conditions => {'people.deactivated' => false}
-  scope :visible, include: :person, conditions: { 'people.visible' => true }
-  scope :listening, :include => [:member_preference, :person], :conditions => {'people.deactivated' => false, 'member_preferences.forum_notifications' => true}
+  scope :with_role, ->(role) { where('roles_mask & ? > 0', 2**ROLES.index(role.to_s)) }
+  scope :active, -> { includes(:person).where(people: { deactivated: false }) }
+  scope :visible, -> { includes(:person).where(people: { visible: true }) }
+  scope :listening, lambda {
+    active.includes(:member_preference)
+          .where(member_preferences: { forum_notifications: true })
+  }
 
   belongs_to :group
   belongs_to :person
@@ -212,14 +215,14 @@ class Membership < ActiveRecord::Base
       mem.add_role('individual')
       mem.save
 
-      if person.accounts.find(:first,:conditions => ["group_id = ?",group.id]).nil?
-        account = Account.new( :name => group.name ) # group name can change
-        account.balance = Account::INITIAL_BALANCE
-        account.person = person
-        account.group = group
-        account.credit_limit = group.default_credit_limit
-        account.save
-      end
+      return if person.accounts.exists?(group_id: group.id)
+
+      account = Account.new(name: group.name) # group name can change
+      account.balance = Account::INITIAL_BALANCE
+      account.person = person
+      account.group = group
+      account.credit_limit = group.default_credit_limit
+      account.save
     end
 
     def log_activity(membership)
@@ -227,5 +230,4 @@ class Membership < ActiveRecord::Base
       add_activities(:activity => activity, :person => membership.person)
     end
   end
-
 end

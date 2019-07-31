@@ -101,7 +101,7 @@ RSpec.configure do |config|
   end
 
   def enable_email_notifications
-    Preference.find(:first).update_attributes(:email_verifications => true)
+    Preference.first.update_attributes(:email_verifications => true)
   end
 end
 
