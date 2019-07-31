@@ -2,7 +2,7 @@ class AddressesController < ApplicationController
   before_filter :login_required
   before_filter :credit_card_required
   before_filter :correct_user_required
-  before_action :states, only: %i[new edit]
+  before_action :load_states, only: %i[new edit]
 
   def index
     @addresses = current_person.addresses
@@ -25,11 +25,11 @@ class AddressesController < ApplicationController
       if current_person.addresses << @address
         redirect_to person_url(current_person)
       else
-        states
+        load_states
         render :action => :new
       end
     rescue
-      states
+      load_states
       flash[:error] = t("error_geocoding_failed")
       render :action => :new
     end
@@ -41,11 +41,11 @@ class AddressesController < ApplicationController
       if @address.update_attributes(params[:address])
         redirect_to person_url(current_person)
       else
-        states
+        load_states
         render :action => :edit
       end
     rescue
-      states
+      load_states
       flash[:error] = t("error_geocoding_failed")
       render :action => :edit
     end
@@ -81,7 +81,7 @@ class AddressesController < ApplicationController
 
   private
 
-  def states
+  def load_states
     @states ||= State.order(:name).pluck(:name, :id)
   end
 

@@ -13,11 +13,11 @@
           <% if @group.owner?(current_person) %>
             <div class="accept_or_cancel_membership">
                 <%= link_to image_tag("icons/remove.gif"),
-                  unsuscribe_membership_path(contact.memberships.find_by_group_id(@group)),
+                  unsuscribe_membership_path(contact.memberships.find_by(group_id: @group)),
                   :method => "delete", :title => t('groups.members.cancel_membership'),
                 :confirm => t('groups.members.confirm')  %>
                 <%= link_to image_tag("icons/add.gif"),
-                  suscribe_membership_path(contact.memberships.find_by_group_id(@group)),
+                  suscribe_membership_path(contact.memberships.find_by(group_id: @group)),
                   :method => "post", :title => t('groups.members.accept_membership') %>
             </div>
           <% end %>

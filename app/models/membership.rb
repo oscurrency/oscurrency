@@ -215,7 +215,7 @@ class Membership < ActiveRecord::Base
       mem.add_role('individual')
       mem.save
 
-      return unless person.accounts.exists?(group_id: group.id)
+      return if person.accounts.exists?(group_id: group.id)
 
       account = Account.new(name: group.name) # group name can change
       account.balance = Account::INITIAL_BALANCE
