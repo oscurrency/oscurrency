@@ -1,8 +1,8 @@
 [![Build Status](https://travis-ci.org/oscurrencyVRL/oscurrency.png?branch=master)](https://travis-ci.org/oscurrencyVRL/oscurrency)
 
 ### Quick Facts
-- ruby 2.1.5
-- rails 3.2.16
+- ruby 2.3.7p456
+- rails 4.0
 - heroku deployment
 - [Issues](https://github.com/oscurrency/oscurrency/issues)
 - [Demo site](http://demo.opensourcecurrency.org)
