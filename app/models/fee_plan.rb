@@ -35,7 +35,7 @@ class FeePlan < ActiveRecord::Base
   accepts_nested_attributes_for :percent_transaction_stripe_fees
 
   before_destroy :subscribe_people_to_default_plan
-  default_scope :order => 'name ASC'
+  default_scope -> { order(name: :asc) }
 
   class << self
 
@@ -56,8 +56,6 @@ class FeePlan < ActiveRecord::Base
     Rails.logger.info "does_not_include_bogus_recurring_stripe_fee: #{e.message}"
     errors.add(:enabled, "cannot be set with stripe plan that does not exist")
   end
-
-  default_scope :order => 'name ASC'
 
   def recurring_fees
     @recurring_fees ||= self.fees.where(:type => "RecurringFee")

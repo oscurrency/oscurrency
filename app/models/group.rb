@@ -27,7 +27,7 @@ require 'texticle/searchable'
 class Group < ActiveRecord::Base
   include ActivityLogger
   extend PreferencesHelper
-  
+
   validates_presence_of :name, :person_id
 
   attr_accessible :name, :description, :mode, :unit, :adhoc_currency, :default_credit_limit
@@ -36,20 +36,23 @@ class Group < ActiveRecord::Base
 
   has_one :forum
   has_one :privacy_setting
-  has_many :reqs, :conditions => ["biddable = ?",true], :order => "created_at DESC"
-  has_many :offers, :order => "created_at DESC"
-  has_many :photos, :as => :photoable, :dependent => :destroy, :order => "created_at"
-  has_many :exchanges, -> { order("created_at DESC") }
-  has_many :exchange_and_fees, :order => "created_at DESC"
+  has_many :reqs, -> { where(biddable: true).order(created_at: :desc) }
+  has_many :offers, -> { order(created_at: :desc) }
+  has_many :photos, -> { order(:created_at) }, :as => :photoable, :dependent => :destroy
+  has_many :exchanges, -> { order(created_at: :desc) }
+  has_many :exchange_and_fees, -> { order(created_at: :desc) }
   has_many :memberships, :dependent => :destroy
   has_many :accounts, :dependent => :destroy
-  has_many :people, :through => :memberships, 
-    :conditions => "status = 0", :order => "name DESC"
-  has_many :pending_request, :through => :memberships, :source => "person",
-    :conditions => "status = 2", :order => "name DESC"
-  
+  has_many :people,
+           -> { where(status: 0).order(name: :desc) },
+           :through => :memberships
+  has_many :pending_request,
+           -> { where(status: 2).order(name: :desc) },
+           :through => :memberships,
+           :source => "person"
+
   belongs_to :owner, :class_name => "Person", :foreign_key => "person_id"
-  
+
   has_many :activities, :as => :item, :dependent => :destroy
 
   validates_uniqueness_of :name
@@ -62,13 +65,13 @@ class Group < ActiveRecord::Base
   after_create :create_privacy_setting
   after_create :log_activity
   before_update :update_member_credit_limits
-  
+
   extend Searchable(:name, :description)
-  
+
   # GROUP modes
   PUBLIC = 0
   PRIVATE = 1
-  
+
   def get_groups_modes
     modes = []
     modes << ["Public",PUBLIC]
@@ -89,7 +92,7 @@ class Group < ActiveRecord::Base
       ((roles_mask || 0) & 2**Membership::ROLES.index(r)).zero?
     end
   end
-  
+
   class << self
 
     def name_sorted_and_paginated(page = 1)
@@ -124,15 +127,15 @@ class Group < ActiveRecord::Base
   def public?
     self.mode == PUBLIC
   end
-  
+
   def private?
     self.mode == PRIVATE
   end
-  
+
   def owner?(person)
     self.owner == person
   end
- 
+
   def authorized_to_view_reqs?(person)
     privacy_setting.viewable_reqs? or Membership.exist?(person, self)
   end
@@ -184,8 +187,8 @@ class Group < ActiveRecord::Base
     # flatten yields [primary, other one, another one]
     @sorted_photos ||= photos.partition(&:primary).flatten
   end
-  
-  
+
+
   private
 
   def changing_asset_name_only_allowed_if_empty
@@ -200,7 +203,7 @@ class Group < ActiveRecord::Base
 
   def create_owner_membership
     mem = Membership.new( :status => Membership::PENDING )
-    mem.person = self.owner 
+    mem.person = self.owner
     mem.group = self
     mem.roles = ['admin']
     mem.save
@@ -221,5 +224,5 @@ class Group < ActiveRecord::Base
     activity = Activity.create!(:item => self, :person => Person.find(self.person_id))
     add_activities(:activity => activity, :person => Person.find(self.person_id))
   end
-  
+
 end

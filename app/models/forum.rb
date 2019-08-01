@@ -17,10 +17,10 @@ class Forum < ActiveRecord::Base
   attr_accessible :worldwritable
 
   belongs_to :group
-  has_many :topics, :order => "updated_at DESC", :dependent => :destroy
+  has_many :topics, -> { order(updated_at: :desc) }, :dependent => :destroy
   has_many :posts, :through => :topics
 
-  
+
   validates_length_of :name, :maximum => 255, :allow_nil => true
   validates_length_of :description, :maximum => 1000, :allow_nil => true
 end

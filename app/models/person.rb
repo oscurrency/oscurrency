@@ -79,7 +79,7 @@ class Person < ActiveRecord::Base
   attr_accessor :credit_card, :expire, :cvc #stripe data - virtual, won't be stored in db.
   attr_accessor :plan_started_at
   attr_accessible :stripe_id
-  attr_accessible *attribute_names, :as => :admin
+  attr_accessible(*attribute_names, :as => :admin)
   attr_accessible :address_ids, :as => :admin
   attr_accessible :password, :password_confirmation, :as => :admin
   attr_accessible :email, :password, :password_confirmation, :name
@@ -175,32 +175,48 @@ class Person < ActiveRecord::Base
   has_many :photos, :as => :photoable, :dependent => :destroy    #, :order => 'created_at' FIXME
   has_many :requested_contacts, :through => :connections, :source => :contact#, :conditions => REQUESTED_AND_ACTIVE
 
-  with_options :dependent => :destroy, :order => 'created_at DESC' do |person|
-    person.has_many :_sent_messages, :foreign_key => "sender_id",
-    :conditions => "communications.sender_deleted_at IS NULL", :class_name => "Message"
-    person.has_many :_received_messages, :foreign_key => "recipient_id",
-    :conditions => "communications.recipient_deleted_at IS NULL", :class_name => "Message"
-    person.has_many :_sent_exchanges, :foreign_key => "customer_id", :class_name => "Exchange"
-    person.has_many :_received_exchanges, :foreign_key => "worker_id", :class_name => "Exchange"
+  with_options :dependent => :destroy do |person|
+    person.has_many :_sent_messages,
+                    -> { where(communications: { sender_deleted_at: nil }).order(created_at: :desc) },
+                    :foreign_key => "sender_id",
+                    :class_name => "Message"
+    person.has_many :_received_messages,
+                    -> { where(communications: { recipient_deleted_at: nil }).order(created_at: :desc) },
+                    :foreign_key => "recipient_id",
+                    :class_name => "Message"
+    person.has_many :_sent_exchanges,
+                    -> { order(created_at: :desc) },
+                    :foreign_key => "customer_id",
+                    :class_name => "Exchange"
+    person.has_many :_received_exchanges,
+                    -> { order(created_at: :desc) },
+                    :foreign_key => "worker_id",
+                    :class_name => "Exchange"
   end
 
   has_many :exchanges, :foreign_key => "worker_id"
   has_many :feeds
-  has_many :activities, :through => :feeds, :order => 'activities.created_at DESC',
-  :limit => FEED_SIZE,
-  :conditions => ["people.deactivated = ?", false],
-  :include => :person
+  has_many :activities,
+           -> {
+            inlcude(:person)
+              .where(people: { deactivated: false })
+              .order(activities: { created_at: :desc })
+              .limit(FEED_SIZE)
+           },
+           :through => :feeds
 
-  has_many :own_groups, :class_name => "Group", :foreign_key => "person_id", :order => "name ASC"
+  has_many :own_groups, -> { order(name: :asc) }, :class_name => "Group", :foreign_key => "person_id"
   has_many :memberships
-  has_many :groups, :through => :memberships, :source => :group, :conditions => "status = 0", :order => "name ASC"
-  has_many :groups_not_hidden, :through => :memberships, :source => :group, :conditions => "status = 0 and mode != 2", :order => "name ASC"
+  has_many :groups, -> { where(status:  0).order(name :asc) }, :through => :memberships, :source => :group
+  has_many :groups_not_hidden, -> { where(status: 0).where("mode != 2").order(name: :asc) }, :through => :memberships, :source => :group
 
   has_many :accounts
   has_many :addresses, :inverse_of => :person
   accepts_nested_attributes_for :addresses
   has_many :client_applications
-  has_many :tokens, :class_name => "OauthToken", :order => "authorized_at DESC", :include => [:client_application]
+  has_many :tokens,
+           -> { includes(:client_application).order(authorized_at: :desc) },
+           :class_name => "OauthToken"
 
   has_and_belongs_to_many :categories
   has_and_belongs_to_many :neighborhoods

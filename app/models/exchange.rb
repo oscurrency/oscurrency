@@ -88,7 +88,7 @@ class Exchange < ActiveRecord::Base
   end
 
   def self.total_on(date)
-    Exchange.sum(:amount, :conditions => ["date(created_at) = ?", date])
+    Exchange.where("date(created_at) = ?", date).sum(:amount)
   end
 
   # XXX person_id hacks for cancan's load_and_authorize_resource
@@ -101,7 +101,7 @@ class Exchange < ActiveRecord::Base
   end
 
   def self.total_on_month(date)
-    Exchange.sum(:amount, :conditions => ["DATE_TRUNC('month',created_at) = ?", date])
+    Exchange.where("DATE_TRUNC('month',created_at) = ?", date).sum(:amount)
   end
 
   def group_id_enum

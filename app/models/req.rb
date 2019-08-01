@@ -37,10 +37,10 @@ class Req < ActiveRecord::Base
 
   has_many :workers, :through => :categories, :source => :people
   has_many :bids, :order => 'created_at DESC', :dependent => :destroy
-  has_many :accepted_bids, :class_name => "Bid", :conditions => "accepted_at IS NOT NULL"
-  has_many :completed_bids, :class_name => "Bid", :conditions => "completed_at IS NOT NULL"
-  has_many :committed_bids, :class_name => "Bid", :conditions => "committed_at IS NOT NULL"
-  has_many :approved_bids, :class_name => "Bid", :conditions => "approved_at IS NOT NULL"
+  has_many :accepted_bids, -> { where("accepted_at IS NOT NULL") }, :class_name => "Bid"
+  has_many :completed_bids, -> { where("completed_at IS NOT NULL") }, :class_name => "Bid"
+  has_many :committed_bids, -> { where("committed_at IS NOT NULL") }, :class_name => "Bid"
+  has_many :approved_bids, -> { where("approved_at IS NOT NULL") }, :class_name => "Bid"
 
   attr_accessor :ability
   attr_protected :ability
