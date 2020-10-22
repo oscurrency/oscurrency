@@ -6,3 +6,7 @@ class ActiveRecord::Base
   end
 end
 
+# ruby 2.3 see https://stackoverflow.com/questions/36966497/typeerror-no-implicit-conversion-of-nil-into-string-when-eager-loading-result
+class Hash
+  undef_method :to_proc if self.method_defined?(:to_proc)
+end

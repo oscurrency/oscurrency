@@ -1,16 +1,19 @@
 #!/usr/bin/ruby
 
 source 'https://rubygems.org'
-ruby "2.1.5"
-gem 'rails', '3.2.16'
+ruby "2.3.8"
+gem 'rails', '3.2.22'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'pg'
+gem 'pg', '0.17.1'
 gem "unicorn"
 gem "girl_friday"
-gem "exception_notification", :git => "https://github.com/smartinez87/exception_notification.git"
+gem "exception_notification"
+gem "kgio"
+gem "raindrops"
+gem "unf"
 
 group :assets do
   gem "sass-rails"
@@ -36,8 +39,8 @@ gem "texticle"
 gem "aws-s3"
 gem "fog", '1.19.0'
 gem "carrierwave"
-gem "rmagick", :require => 'RMagick'
-gem "json", '1.7.7'
+gem "rmagick", '2.16.0'
+gem "json", '~> 1.8.1'
 gem "geokit-rails3"
 
 gem "will_paginate"
@@ -56,10 +59,10 @@ gem 'valid_email', :require => 'valid_email/email_validator'
 gem "calendar_helper"
 gem "gibbon", :git => "git://github.com/amro/gibbon.git"
 gem "bootstrap_form", "~> 0.3.2"
+gem 'test-unit'
 
 group :development, :test do
   gem "heroku-api"
-  gem 'sqlite3'
   gem "rack"
   gem "rack-test"
   gem "awesome_print"
