@@ -53,7 +53,8 @@ gem "open_id_authentication", :git => "git://github.com/rewritten/open_id_authen
 gem "cancan"
 gem "dalli"
 gem "redcarpet"
-gem 'rails_admin'
+gem 'syck'
+gem 'rails_admin', '0.4.6' # addresses rails_admin issues 1516 and 1578
 gem "ar_after_transaction"
 gem 'valid_email', :require => 'valid_email/email_validator'
 gem "calendar_helper"
