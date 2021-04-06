@@ -90,7 +90,7 @@ class ReqsController < ApplicationController
     @all_neighborhoods = Neighborhood.by_long_name
 
     respond_to do |format|
-      if @req.save
+      if @req.save!
         @reqs = Req.custom_search(nil,@group,active=true,page=1,ajax_posts_per_page,nil).order("updated_at desc")
         flash[:notice] = t('success_request_created')
         #respond_with @req
