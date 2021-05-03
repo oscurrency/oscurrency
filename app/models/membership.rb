@@ -5,7 +5,7 @@ class Membership < ActiveRecord::Base
   extend PreferencesHelper
 
   scope :with_role, lambda { |role| {:conditions => "roles_mask & #{2**ROLES.index(role.to_s)} > 0"} }
-  scope :active, -> { includes(:people).where('people.deactivated' => false) }
+  scope :active, -> { includes(:person).where('people.deactivated' => false) }
   scope :listening, -> { includes(:member_preference, :person).where('people.deactivated' => false, 'member_preferences.forum_notifications' => true) }
 
   belongs_to :group

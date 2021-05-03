@@ -8,6 +8,6 @@ module PreferencesHelper
   # in test mode it's a pain in the ass.
   def global_prefs
     return Preference.first || Preference.create() if Rails.env.test?
-    @global_prefs ||= Preference.find(:first) || Preference.create()
+    @global_prefs ||= Preference.first || Preference.create()
   end
 end
