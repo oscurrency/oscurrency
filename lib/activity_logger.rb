@@ -35,9 +35,7 @@ module ActivityLogger
     # attribute (due to the "DISTINCT person_id" clause), which we extract
     # using map(&:person_id).
     def already_have_activity(people, activity)
-      Feed.find(:all, :select => "DISTINCT person_id",
-                      :conditions => ["person_id IN (?) AND activity_id = ?",
-                                      people, activity]).map(&:person_id)    
+      Feed.where(person_id: people, activity_id: activity).distinct('person_id').map(&:person_id)
     end
   
     # Return the SQL values string needed for the SQL VALUES clause.

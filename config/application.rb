@@ -45,6 +45,8 @@ module Oscurrency
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
 
+    config.active_record.whitelist_attributes = false
+
     # Enable the asset pipeline
     config.assets.enabled = true
     config.assets.initialize_on_precompile = false
@@ -52,8 +54,8 @@ module Oscurrency
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
-    require 'oauth/rack/oauth_filter'
-    config.middleware.use OAuth::Rack::OAuthFilter
+    #require 'oauth/rack/oauth_filter'
+    #config.middleware.use OAuth::Rack::OAuthFilter
     if ENV['EXCEPTION_NOTIFICATION']
       config.middleware.use ExceptionNotification::Rack,
         email: {

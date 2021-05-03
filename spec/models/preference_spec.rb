@@ -4,7 +4,7 @@ describe Preference do
   describe "static global preference" do
     it "should prohibit multiple preference objects" do
       @preferences = Preference.new
-      @preferences.save.should be_false
+      @preferences.save.should be_falsey
       @preferences.errors.full_messages.should include('Attempting to instantiate another Preference object')
     end
   end

@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'cancan/matchers'
 
 describe Group do
-  fixtures :client_applications, :people, :oauth_tokens, :groups
+  fixtures :people, :groups
 
   before(:each) do
     @p = people(:quentin)
@@ -220,77 +220,6 @@ describe Group do
         @e_seller_initiated.metadata = @req
         @e_seller_initiated.worker = @p2
         @ability.should be_able_to(:create,@e_seller_initiated)
-      end
-
-      describe 'delegated payments with oauth' do
-        before(:each) do
-          @token = RequestToken.new :client_application => client_applications(:one), :callback_url => "http://example.com/callback"  
-        end
-
-        it "should not allow a payment with wrong scope type" do
-          # _id = "read_payments"
-          @token.scope = "http://localhost/scopes/list_payments.json?asset=#{@g.asset}"
-          @token.save
-          @token.authorize!(@p2)
-
-          @token.provided_oauth_verifier = @token.verifier
-          @access_token = @token.exchange!
-
-          @scoped_ability = Ability.new(@p2,@access_token)
-          @e.customer = @p2
-          @scoped_ability.should_not be_able_to(:create,@e)
-        end
-
-        it "should allow a payment with the right scope type" do
-          # _id = "single_payment"
-          @token.scope = "http://localhost/scopes/single_payment.json?amount=10&asset=#{@g.asset}"
-          @token.save
-          @token.authorize!(@p2)
-
-          @token.provided_oauth_verifier = @token.verifier
-          @access_token = @token.exchange!
-
-          @scoped_ability = Ability.new(@p2,@access_token)
-          @e.customer = @p2
-          @scoped_ability.should be_able_to(:create,@e)
-        end
-
-        it "should not allow a single payment that exceeds the authorized amount" do
-          # _id = "single_payment"
-          @token.scope = "http://localhost/scopes/single_payment.json?amount=0.5&asset=#{@g.asset}"
-          @token.save
-          @token.authorize!(@p2)
-
-          @token.provided_oauth_verifier = @token.verifier
-          @access_token = @token.exchange!
-
-          @scoped_ability = Ability.new(@p2,@access_token)
-          @e.customer = @p2
-          @scoped_ability.should_not be_able_to(:create,@e)
-        end
-
-        it "should not allow a single payment to be made more than once" do
-          # _id = "single_payment"
-          @token.scope = "http://localhost/scopes/single_payment.json?amount=1&asset=#{@g.asset}"
-          @token.save
-          @token.authorize!(@p2)
-
-          @token.provided_oauth_verifier = @token.verifier
-          @access_token = @token.exchange!
-
-          @scoped_ability = Ability.new(@p2,@access_token)
-          @e.customer = @p2
-
-          # first check, pay, invalidate
-          if @scoped_ability.can? :create, @e
-            @e.save
-            # when access token present, invalidate on successful payment
-            if @access_token.capabilities[0].action_id == 'single_payment'
-              @access_token.capabilities[0].invalidate!
-            end
-          end
-          @scoped_ability.should_not be_able_to(:create,@e)
-        end
       end
 
       describe 'account balances' do

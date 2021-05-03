@@ -39,7 +39,7 @@ RSpec.configure do |config|
   # Custom matchers includes
   config.include(CustomModelMatchers)
 
-  config.global_fixtures = :client_applications, :conversations, :feeds, :forums, :neighborhoods, :oauth_nonces, :oauth_tokens, :offers, :people, :posts, :preferences, :topics
+  config.global_fixtures = :conversations, :feeds, :forums, :neighborhoods, :offers, :people, :posts, :preferences, :topics
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
@@ -88,7 +88,7 @@ RSpec.configure do |config|
   end
 
   def enable_email_notifications
-    Preference.find(:first).update_attributes(:email_verifications => true)
+    Preference.first.update_attributes(:email_verifications => true)
   end
 end
 

@@ -7,7 +7,7 @@
 #
 
 class Conversation < ActiveRecord::Base
-  has_many :messages, :order => :created_at
+  has_many :messages, -> { order("created_at") }
 
   # current now, only offer will be as this field
   # if you use other object stored as this(for example req), please update this comment

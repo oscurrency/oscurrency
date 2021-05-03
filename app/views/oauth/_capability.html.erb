@@ -1,3 +1,0 @@
-<p>
-<%= check_box_tag "capabilities[#{capability.action_id}]", capability.id, true %> <%= t('oauth.authorize.authorize') %> <span class="<%= oauth_scope_class(capability) %>"><%= capability.action_name %></span> <img src="<%= capability.action_icon_uri %>"><%= dynamic_scope_params(capability) %>
-</p>

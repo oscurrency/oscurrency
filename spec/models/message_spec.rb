@@ -106,7 +106,7 @@ describe Message do
     before(:each) do
       @emails = ActionMailer::Base.deliveries
       @emails.clear
-      @global_prefs = Preference.find(:first)
+      @global_prefs = Preference.first
     end
     
     it "should send an email when global/recipient notifications are on" do

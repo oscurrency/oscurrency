@@ -19,7 +19,7 @@ describe Topic do
   end
 
   it "should have many posts" do
-    @topic.posts.should be_a_kind_of(Array)
+    @topic.posts.load.to_a.should be_a_kind_of(Array)
   end
 
   it "should belong to a person" do

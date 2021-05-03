@@ -52,7 +52,6 @@ class Exchange < ActiveRecord::Base
   before_destroy :delete_calculate_account_balances
 
   scope :by_customer, lambda {|person_id| {:conditions => ["customer_id = ?", person_id]}}
-  scope :everyone, :conditions => {}
   scope :everyone_by_group, lambda {|group_id| {:conditions => ["group_id = ?", group_id]}}
   scope :by_month, lambda {|date| {:conditions => ["DATE_TRUNC('month',created_at) = ?", date]}}
 

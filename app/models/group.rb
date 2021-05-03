@@ -12,17 +12,15 @@ class Group < ActiveRecord::Base
 
   has_one :forum
   has_one :privacy_setting
-  has_many :reqs, :conditions => ["biddable = ?",true], :order => "created_at DESC"
-  has_many :offers, :order => "created_at DESC"
-  has_many :photos, :as => :photoable, :dependent => :destroy, :order => "created_at"
-  has_many :exchanges, :order => "created_at DESC"
-  has_many :exchange_and_fees, :order => "created_at DESC"
+  has_many :reqs, -> { where(biddable: true).order("created_at DESC") }
+  has_many :offers, -> { order("created_at DESC") }
+  has_many :photos, -> { order("created_at") }, :as => :photoable, :dependent => :destroy
+  has_many :exchanges, -> { order("created_at DESC") }
+  has_many :exchange_and_fees, -> { order("created_at DESC") }
   has_many :memberships, :dependent => :destroy
   has_many :accounts, :dependent => :destroy
-  has_many :people, :through => :memberships, 
-    :conditions => "status = 0", :order => "name DESC"
-  has_many :pending_request, :through => :memberships, :source => "person",
-    :conditions => "status = 2", :order => "name DESC"
+  has_many :people, -> { where(status: 0).order("name DESC") }, :through => :memberships
+  has_many :pending_request, -> { where(status: 2).order("name DESC") }, :through => :memberships, :source => "person"
   
   belongs_to :owner, :class_name => "Person", :foreign_key => "person_id"
   
@@ -31,7 +29,7 @@ class Group < ActiveRecord::Base
   validates_uniqueness_of :name
   validates_uniqueness_of :unit, :allow_nil => true
   validates_uniqueness_of :asset, :allow_nil => true
-  validates_format_of :asset, :with => /^[-\.a-z0-9_]+$/i, :allow_blank => true
+  validates_format_of :asset, :with => /^[-\.a-z0-9_]+$/i, :allow_blank => true, :multiline => true
   validate :changing_asset_name_only_allowed_if_empty
   after_create :create_owner_membership
   after_create :create_forum

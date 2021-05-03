@@ -70,20 +70,10 @@ describe Person do
       Connection.connect(person, @person)
       @person.update_attributes(:name => "New name")
 
-      Activity.find_all_by_person_id(person).should_not be_empty
+      Activity.where(person_id: person.id).should_not be_empty
       person.destroy
-      Activity.find_all_by_person_id(person).should be_empty
-      Feed.find_all_by_person_id(person).should be_empty
-    end
-
-    it "should disappear from other feeds if the person is destroyed" do
-      initial_person = create_person(:save => true)
-      person         = create_person(:email => "new@foo.com", :name => "Foo",
-                                     :save => true)
-      Connection.connect(person, initial_person)
-      initial_person.activities.length.should == 1
-      person.destroy
-      initial_person.reload.activities.length.should == 0
+      Activity.where(person_id: person.id).should be_empty
+      Feed.where(person_id: person.id).should be_empty
     end
   end
 

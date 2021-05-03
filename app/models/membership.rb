@@ -5,8 +5,8 @@ class Membership < ActiveRecord::Base
   extend PreferencesHelper
 
   scope :with_role, lambda { |role| {:conditions => "roles_mask & #{2**ROLES.index(role.to_s)} > 0"} }
-  scope :active, :include => :person, :conditions => {'people.deactivated' => false}
-  scope :listening, :include => [:member_preference, :person], :conditions => {'people.deactivated' => false, 'member_preferences.forum_notifications' => true}
+  scope :active, -> { includes(:people).where('people.deactivated' => false) }
+  scope :listening, -> { includes(:member_preference, :person).where('people.deactivated' => false, 'member_preferences.forum_notifications' => true) }
 
   belongs_to :group
   belongs_to :person
@@ -178,7 +178,7 @@ class Membership < ActiveRecord::Base
       mem.add_role('individual')
       mem.save
 
-      if person.accounts.find(:first,:conditions => ["group_id = ?",group.id]).nil?
+      if person.accounts.where(group_id: group.id).none?
         account = Account.new( :name => group.name ) # group name can change
         account.balance = Account::INITIAL_BALANCE
         account.person = person

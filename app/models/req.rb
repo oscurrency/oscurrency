@@ -10,18 +10,18 @@ class Req < ActiveRecord::Base
   extend Searchable(:name, :description)
 
   scope :active, lambda { where("active = ? AND due_date >= ?", true, DateTime.now) }
-  scope :biddable, where("biddable = ?", true)
+  scope :biddable, -> { where(biddable: true) }
   scope :current, lambda { where("due_date >= ?", DateTime.now) }
   scope :without_approved_bid,
-    joins("LEFT JOIN bids AS approved_bids ON approved_bids.req_id = reqs.id AND approved_bids.state = 'approved'").
-    where("approved_bids.id IS NULL")
+    -> {joins("LEFT JOIN bids AS approved_bids ON approved_bids.req_id = reqs.id AND approved_bids.state = 'approved'").
+    where("approved_bids.id IS NULL") }
 
   has_many :workers, :through => :categories, :source => :people
-  has_many :bids, :order => 'created_at DESC', :dependent => :destroy
-  has_many :accepted_bids, :class_name => "Bid", :conditions => "accepted_at IS NOT NULL"
-  has_many :completed_bids, :class_name => "Bid", :conditions => "completed_at IS NOT NULL"
-  has_many :committed_bids, :class_name => "Bid", :conditions => "committed_at IS NOT NULL"
-  has_many :approved_bids, :class_name => "Bid", :conditions => "approved_at IS NOT NULL"
+  has_many :bids, -> { order('created_at DESC') }, :dependent => :destroy
+  has_many :accepted_bids, -> { where("accepted_at IS NOT NULL") }, :class_name => "Bid"
+  has_many :completed_bids, -> { where("completed_at IS NOT NULL") }, :class_name => "Bid"
+  has_many :committed_bids, -> { where("committed_at IS NOT NULL") }, :class_name => "Bid"
+  has_many :approved_bids, -> { where("approved_at IS NOT NULL") }, :class_name => "Bid"
 
   attr_accessor :ability
   attr_protected :ability

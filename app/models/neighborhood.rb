@@ -1,8 +1,8 @@
 class Neighborhood < ActiveRecord::Base
   LONG_NAME_SEPARATOR = ":"
   validates_presence_of :name
-  has_and_belongs_to_many :reqs, :order => 'created_at DESC'
-  has_and_belongs_to_many :offers, :order => 'created_at DESC'
+  has_and_belongs_to_many :reqs, -> { order('created_at DESC') }
+  has_and_belongs_to_many :offers, -> { order('created_at DESC') }
   has_and_belongs_to_many :people
   acts_as_tree
 

@@ -22,7 +22,7 @@
           Highcharts.numberFormat(this.y, 2) + " <%= t('currency_unit_plural') %>";
         }
       },
-      series: [<% {"everyone" => Exchange.everyone, "admin" => Exchange.by_customer(1)}. each do |name,exchanges| %>   
+      series: [<% {"everyone" => Exchange.all, "admin" => Exchange.by_customer(1)}. each do |name,exchanges| %>   
         {
         name: "<%= name %>",
         pointStart: <%= @num_months.months.ago.to_i * 1000 %>,

@@ -114,7 +114,6 @@ class ApplicationController < ActionController::Base
     end
 
     def current_person
-      # login_or_oauth_required sets @current_person to nil
       return @current_person if defined?(@current_person) && @current_person
       @current_person = current_person_session && current_person_session.record
     end
@@ -125,6 +124,10 @@ class ApplicationController < ActionController::Base
 
     def current_user
       current_person 
+    end
+
+    def current_token
+      nil
     end
 
     def current_ability

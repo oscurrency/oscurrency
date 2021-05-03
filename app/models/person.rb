@@ -6,12 +6,14 @@ class Person < ActiveRecord::Base
 
   acts_as_authentic do |c|
     c.crypto_provider = Authlogic::CryptoProviders.const_get(ENV['CRYPTOPROVIDER'].to_sym) unless ENV['CRYPTOPROVIDER'].blank?
+=begin
     c.openid_required_fields = ['http://axschema.org/contact/email',
       'http://axschema.org/namePerson/first',
       'http://axschema.org/namePerson/last',
       :fullname,
       :email
     ]
+=end
     c.perishable_token_valid_for = 48.hours
     c.maintain_sessions = false if Rails.env == "test"
   end
@@ -98,44 +100,34 @@ class Person < ActiveRecord::Base
   extend Scopes
 
   has_many :connections
-  has_many :contacts, :through => :connections, :conditions => {"connections.status" => Connection::ACCEPTED}
-  has_many :photos, :as => :photoable, :dependent => :destroy, :order => 'created_at'
+  has_many :contacts, :through => :connections
+  has_many :photos, -> { order('created_at') }, :as => :photoable, :dependent => :destroy
   has_many :requested_contacts, :through => :connections, :source => :contact#, :conditions => REQUESTED_AND_ACTIVE
 
-  with_options :dependent => :destroy, :order => 'created_at DESC' do |person|
-    person.has_many :_sent_messages, :foreign_key => "sender_id",
-    :conditions => "communications.sender_deleted_at IS NULL", :class_name => "Message"
-    person.has_many :_received_messages, :foreign_key => "recipient_id",
-    :conditions => "communications.recipient_deleted_at IS NULL", :class_name => "Message"
-    person.has_many :_sent_exchanges, :foreign_key => "customer_id", :class_name => "Exchange"
-    person.has_many :_received_exchanges, :foreign_key => "worker_id", :class_name => "Exchange"
-  end
+  has_many :_sent_messages, -> { where(sender_deleted_at: nil).order('created_at DESC') }, :foreign_key => "sender_id", :class_name => "Message", :dependent => :destroy
+  has_many :_received_messages, -> { where(recipient_deleted_at: nil).order('created_at DESC') }, :foreign_key => "recipient_id", :class_name => "Message", :dependent => :destroy
+  has_many :_sent_exchanges, -> { order('created_at DESC') }, :foreign_key => "customer_id", :class_name => "Exchange", :dependent => :destroy
+  has_many :_received_exchanges, -> { order('created_at DESC') }, :foreign_key => "worker_id", :class_name => "Exchange", :dependent => :destroy
 
   has_many :exchanges, :foreign_key => "worker_id"
   has_many :feeds
-  has_many :activities, :through => :feeds, :order => 'activities.created_at DESC',
-  :limit => FEED_SIZE,
-  :conditions => ["people.deactivated = ?", false],
-  :include => :person
 
-  #  has_many :page_views, :order => 'created_at DESC'
-
-  has_many :own_groups, :class_name => "Group", :foreign_key => "person_id", :order => "name ASC"
+  has_many :own_groups, -> { order("name ASC") }, :class_name => "Group", :foreign_key => "person_id"
   has_many :memberships
-  has_many :groups, :through => :memberships, :source => :group, :conditions => "status = 0", :order => "name ASC"
-  has_many :groups_not_hidden, :through => :memberships, :source => :group, :conditions => "status = 0 and mode != 2", :order => "name ASC"
+  has_many :groups, -> { where('memberships.status' => 0).order("name ASC") }, :through => :memberships, :source => :group
+  has_many :groups_not_hidden, -> { where('memberships.status' => 0).not(mode: 2).order("name ASC") }, :through => :memberships, :source => :group
 
   has_many :accounts
   has_many :addresses, :inverse_of => :person
   has_many :client_applications
-  has_many :tokens, :class_name => "OauthToken", :order => "authorized_at DESC", :include => [:client_application]
+  has_many :tokens, -> { includes(:client_applications).order("authorized_at DESC") }, :class_name => "OauthToken"
 
   has_and_belongs_to_many :categories
   has_and_belongs_to_many :neighborhoods
   has_many :offers
   has_many :reqs
   has_many :bids
-  has_many :invitations, :order => 'created_at DESC'
+  has_many :invitations, -> { order('created_at DESC') }
   belongs_to :default_group, :class_name => "Group", :foreign_key => "default_group_id"
   belongs_to :sponsor, :class_name => "Person", :foreign_key => "sponsor_id"
   belongs_to :support_contact, :class_name => "Person", :foreign_key => "support_contact_id"
