@@ -7,5 +7,5 @@ before_fork do |server, worker|
 end
 
 after_fork do |server, worker|
-	ActiveRecord::Base.connection_handler.verify_active_connections!
+	ActiveRecord::Base.connection_handler.clear_active_connections!
 end
