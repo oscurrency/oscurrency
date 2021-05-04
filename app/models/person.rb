@@ -115,7 +115,7 @@ class Person < ActiveRecord::Base
   has_many :own_groups, -> { order("name ASC") }, :class_name => "Group", :foreign_key => "person_id"
   has_many :memberships
   has_many :groups, -> { where('memberships.status' => 0).order("name ASC") }, :through => :memberships, :source => :group
-  has_many :groups_not_hidden, -> { where('memberships.status' => 0).not(mode: 2).order("name ASC") }, :through => :memberships, :source => :group
+  has_many :groups_not_hidden, -> { where('memberships.status' => 0).where.not(mode: 2).order("name ASC") }, :through => :memberships, :source => :group
 
   has_many :accounts
   has_many :addresses, :inverse_of => :person
