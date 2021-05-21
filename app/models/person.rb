@@ -137,7 +137,7 @@ class Person < ActiveRecord::Base
 
   validates :name, :presence => true, :length => { :maximum => MAX_NAME }
   validates :description, :length => { :maximum => MAX_DESCRIPTION }
-  validates :email, :presence => true, :uniqueness => true, :email => true
+  validates :email, :presence => true, :uniqueness => true
   validates :business_name, :length => { :maximum => 100 }, :presence => true, :if => lambda { |p| p.org }
   validates :legal_business_name, :length => { :maximum => 100 }
   validates :business_type, :presence => true, :if => lambda { |p| p.org }
