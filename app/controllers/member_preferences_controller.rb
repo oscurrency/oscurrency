@@ -1,11 +1,11 @@
 class MemberPreferencesController < ApplicationController
   before_filter :login_required
-  load_and_authorize_resource
+  authorize_resource
 
   # GET /member_preferences/1
   # GET /member_preferences/1.xml
   def show
-    #@member_preference = MemberPreference.find(params[:id])
+    @member_preference = MemberPreference.find(params[:id])
     @group = @member_preference.membership.group
 
     respond_to do |format|
@@ -15,7 +15,7 @@ class MemberPreferencesController < ApplicationController
 
   # GET /member_preferences/1/edit
   def edit
-    #@member_preference = MemberPreference.find(params[:id])
+    @member_preference = MemberPreference.find(params[:id])
     @group = @member_preference.membership.group
     respond_to do |format|
       format.js {render :action => 'reject' if not request.xhr?}
@@ -25,7 +25,7 @@ class MemberPreferencesController < ApplicationController
   # PUT /member_preferences/1
   # PUT /member_preferences/1.xml
   def update
-    #@member_preference = MemberPreference.find(params[:id])
+    @member_preference = MemberPreference.find(params[:id])
     @group = @member_preference.membership.group
 
     respond_to do |format|

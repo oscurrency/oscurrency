@@ -1,12 +1,13 @@
 class AccountsController < ApplicationController
   before_filter :login_required
   load_resource :person
-  load_and_authorize_resource :account, :through => :person
+  authorize_resource :account, :through => :person
 
   def index
   end
 
   def update
+    @account = Account.find(params[:account_id])
     if @account.update_attributes(account_params)
       flash[:success] = t('success_account_updated')
       redirect_to(edit_membership_path(@account.membership))
