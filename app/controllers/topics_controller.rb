@@ -1,6 +1,6 @@
 class TopicsController < ApplicationController
   load_resource :forum
-  load_and_authorize_resource :topic, :through => :forum
+  authorize_resource :topic, :through => :forum
   
   before_filter :login_required
   
@@ -9,6 +9,7 @@ class TopicsController < ApplicationController
   end
 
   def show
+    @topic = Topic.find(params[:id])
     @group = @forum.group
     @authorized = @group.authorized_to_view_forum?(current_person)
     if @authorized
@@ -30,7 +31,7 @@ class TopicsController < ApplicationController
   end
 
   def create
-    @topic = Topic.new(topic_params)
+    @topic = @forum.topics.build(topic_params)
     @body = "yui-skin-sam" 
     @topic.person = current_person
     @post = ForumPost.new
