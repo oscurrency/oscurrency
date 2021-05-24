@@ -1,6 +1,6 @@
 class BidsController < ApplicationController
   load_resource :req
-  load_and_authorize_resource :bid, :through => :req
+  authorize_resource :bid, :through => :req
   before_filter :login_required
 
   # POST /bids
@@ -72,6 +72,6 @@ class BidsController < ApplicationController
 
   private
     def bid_params
-      params.require(:bid).permit(:estimated_hours)
+      params.require(:bid).permit(:estimated_hours, :expiration_date, :private_message_to_requestor)
     end
 end
