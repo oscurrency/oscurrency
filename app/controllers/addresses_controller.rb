@@ -20,7 +20,7 @@ class AddressesController < ApplicationController
   end
 
   def create
-    @address = Address.new(params[:address])
+    @address = Address.new(:address_params)
     begin
       if current_person.addresses << @address
         redirect_to person_url(current_person)
@@ -38,7 +38,7 @@ class AddressesController < ApplicationController
   def update
     @address = current_person.addresses.find(params[:id])
     begin
-      if @address.update_attributes(params[:address])
+      if @address.update_attributes(address_params)
         redirect_to person_url(current_person)
       else
         @states = State.find(:all, :order => "name").collect {|s| [s.name, s.id]}
