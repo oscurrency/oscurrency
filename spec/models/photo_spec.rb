@@ -28,7 +28,6 @@ describe Photo do
   private
 
     def new_photo(options = {})
-      Photo.new({ :uploaded_data => @image,
-                  :photoable        => @person }.merge(options))
+      Photo.new({:photoable => @person }.merge(options))
     end
 end

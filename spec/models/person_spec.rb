@@ -295,13 +295,15 @@ describe Person do
     end
 
     def create_person(options = {})
+      save_record = options[:save]
+      options.delete(:save)
       record = Person.new({ :email => 'quire@example.com',
                             :password => 'quire',
                             :password_confirmation => 'quire',
                             :name => 'Quire',
                             :description => 'A new person' }.merge(options))
       record.valid?
-      record.save! if options[:save]
+      record.save! if save_record
       record
     end
 end
