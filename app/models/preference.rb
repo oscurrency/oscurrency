@@ -32,20 +32,6 @@
 #  display_orgicon                       :boolean(1)      default(true)
 
 class Preference < ActiveRecord::Base
-  attr_accessible :app_name, :server_name,
-                  :new_member_notification,
-                  :email_notifications, :email_verifications, :analytics,
-                  :about, :demo, :whitelist, :gmail,
-                  :practice, :steps, :questions, :contact,
-                  :registration_intro,
-                  :agreement,
-                  :protected_categories,
-                  :blog_feed_url,
-                  :googlemap_api_key,
-                  :admin_contact_id,
-                  :default_group_id, :display_orgicon
-  attr_accessible *attribute_names, :as => :admin
-
   validate :enforce_singleton, :on => :create
 
   belongs_to :default_group, :class_name => "Group", :foreign_key => "default_group_id"

@@ -2,7 +2,7 @@ class PeopleController < ApplicationController
 
   skip_before_filter :require_activation, :only => :verify_email
   skip_before_filter :admin_warning, :only => [ :show, :update ]
-  before_filter :login_required, :only => [ :index, :show, :edit, :update ]
+  before_filter :login_required, :except => [:new, :create, :verify_email]
   before_filter :correct_person_required, :only => [ :edit, :update ]
 
   def index
@@ -56,7 +56,7 @@ class PeopleController < ApplicationController
   end
 
   def create
-    @person = Person.new(params[:person])
+    @person = Person.new(person_params)
     @person.email_verified = false if global_prefs.email_verifications?
     @person.save do |result|
       respond_to do |format|
@@ -138,7 +138,7 @@ class PeopleController < ApplicationController
     case params[:type]
     when 'info_edit'
       respond_to do |format|
-        if @person.update_attributes(params[:person])
+        if @person.update_attributes(person_params)
           flash[:success] = t('success_profile_updated')
           format.html { redirect_to(@person) }
         else
@@ -164,7 +164,7 @@ class PeopleController < ApplicationController
       end
       #when 'openid_edit'
     else
-      @person.attributes = params[:person]
+      @person.attributes = person_params
       @person.save do |result|
         respond_to do |format|
           if result
@@ -179,15 +179,6 @@ class PeopleController < ApplicationController
           end
         end
       end
-    end
-  end
-
-  def common_contacts
-    @person = Person.find(params[:id])
-    @common_contacts = @person.common_contacts_with(current_person,
-                                                    params[:page])
-    respond_to do |format|
-      format.html
     end
   end
 
@@ -249,5 +240,9 @@ class PeopleController < ApplicationController
 
     def cancel?
       params["commit"] == t('button_cancel');
+    end
+
+    def person_params
+      params.require(:person).permit(:email, :password, :password_confirmation, :name, :business_name, :legal_business_name, :business_type_id, :title, :activity_status_id, :plan_type_id, :support_contact_id, :description, :connection_notifications, :message_notifications, :category_ids, :address_ids, :neighborhood_ids, :zipcode, :phone, :phoneprivacy, :accept_agreement, :language, :time_zone, :date_style, :openid_identifier, :sponsor, :broadcast_emails, :web_site_url, :org, :posts_per_page, :deactivated)
     end
 end

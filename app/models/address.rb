@@ -23,11 +23,6 @@ class Address < ActiveRecord::Base
   belongs_to :person, :inverse_of => :addresses
   belongs_to :state
 
-  attr_accessible :address_line_1, :address_line_2, :address_line_3, :city, :state_id, :zipcode_plus_4, :address_privacy
-  attr_accessible :primary
-  attr_accessible *attribute_names, :as => :admin
-
-  attr_accessible :person_attributes, :allow_destroy => true
   accepts_nested_attributes_for :person, :allow_destroy => true
 
   after_commit :geocode_address, :if => :persisted?

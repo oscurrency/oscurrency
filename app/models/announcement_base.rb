@@ -4,8 +4,6 @@ module AnnouncementBase
   extend ActiveSupport::Concern
 
   included do
-
-    attr_protected :person_id, :created_at, :updated_at
     attr_readonly :group_id
 
     belongs_to :person

@@ -52,6 +52,7 @@ class GroupsController < ApplicationController
   end
 
   def create
+    @group = Group.new(group_params)
     @group.owner = current_person
 
     respond_to do |format|
@@ -68,7 +69,7 @@ class GroupsController < ApplicationController
 
   def update
     respond_to do |format|
-      if @group.update_attributes(params[:group])
+      if @group.update_attributes(group_params)
         flash[:notice] = t('notice_group_updated')
         format.html { redirect_to(group_path(@group)) }
       else
@@ -149,9 +150,9 @@ class GroupsController < ApplicationController
       redirect_to(edit_group_path(@group)) and return
     end
     
-    group_data = { :photoable => @group,
-                    :primary => @group.photos.empty? }
-    @photo = Photo.new(params[:photo].merge(group_data))
+    @photo = Photo.new(photo_params)
+    @photo.photoable = @group
+    @photo.primary = @group.photos.empty?
     
     respond_to do |format|
       if @photo.save
@@ -178,6 +179,14 @@ class GroupsController < ApplicationController
   end
   
   protected
+
+  def photo_params
+    params.require(:photo).permit(:picture, :primary, :photoable, :picture_for)
+  end
+
+  def group_params
+    params.require(:group).permit(:name, :description, :mode, :unit, :adhoc_currency, :default_credit_limit, :asset, :private_txns, :enable_forum, :display_balance, :display_earned, :display_paid, :default_roles)
+  end
 
   def membership
     @membership ||= Membership.mem(current_person,@group)

@@ -77,7 +77,7 @@ class MembershipsController < ApplicationController
   
   def update
     respond_to do |format|
-      if @membership.update_attributes(params[:membership])
+      if @membership.update_attributes(membership_params)
         flash[:notice] = 'Membership was successfully updated.'
         format.html { redirect_to(members_group_path(@membership.group)) }
       else
@@ -114,5 +114,9 @@ class MembershipsController < ApplicationController
       format.html { redirect_to(members_group_path(@membership.group)) }
     end
   end
-  
+
+  private
+    def membership_params
+      params.require(:membership).permit!
+    end
 end

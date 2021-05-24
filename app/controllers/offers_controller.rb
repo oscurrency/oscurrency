@@ -53,6 +53,7 @@ class OffersController < ApplicationController
   end
 
   def create
+    @offer = Offer.new(offer_params)
     @offer.group = @group
     @offer.person = current_person
     @all_categories = Category.by_long_name
@@ -86,12 +87,13 @@ class OffersController < ApplicationController
   end
 
   def update
+    @offer = Offer.new(offer_params)
     @group = @offer.group
     @all_categories = Category.by_long_name
     @all_neighborhoods = Neighborhood.by_long_name
 
     respond_to do |format|
-      if @offer.update_attributes(params[:offer])
+      if @offer.update_attributes(offer_params)
         flash[:notice] = t('notice_offer_updated')
         @offers = Offer.custom_search(nil,@group,active=true,page=1,ajax_posts_per_page,nil).order("updated_at desc")
         #format.html { redirect_to(@offer) }
@@ -138,9 +140,9 @@ class OffersController < ApplicationController
       redirect_to(offer_path(@offer)) and return
     end
     
-    offer_data = { :photoable => @offer,
-                    :primary => @offer.photos.empty? }
-    @photo = Photo.new(params[:photo].merge(offer_data))
+    @photo = Photo.new(photo_params)
+    @photo.photoable = @offer
+    @photo.primary = @offer.photos.empty?
     
     respond_to do |format|
       if @photo.save
@@ -152,7 +154,10 @@ class OffersController < ApplicationController
     end
   end
 
-  # private
+  private
+  def offer_params
+    params.require(:offer).permit!
+  end
 
   def correct_person_required
     redirect_to home_url unless ( current_person.admin? or Offer.find(params[:id]).person == current_person )

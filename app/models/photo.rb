@@ -23,8 +23,6 @@ class Photo < ActiveRecord::Base
   
   belongs_to :photoable, :polymorphic => true
 
-  attr_accessible :picture, :primary, :photoable, :picture_for
-
   has_many :activities, :as => :item, :dependent => :destroy
 
   before_save :update_photo_attributes

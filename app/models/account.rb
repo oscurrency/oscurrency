@@ -16,9 +16,6 @@ class Account < ActiveRecord::Base
   belongs_to :person
   belongs_to :group
 
-  attr_accessible :credit_limit, :offset, :reserve, :reserve_percent, :as => :admin
-  attr_accessible :credit_limit, :offset, :reserve, :reserve_percent
-
   before_update :check_credit_limit
 
   INITIAL_BALANCE = 0

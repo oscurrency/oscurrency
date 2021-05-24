@@ -3,7 +3,6 @@
 source 'https://rubygems.org'
 ruby "2.3.8"
 gem 'rails', '4.0.6'
-gem 'protected_attributes', '~>1.0.1'
 #gem 'rails4_upgrade', github: 'alindeman/rails4_upgrade'
 =begin
 gem 'actionpack-action_caching', '~>1.0.0'

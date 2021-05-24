@@ -7,7 +7,7 @@ class AccountsController < ApplicationController
   end
 
   def update
-    if @account.update_attributes(params[:account])
+    if @account.update_attributes(account_params)
       flash[:success] = t('success_account_updated')
       redirect_to(edit_membership_path(@account.membership))
     else
@@ -27,4 +27,9 @@ class AccountsController < ApplicationController
     end
   end
 
+  private
+
+    def account_params
+      params.require(:account).permit(:credit_limit, :offset, :reserve, :reserve_percent)
+    end
 end

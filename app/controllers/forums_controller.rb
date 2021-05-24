@@ -21,7 +21,7 @@ class ForumsController < ApplicationController
   def update
     @forum = Forum.find(params[:id])
     respond_to do |format|
-      if @forum.update_attributes(params[:forum])
+      if @forum.update_attributes(forum_params)
         flash[:notice] = t('notice_forum_updated')
         format.js
       else
@@ -32,6 +32,9 @@ class ForumsController < ApplicationController
   end
 
   private
+    def forum_params
+      params.require(:forum).permit(:name, :description, :world_writable)
+    end
   
     def setup
       @body = "forum"

@@ -30,6 +30,7 @@ class TopicsController < ApplicationController
   end
 
   def create
+    @topic = Topic.new(topic_params)
     @body = "yui-skin-sam" 
     @topic.person = current_person
     @post = ForumPost.new
@@ -53,4 +54,9 @@ class TopicsController < ApplicationController
       format.js
     end
   end
+
+  private
+    def topic_params
+      params.require(:topic).permit(:name)
+    end
 end

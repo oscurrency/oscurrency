@@ -57,7 +57,7 @@ class ExchangesController < ApplicationController
   # this method expects that the form is either referencing an existing offer or accepting a name field for a new req to be created 
   #
   def create
-    @exchange = ExchangeAndFee.new(params[:exchange]) # amount and group_id are the only accessible fields
+    @exchange = ExchangeAndFee.new(exchange_params)
     @exchange.worker = @person
     unless @exchange.customer.present?
       @exchange.customer = current_person
@@ -71,7 +71,7 @@ class ExchangesController < ApplicationController
       # XXX maybe cleaner to let the exchange object assign group_id itself?
       @exchange.group_id = @offer.group.adhoc_currency? ? @offer.group_id : global_prefs.default_group_id
     else
-      @req = Req.new(params[:req])
+      @req = Req.new(req_params)
 
       @req.name = 'Gift transfer' if @req.name.blank? # XML creation might not set this
       @req.group = @exchange.group
@@ -120,5 +120,13 @@ class ExchangesController < ApplicationController
   
   def get_offer_count
     @offer_count ||= params[:offer][:count].blank? ? 1 : params[:offer][:count].to_i
+  end
+
+  def exchange_params
+    params.require(:exchange).permit(:amount, :group_id, :customer_id)
+  end
+
+  def req_params
+    params.require(:req).permit(:name, :description)
   end
 end

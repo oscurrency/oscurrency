@@ -81,7 +81,7 @@ class ReqsController < ApplicationController
   # POST /reqs
   # POST /reqs.xml
   def create
-    #@req = Req.new(params[:req])
+    @req = Req.new(req_params)
     @req.group = @group
     @req.person = current_person
 
@@ -114,7 +114,7 @@ class ReqsController < ApplicationController
     @all_neighborhoods = Neighborhood.by_long_name
 
     respond_to do |format|
-      if @req.update_attributes(params[:req])
+      if @req.update_attributes(req_params)
         flash[:notice] = t('notice_request_updated')
         @reqs = Req.custom_search(nil,@group,active=true,page=1,ajax_posts_per_page,nil).order("updated_at desc")
         format.html { redirect_to(@req) }
@@ -157,4 +157,9 @@ class ReqsController < ApplicationController
       format.js
     end
   end
+
+  private
+    def req_params
+      params.require(:req).permit(:name, :description, :estimated_hours, :due_date, :biddable, :notifications, :active, :public_bid)
+    end
 end

@@ -6,10 +6,6 @@ class Group < ActiveRecord::Base
   
   validates_presence_of :name, :person_id
 
-  attr_accessible :name, :description, :mode, :unit, :adhoc_currency, :default_credit_limit
-  attr_accessible :asset, :private_txns, :enable_forum, :display_balance, :display_earned, :display_paid
-  attr_accessible :default_roles
-
   has_one :forum
   has_one :privacy_setting
   has_many :reqs, -> { where(biddable: true).order("created_at DESC") }

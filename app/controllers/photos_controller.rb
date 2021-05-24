@@ -32,10 +32,10 @@ class PhotosController < ApplicationController
     if params[:commit] == "Cancel"
       redirect_to edit_person_url(current_person) and return
     end
-    person_data = { :photoable => current_person,
-                    :primary => current_person.photos.empty? }
     # raise params.inspect
-    @photo = Photo.new(params[:photo].merge(person_data))
+    @photo = Photo.new(photo_params)
+    @photo.photoable = current_person
+    @photo.primary = current_person.photos.empty?
   
     respond_to do |format|
       if @photo.save
@@ -89,7 +89,7 @@ class PhotosController < ApplicationController
   end
 
   def update_default_profile_picture
-    if @photo.update_attributes(params[:photo])
+    if @photo.update_attributes(photo_params)
       redirect_to default_profile_picture_photos_url
     else
       format.html do
@@ -104,7 +104,7 @@ class PhotosController < ApplicationController
   end
 
   def update_default_group_picture
-    if @photo.update_attributes(params[:photo])
+    if @photo.update_attributes(photo_params)
       redirect_to default_group_picture_photos_url
     else
       format.html do
@@ -115,6 +115,9 @@ class PhotosController < ApplicationController
   end
   
   private
+    def photo_params
+      params.require(:photo).permit(:picture, :primary, :photoable, :picture_for)
+    end
   
     def correct_user_required
       @photo = Photo.find(params[:id])

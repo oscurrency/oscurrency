@@ -6,8 +6,6 @@ class Message < Communication
 
   MAX_CONTENT_LENGTH = 5000
 
-  attr_accessible :subject, :content, :talkable_id, :talkable_type
-  
   belongs_to :sender, :class_name => 'Person', :foreign_key => 'sender_id'
   belongs_to :recipient, :class_name => 'Person',
                          :foreign_key => 'recipient_id'

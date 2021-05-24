@@ -90,7 +90,6 @@ Oscurrency::Application.routes.draw do
       get :unsu
       get :invite
       post :send_invite
-      get :common_contacts
     end
     resources :messages
     resources :accounts

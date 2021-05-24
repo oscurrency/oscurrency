@@ -19,8 +19,6 @@ class Topic < ActiveRecord::Base
   NUM_RECENT = 6
   DEFAULT_REFRESH_SECONDS = 30
   
-  attr_accessible :name
-  
   belongs_to :forum, :counter_cache => true
   belongs_to :person
   has_many :posts, -> { order('created_at DESC') }, :dependent => :destroy,

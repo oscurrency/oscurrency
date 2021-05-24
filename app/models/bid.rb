@@ -36,10 +36,6 @@ class Bid < ActiveRecord::Base
   validates :estimated_hours, :presence => true, :numericality => { :greater_than => 0 }
   validate :group_includes_bidder_as_a_member
 
-  attr_protected :person_id, :created_at, :updated_at
-  attr_protected :status_id, :state
-  attr_protected :group_id
-
   aasm_column :state
 
   aasm_initial_state :offered

@@ -20,27 +20,6 @@ class Person < ActiveRecord::Base
 
   #  attr_accessor :password, :verify_password, :new_password, :password_confirmation
   attr_accessor :sorted_photos, :accept_agreement
-  attr_accessible *attribute_names, :as => :admin
-  attr_accessible :address_ids, :as => :admin
-  attr_accessible :password, :password_confirmation, :as => :admin
-  attr_accessible :email, :password, :password_confirmation, :name
-  attr_accessible :business_name, :legal_business_name, :business_type_id
-  attr_accessible :title, :activity_status_id, :plan_type_id, :support_contact_id
-  attr_accessible :description, :connection_notifications
-  attr_accessible :message_notifications
-  attr_accessible :category_ids, :address_ids, :neighborhood_ids
-  attr_accessible :zipcode
-  attr_accessible :phone, :phoneprivacy
-  attr_accessible :accept_agreement
-  attr_accessible :language, :time_zone, :date_style
-  attr_accessible :openid_identifier
-  attr_accessible :sponsor
-  attr_accessible :broadcast_emails
-  attr_accessible :web_site_url
-  attr_accessible :org
-  attr_accessible :posts_per_page
-  attr_accessible :deactivated
-
   extend Searchable(:name, :business_name, :description)
 
   MAX_PASSWORD = 40

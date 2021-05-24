@@ -10,7 +10,7 @@ class PersonSessionsController < ApplicationController
 
 
   def create
-    @person_session = PersonSession.new(params[:person_session])
+    @person_session = PersonSession.new(person_session_params)
     @person_session.save do |result|
       if result
         unless params[:person_session].nil?
@@ -39,4 +39,9 @@ class PersonSessionsController < ApplicationController
     custom_logout_url = global_prefs.logout_url.empty? ? root_url : global_prefs.logout_url
     redirect_back_or_default custom_logout_url
   end
+
+  private
+    def person_session_params
+      params.require(:person_session).permit!
+    end
 end

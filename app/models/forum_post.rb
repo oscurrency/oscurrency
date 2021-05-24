@@ -3,9 +3,6 @@ require 'texticle/searchable'
 class ForumPost < Post
   extend Searchable(:body)
 
-  attr_accessible :body
-  attr_accessible *attribute_names, :as => :admin
-  
   belongs_to :topic,  :counter_cache => true, :touch => true
   belongs_to :person, :counter_cache => true
   

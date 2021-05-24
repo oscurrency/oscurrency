@@ -23,7 +23,7 @@ class PostsController < ApplicationController
   end
 
   def create
-    @post = @topic.posts.build(params[:forum_post])
+    @post = @topic.posts.build(forum_post_params)
     @post.person = current_person
 
     authorize! :create, @post
@@ -40,7 +40,7 @@ class PostsController < ApplicationController
 
   def update
     respond_to do |format|
-      if @post.update_attributes(params[:post])
+      if @post.update_attributes(post_params)
         flash[:notice] = t('notice_post_updated')
         format.html { redirect_to forum_topic_url(@forum, @topic, :posts => @topic.posts.count) }
       else
@@ -62,6 +62,13 @@ class PostsController < ApplicationController
   end
   
   private
+    def forum_post_params
+      params.require(:forum_post).permit(:body)
+    end
+
+    def post_params
+      params.require(:post).permit(:body)
+    end
   
     ## Before filters
   

@@ -24,7 +24,6 @@ class Req < ActiveRecord::Base
   has_many :approved_bids, -> { where("approved_at IS NOT NULL") }, :class_name => "Bid"
 
   attr_accessor :ability
-  attr_protected :ability
   attr_readonly :estimated_hours
 
   validates :due_date, :presence => true

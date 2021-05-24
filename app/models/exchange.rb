@@ -32,10 +32,6 @@ class Exchange < ActiveRecord::Base
   validate :amount_is_positive
   validate :worker_is_not_customer
 
-  attr_accessible :amount, :group_id
-  
-  attr_accessible :customer_id
-  attr_accessible *attribute_names, :as => :admin
   attr_readonly :amount
   attr_readonly :customer_id, :worker_id, :group_id
 

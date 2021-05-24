@@ -4,7 +4,7 @@ class PrivacySettingsController < ApplicationController
 
   def update
     respond_to do |format|
-      if @privacy_setting.update_attributes(params[:privacy_setting])
+      if @privacy_setting.update_attributes(privacy_setting_params)
         flash[:notice] = t('notice_privacy_settings_updated')
         format.js
       else
@@ -13,4 +13,9 @@ class PrivacySettingsController < ApplicationController
       end
     end
   end
+
+  private
+    def privacy_setting_params
+      params.require(:privacy_setting).permit(:viewable_reqs, :viewable_offers, :viewable_forum, :viewable_members)
+    end
 end

@@ -83,4 +83,8 @@ private
   def correct_user_required
     redirect_to home_url unless Person.find(params[:person_id]) == current_person
   end
+
+  def address_params
+    params.require(:address).permit(:address_line_1, :address_line_2, :address_line_3, :city, :state_id, :zipcode_plus_4, :address_privacy)
+  end
 end

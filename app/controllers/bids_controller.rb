@@ -6,7 +6,7 @@ class BidsController < ApplicationController
   # POST /bids
   # POST /bids.xml
   def create
-    @bid = @req.bids.new(params[:bid])
+    @bid = @req.bids.new(bid_params)
     @bid.person = current_person
 
     respond_to do |format|
@@ -69,4 +69,9 @@ class BidsController < ApplicationController
       #format.xml  { head :ok }
     end
   end
+
+  private
+    def bid_params
+      params.require(:bid).permit(:estimated_hours)
+    end
 end

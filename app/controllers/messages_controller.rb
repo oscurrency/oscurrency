@@ -81,7 +81,7 @@ class MessagesController < ApplicationController
   end
 
   def create
-    @message = Message.new(params[:message])
+    @message = Message.new(message_params)
     @recipient = Person.find(params[:person_id]) if params[:person_id]
     @message.sender    = current_person
     @message.recipient = @recipient
@@ -130,6 +130,10 @@ class MessagesController < ApplicationController
   end
 
   private
+
+    def message_params
+      params.require(:message).permit(:subject, :content, :talkable_id, :talkable_type)
+    end
   
     def setup
       @body = "messages"
