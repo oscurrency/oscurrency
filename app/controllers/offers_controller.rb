@@ -4,7 +4,7 @@ class OffersController < ApplicationController
 
   before_filter :login_required
   load_resource :group
-  load_and_authorize_resource :offer, :through => :group, :shallow => true
+  authorize_resource :offer, :through => :group, :shallow => true
   before_filter :correct_person_required, :only => [:edit, :update, :destroy]
 
   def index
@@ -42,6 +42,7 @@ class OffersController < ApplicationController
   end
 
   def new
+    @offer = Offer.new
     @all_categories = Category.by_long_name
     @all_neighborhoods = Neighborhood.by_long_name
     @selected_neighborhoods = current_person.neighborhoods
