@@ -1,6 +1,6 @@
 class ExchangesController < ApplicationController
   load_resource :person
-  load_and_authorize_resource :exchange, :through => :person
+  authorize_resource :exchange, :through => :person
   skip_before_filter :require_activation
   before_filter :login_required
 
@@ -27,6 +27,7 @@ class ExchangesController < ApplicationController
   end
 
   def new
+    @exchange = Exchange.new
     if params[:offer]
       @offer = Offer.find(params[:offer])
       if @offer.person != @person
