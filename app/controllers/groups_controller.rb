@@ -1,7 +1,7 @@
 class GroupsController < ApplicationController
   before_filter :login_required
   skip_before_filter :require_activation
-  load_and_authorize_resource
+  authorize_resource
   
   def index
     @body = "noajax"
@@ -14,6 +14,7 @@ class GroupsController < ApplicationController
   end
 
   def show
+    @group = Group.find(params[:id])
     membership_display
 
     if membership
@@ -42,6 +43,7 @@ class GroupsController < ApplicationController
   end
 
   def new
+    @group = Group.new
     @photo = Photo.new
     respond_to do |format|
       format.html
@@ -49,6 +51,7 @@ class GroupsController < ApplicationController
   end
 
   def edit
+    @group = Group.find(params[:id])
   end
 
   def create
@@ -68,6 +71,7 @@ class GroupsController < ApplicationController
   end
 
   def update
+    @group = Group.find(params[:id])
     respond_to do |format|
       if @group.update_attributes(group_params)
         flash[:notice] = t('notice_group_updated')
@@ -79,6 +83,7 @@ class GroupsController < ApplicationController
   end
 
   def destroy
+    @group = Group.find(params[:id])
     @group.destroy
 
     respond_to do |format|
@@ -88,6 +93,7 @@ class GroupsController < ApplicationController
   end
  
   def exchanges
+    @group = Group.find(params[:id])
     @exchanges = @group.exchanges.paginate(:page => params[:page], :per_page => ajax_posts_per_page)
     respond_to do |format|
       format.js {render :action => 'reject' if not request.xhr?}
@@ -95,12 +101,14 @@ class GroupsController < ApplicationController
   end
 
   def people
+    @group = Group.find(params[:id])
     respond_to do |format|
       format.html { redirect_to group_path(@group, :anchor => 'people') }
     end
   end
 
   def members
+    @group = Group.find(params[:id])
     @body = "noajax"
     @memberships = Membership.custom_search(nil,
                                             @group,
@@ -117,6 +125,7 @@ class GroupsController < ApplicationController
   end
 
   def graphs
+    @group = Group.find(params[:id])
     @num_months = 6
     respond_to do |format|
       format.js {render :action => 'reject' if not request.xhr?}
@@ -124,7 +133,7 @@ class GroupsController < ApplicationController
   end
 
   def photos
-    #@group = Group.find(params[:id])
+    @group = Group.find(params[:id])
     @photos = @group.photos
     respond_to do |format|
       format.html
@@ -132,6 +141,7 @@ class GroupsController < ApplicationController
   end
   
   def new_photo
+    @group = Group.find(params[:id])
     @photo = Photo.new
     respond_to do |format|
       format.html
@@ -139,7 +149,7 @@ class GroupsController < ApplicationController
   end
   
   def save_photo
-    #group = Group.find(params[:id])
+    @group = Group.find(params[:id])
     if params[:photo].nil?
       # This is mainly to prevent exceptions on iPhones.
       flash[:error] = t('error_browser_upload_fail')
