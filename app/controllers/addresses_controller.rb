@@ -20,7 +20,7 @@ class AddressesController < ApplicationController
   end
 
   def create
-    @address = Address.new(:address_params)
+    @address = Address.new(address_params)
     begin
       if current_person.addresses << @address
         redirect_to person_url(current_person)
