@@ -55,7 +55,8 @@ gem "geokit-rails", "2.0.1"
 
 gem "will_paginate"
 gem "aasm", '3.0.19'
-gem "authlogic"
+gem "authlogic", '3.5.0'
+gem "scrypt"
 #gem "authlogic-oid", :require => "authlogic_openid"
 gem "ruby-openid", :require => "openid"
 gem "open_id_authentication", :git => "git://github.com/rewritten/open_id_authentication.git"

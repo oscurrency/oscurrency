@@ -58,26 +58,24 @@ class PeopleController < ApplicationController
   def create
     @person = Person.new(person_params)
     @person.email_verified = false if global_prefs.email_verifications?
-    @person.save do |result|
-      respond_to do |format|
-        if result
+    respond_to do |format|
+      format.html do
+        if @person.save
           if global_prefs.can_send_email? && !global_prefs.new_member_notification.blank?
             PersonMailerQueue.registration_notification(@person)
           end
           if global_prefs.email_verifications?
             @person.deliver_email_verification!
             flash[:notice] = t('notice_thanks_for_signing_up_check_email')
-            format.html { redirect_to(home_url) }
           else
-            # XXX self.current_person = @person
             flash[:notice] = t('notice_thanks_for_signing_up')
-            format.html { redirect_to(home_url) }
           end
+          redirect_to(home_url)
         else
           @body = "register single-col"
           @all_categories = Category.find(:all, :order => "parent_id, name").sort_by { |a| a.long_name }
           @all_neighborhoods = Neighborhood.find(:all, :order => "parent_id, name").sort_by { |a| a.long_name }
-          format.html { render :action => 'new' }
+          render :action => 'new'
         end
       end
     end
