@@ -31,6 +31,7 @@ class OffersController < ApplicationController
   end
 
   def show
+    @offer = Offer.find(params[:id])
     @group = @offer.group
     if @group.authorized_to_view_offers?(current_person)
       respond_with @offer do |format|
@@ -61,23 +62,20 @@ class OffersController < ApplicationController
     @all_neighborhoods = Neighborhood.by_long_name
 
     respond_to do |format|
-      if @offer.save
-        flash[:notice] = t('success_offer_created') if @offer.save
-        @offers = Offer.custom_search(nil,@group,active=true,page=1,ajax_posts_per_page,nil).order("updated_at desc")
-        #respond_with @offer
-        #format.html { redirect_to(@offer) }
-        format.js
-        format.xml  { head :ok }
-      else
-        @photo = @offer.photos.build if @offer.photos.blank?
-        format.html { render :action => "new" }
-        format.js { render :action => "new" }
-        format.xml  { render :xml => @offer.errors, :status => :unprocessable_entity }
+      format.js do
+        if @offer.save
+          flash[:notice] = t('success_offer_created')
+          @offers = Offer.custom_search(nil,@group,active=true,page=1,ajax_posts_per_page,nil).order("updated_at desc")
+        else
+          @photo = @offer.photos.build if @offer.photos.blank?
+          render :action => "new"
+        end
       end
     end
   end
 
   def edit
+    @offer = Offer.find(params[:id])
     @group = @offer.group
     @all_categories = Category.by_long_name
     @all_neighborhoods = Neighborhood.by_long_name
@@ -110,6 +108,7 @@ class OffersController < ApplicationController
   end
 
   def destroy
+    @offer = Offer.find(params[:id])
     if can?(:destroy, @offer)
       flash[:notice] = t('success_offer_destroyed')
       @offer.destroy
