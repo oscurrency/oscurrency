@@ -335,7 +335,7 @@ class Person < ActiveRecord::Base
   end
 
   def primary_address
-    addresses.find_all_by_primary(true).first
+    addresses.where(primary: true).first
   end
 
   def shared_addresses
@@ -361,7 +361,7 @@ class Person < ActiveRecord::Base
 
   def photo
     # This should only have one entry, but be paranoid.
-    photos.find_all_by_primary(true).first
+    photos.where(primary: true).first
   end
 
   # Return all the photos other than the primary one
