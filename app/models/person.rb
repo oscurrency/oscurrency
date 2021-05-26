@@ -16,6 +16,7 @@ class Person < ActiveRecord::Base
 =end
     c.perishable_token_valid_for = 48.hours
     c.maintain_sessions = false if Rails.env == "test"
+    c.merge_validates_length_of_password_field_options :minimum => 4
   end
 
   #  attr_accessor :password, :verify_password, :new_password, :password_confirmation
