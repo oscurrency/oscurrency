@@ -52,7 +52,7 @@ gem "cancan"
 gem "dalli"
 gem "redcarpet"
 gem 'syck'
-gem 'rails_admin', '0.5.0'
+gem 'rails_admin', '1.0.0'
 gem "ar_after_transaction"
 gem 'valid_email', :require => 'valid_email/email_validator'
 gem "calendar_helper"
