@@ -1,13 +1,9 @@
-require 'texticle/searchable'
-
 class Req < ActiveRecord::Base
   include ActivityLogger
   include AnnouncementBase
   include HasPhotos
 
   extend PreferencesHelper
-
-  extend Searchable(:name, :description)
 
   scope :active, lambda { where("active = ? AND due_date >= ?", true, DateTime.now) }
   scope :biddable, -> { where(biddable: true) }
@@ -41,6 +37,10 @@ class Req < ActiveRecord::Base
       self.biddable.page(page).order('created_at DESC')
     end
 
+  end
+
+  def self.searchable_columns
+    [:name, :description]
   end
 
   def considered_active?

@@ -1,4 +1,4 @@
-require 'texticle/searchable'
+require 'textacular'
 
 class Person < ActiveRecord::Base
   include ActivityLogger
@@ -21,7 +21,6 @@ class Person < ActiveRecord::Base
 
   #  attr_accessor :password, :verify_password, :new_password, :password_confirmation
   attr_accessor :sorted_photos, :accept_agreement
-  extend Searchable(:name, :business_name, :description)
 
   MAX_PASSWORD = 40
   MAX_NAME = 40
@@ -144,6 +143,9 @@ class Person < ActiveRecord::Base
   after_update :log_activity_description_changed
   before_destroy :destroy_activities, :destroy_feeds
 
+  def self.searchable_columns
+    [:name, :business_name, :description]
+  end
 
   # Return the first admin created.
   # We suggest using this admin as the primary administrative contact.

@@ -14,9 +14,7 @@
       <%= select_tag 'offer[count]', options_for_select(Array.new(@offer.available_count) {|i| [i+1, i+1]} ) %>
     </div>
   <% end %>
-  <%= f.actions do %>
-    <%= f.primary t('button_submit') %><%= waiting_image %>
-  <% end %>
+  <%= f.primary t('button_submit') %><%= waiting_image %>
 <% end %>
 
 <script>

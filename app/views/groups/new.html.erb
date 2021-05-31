@@ -25,7 +25,7 @@
   <%= bootstrap_form_for(@group) do |f| %>
     <%= f.text_field :name, label: t('groups.new.name') %>
 
-    <%= f.control_group :adhoc_currency do %>
+    <%= f.form_group :adhoc_currency do %>
       <%= f.check_box :adhoc_currency, label: t('groups.new.adhoc_currency'), onclick: "toggle_currency_unit(this);" %>
     <% end %>
 
@@ -33,7 +33,7 @@
       <%= f.text_field :unit, label: t('groups.new.currency_unit_plural'), disabled: true %>
       <%= f.text_field :asset, label: t('groups.new.asset'), size: 8, disabled: true %>
       <%= f.text_field :default_credit_limit, label: t('groups.new.default_credit_limit'), size: 5, disabled: true %>
-      <%= f.control_group :private_txns do %>
+      <%= f.form_group :private_txns do %>
         <%= f.check_box :private_txns, label: t('groups.new.private_txns') %>
       <% end %>
     </fieldset>
@@ -41,8 +41,6 @@
 
     <%= f.select :mode, @group.get_groups_modes, label: t('groups.new.mode') %>
 
-    <%= f.actions do %>
-      <%= f.primary t('button_create') %>
-    <% end %>
+    <%= f.primary t('button_create') %>
   <% end %>
   </div>

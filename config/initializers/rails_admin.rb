@@ -19,7 +19,6 @@ end
 
   config.current_user_method { current_person } #auto-generated
   config.authorize_with :cancan
-  config.attr_accessible_role {:admin}
   config.authenticate_with {
     unless current_person
       session[:return_to] = request.url

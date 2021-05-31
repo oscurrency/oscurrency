@@ -1,4 +1,4 @@
-  <%= form.control_group :address_privacy do %>
+  <%= form.form_group :address_privacy do %>
     <% if @address.new_record? %>
       <%= form.check_box :address_privacy, checked: @current_person.org? ? true : false, label: t('addresses.form.share_address') %>
     <% else %>
@@ -14,7 +14,7 @@
 
   <%= form.text_field :city, label: t('addresses.form.city') %>
 
-  <%= form.control_group do %>
+  <%= form.form_group do %>
     <%= form.select :state_id, @states, label: {text: t('addresses.form.state')}, include_blank: true %>
   <% end %>
 

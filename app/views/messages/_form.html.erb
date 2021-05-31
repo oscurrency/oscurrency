@@ -17,7 +17,5 @@
         <%= f.text_area :content, :id => "message_body", :rows => 10 %>
         <%= set_focus_to "message_subject" %>
       <%- end -%>
-    <%= f.actions do %>
       <%= f.primary t('button_send'), :id => "message_submit" %><%= waiting_image %>
-    <% end %>
   <% end %>

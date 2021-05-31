@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 ruby "2.3.8"
-gem 'rails', '4.0.13'
+gem 'rails', '4.1.0'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -32,9 +32,9 @@ gem 'dynamic_form'
 gem "oauth"
 
 gem "feed-normalizer"
-gem "texticle", github: 'textacular/textacular', ref: '4b938ad49515c71341e5374b4df8e132a5e24f90'
+gem "textacular"
 
-gem "aws-s3"
+gem "aws-s3", git: "https://github.com/bartoszkopinski/aws-s3.git"
 gem "fog", '1.19.0'
 gem "carrierwave"
 gem "rmagick", '2.16.0'
@@ -53,11 +53,12 @@ gem "dalli"
 gem "redcarpet"
 gem 'syck'
 gem 'rails_admin', '1.0.0'
+gem 'safe_yaml'
 gem "ar_after_transaction"
 gem 'valid_email', :require => 'valid_email/email_validator'
 gem "calendar_helper"
-gem "gibbon", :git => "git://github.com/amro/gibbon.git"
-gem "bootstrap_form", "~> 1.0.0"
+#gem "gibbon", :git => "git://github.com/amro/gibbon.git"
+gem "bootstrap_form", "2.1.1"
 gem 'test-unit'
 
 group :development, :test do

@@ -1,8 +1,5 @@
-require 'texticle/searchable'
-
 class Category < ActiveRecord::Base
   LONG_NAME_SEPARATOR = ":"
-  extend Searchable(:name, :description)
 
   validates_presence_of :name
   has_and_belongs_to_many :reqs
@@ -12,6 +9,10 @@ class Category < ActiveRecord::Base
 
   def self.root_nodes
     where(:parent_id => nil).order(:name)
+  end
+
+  def self.searchable_columns
+    [:name, :description]
   end
 
   def descendant_ids

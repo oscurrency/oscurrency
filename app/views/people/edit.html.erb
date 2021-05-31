@@ -45,7 +45,7 @@
 
       <%= f.text_field :phone, label: t('people.edit.phone') %>
 
-      <%= f.control_group :phoneprivacy do %>
+      <%= f.form_group :phoneprivacy do %>
           <%= f.check_box :phoneprivacy, label: t('people.edit.share_phone_number') %>
       <% end %>
 
@@ -59,10 +59,10 @@
           <%= t('people.edit.email_notification_note') %>
         </p>
 
-        <%= f.control_group :message_notifications do %>
+        <%= f.form_group :message_notifications do %>
           <%= f.check_box :message_notifications, label: t('people.edit.messages')%>
         <% end %>
-        <%= f.control_group :broadcast_emails do %>
+        <%= f.form_group :broadcast_emails do %>
           <%= f.check_box :broadcast_emails, label: t('people.edit.broadcast_emails')%>
         <% end %>
       <%- end -%>
@@ -71,7 +71,7 @@
       <div id="business_details">
         <h3><%= t('people.edit.business_details') %></h3>
 
-        <%= f.control_group :org do %>
+        <%= f.form_group :org do %>
           <%= f.check_box :org, label: t('people.edit.business_account') %>
         <% end %>
 
@@ -91,7 +91,7 @@
       </div>
 
       <div class="scope-action">
-      <%= f.control_group :deactivated do %>
+      <%= f.form_group :deactivated do %>
           <%= f.check_box :deactivated, label: t('people.edit.deactivate_your_account') %>
       <% end %>
       </div>
@@ -165,21 +165,6 @@
                              :maxlength => Person::MAX_PASSWORD,
                              :value => "" %>
         <input type="hidden" name="type" value="password_edit" />
-        <%= f.actions do %>
-          <%= f.primary t('people.edit.change_password') %>
-        <% end %>
+        <%= f.primary t('people.edit.change_password') %>
     <% end %>
-
-  <% if global_prefs.openid? %>
-    <h2>OpenID</h2>
-
-    <%= bootstrap_form_for @person, :html => { :id => "openid_form" } do |f| %>
-      <%= f.text_field :openid_identifier, label: t('people.edit.openid_identifier') %>
-      <%= f.actions do %>
-        <%= f.primary t('people.edit.change_openid') %>
-      <% end %>
-      <input type="hidden" name="type" value="openid_edit" />
-    <% end %>
-  <% end %>
-
 </div>

@@ -1,7 +1,4 @@
-require 'texticle/searchable'
-
 class ForumPost < Post
-  extend Searchable(:body)
 
   belongs_to :topic,  :counter_cache => true, :touch => true
   belongs_to :person, :counter_cache => true
@@ -11,6 +8,10 @@ class ForumPost < Post
   
   after_create :log_activity
   after_create :send_forum_notifications
+
+  def self.searchable_columns
+    [:body]
+  end
 
   def send_forum_notifications
     peeps = topic.forum.group.memberships.listening.map {|m| m.person}

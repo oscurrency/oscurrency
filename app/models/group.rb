@@ -1,5 +1,3 @@
-require 'texticle/searchable'
-
 class Group < ActiveRecord::Base
   include ActivityLogger
   extend PreferencesHelper
@@ -33,12 +31,14 @@ class Group < ActiveRecord::Base
   after_create :log_activity
   before_update :update_member_credit_limits
   
-  extend Searchable(:name, :description)
-  
   # GROUP modes
   PUBLIC = 0
   PRIVATE = 1
-  
+
+  def self.searchable_columns
+    [:name, :description]
+  end
+
   def get_groups_modes
     modes = []
     modes << ["Public",PUBLIC]
@@ -122,7 +122,7 @@ class Group < ActiveRecord::Base
   ## Photo helpers
   def photo
     # This should only have one entry, but be paranoid.
-    photos.find_all_by_primary(true).first
+    photos.where(primary: true).first
   end
 
   # Return all the photos other than the primary one

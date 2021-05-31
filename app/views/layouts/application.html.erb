@@ -56,7 +56,7 @@
                     <b class="caret"></b>
                   </a>
                   <ul class="dropdown-menu">
-                    <% if (memberships = current_person.memberships.all(:include => 'group', :order => 'groups.name ASC')).present? %>
+                    <% if (memberships = current_person.memberships.all.includes(:group).order('groups.name ASC')).present? %>
                       <% memberships.each do |membership| %>
                         <% icon_class = membership.is?(:admin) ? 'wrench' : 'person' %>
                         <li>

@@ -3,8 +3,6 @@
 <%= bootstrap_form_for @photo, :url => {:action => "save_photo"}, :html => { :multipart => true } do |f| -%>
 
   <%= f.file_field :picture, label: t('groups.new_photo.upload_a_photo') %>
-  <%= f.actions do %>
-    <%= f.primary t('button_upload') %>
-    <%= f.submit t('button_cancel'), :id => "cancel", :class => "btn" %>
-  <% end %>
+  <%= f.primary t('button_upload') %>
+  <%= f.submit t('button_cancel'), :id => "cancel", :class => "btn" %>
 <% end -%>

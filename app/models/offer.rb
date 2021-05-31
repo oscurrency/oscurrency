@@ -1,11 +1,7 @@
-require 'texticle/searchable'
-
 class Offer < ActiveRecord::Base
   include ActivityLogger
   include AnnouncementBase
   include HasPhotos
-
-  extend Searchable(:name, :description)
 
   module Scopes
     def active
@@ -16,6 +12,10 @@ class Offer < ActiveRecord::Base
   extend Scopes
 
   validates :expiration_date, :available_count, :presence => true
+
+  def self.searchable_columns
+    [:name, :description]
+  end
 
   def considered_active?
     available_count > 0 && expiration_date >= DateTime.now
