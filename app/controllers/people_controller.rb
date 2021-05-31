@@ -48,8 +48,8 @@ class PeopleController < ApplicationController
   def new
     @body = "register single-col"
     @person = Person.new
-    @all_categories = Category.find(:all, :order => "parent_id, name").sort_by { |a| a.long_name }
-    @all_neighborhoods = Neighborhood.find(:all, :order => "parent_id, name").sort_by { |a| a.long_name }
+    @all_categories = Category.all.order("parent_id, name").sort_by { |a| a.long_name }
+    @all_neighborhoods = Neighborhood.all.order("parent_id, name").sort_by { |a| a.long_name }
     respond_to do |format|
       format.html
     end
