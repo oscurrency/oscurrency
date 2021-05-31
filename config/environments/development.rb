@@ -28,11 +28,11 @@ Oscurrency::Application.configure do
 
   # Do not compress assets
   # XXX config.assets.compress = false
-  config.serve_static_assets = true
+  config.serve_static_files = true
   config.assets.compress = false
   config.assets.compile = true
   config.assets.debug = true
-
+  config.log_level = :info
   config.colorize_logging = true
 
   Rails.application.routes.default_url_options[:host] = 'localhost:3000'
