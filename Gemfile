@@ -48,7 +48,7 @@ gem "scrypt"
 #gem "authlogic-oid", :require => "authlogic_openid"
 gem "ruby-openid", :require => "openid"
 gem "open_id_authentication", :git => "git://github.com/rewritten/open_id_authentication.git"
-gem "cancan"
+gem "cancancan", "1.12.0"
 gem "dalli"
 gem "redcarpet"
 gem 'syck'

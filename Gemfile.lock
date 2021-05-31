@@ -80,7 +80,7 @@ GEM
     builder (3.2.4)
     calendar_helper (0.2.6)
       open4
-    cancan (1.6.10)
+    cancancan (1.12.0)
     capybara (2.18.0)
       addressable
       mini_mime (>= 0.1.3)
@@ -415,7 +415,7 @@ DEPENDENCIES
   binding_of_caller
   bootstrap_form (= 2.1.1)
   calendar_helper
-  cancan
+  cancancan (= 1.12.0)
   capybara
   carrierwave
   coffee-rails (~> 4.0.0)
