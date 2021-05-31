@@ -13,7 +13,7 @@ module RailsAdmin
           @abstract_model.default_scope = Proc.new
           @abstract_model.instance_eval do
             def scoped
-              model.scoped.instance_exec(&@default_scope)
+              model.instance_exec(&@default_scope)
             end
           end
         end

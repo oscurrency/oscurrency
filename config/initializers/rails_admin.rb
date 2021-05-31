@@ -17,6 +17,7 @@ module RailsAdmin
    end
 end
 
+  config.parent_controller = "::ApplicationController"
   config.current_user_method { current_person } #auto-generated
   config.authorize_with :cancan
   config.authenticate_with {
@@ -266,17 +267,14 @@ end
       field :app_name
       field :server_name
       field :admin_contact_id do
-        properties[:collection] = Person.where(admin: true).order(:created_at).map {|p| [p.name,p.id]}
-        partial "select"
       end
       field :groups
-      field :default_group_id do
-        properties[:collection] = Group.all.map {|g| [g.name,g.id]}
-        partial "select"
+      field :default_group_id, :enum do
+        enum_method do
+          :default_group_id_enum
+        end
       end
       field :locale do
-        properties[:collection] = [['English','en'],['Spanish','es'],['French','fr'],['Greek','gr']]
-        partial "select"
       end
       field :logout_url
       field :blog_feed_url
@@ -421,8 +419,6 @@ end
     edit do
       field :name
       field :parent_id do
-        properties[:collection] = [['',nil]] + Category.by_long_name.map {|c| [c.long_name, c.id]}
-        partial "select"
       end
       field :description
     end
@@ -436,8 +432,6 @@ end
     edit do
       field :name
       field :parent_id do
-        properties[:collection] = [['',nil]] + Neighborhood.by_long_name.map {|n| [n.long_name, n.id]}
-        partial "select"
       end
       field :description
     end

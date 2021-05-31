@@ -39,6 +39,18 @@ class Preference < ActiveRecord::Base
   # default profile picture and default group picture
   has_many :photos, -> { order('created_at') }, :as => :photoable, :dependent => :destroy
 
+  def default_group_id_enum
+    Group.all.map {|g| [g.name,g.id]}
+  end
+
+  def admin_contact_id_enum
+    Person.where(admin: true).order(:created_at).map {|p| [p.name,p.id]}
+  end
+
+  def locale_enum
+    [['English','en'],['Spanish','es'],['French','fr'],['Greek','gr']]
+  end
+
   # Can we send mail with the present configuration?
   def can_send_email?
     not (ENV['SMTP_DOMAIN'].blank? or ENV['SMTP_SERVER'].blank?)

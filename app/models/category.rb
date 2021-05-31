@@ -15,6 +15,10 @@ class Category < ActiveRecord::Base
     [:name, :description]
   end
 
+  def parent_id_enum
+    [['',nil]] + Category.by_long_name.map {|c| [c.long_name, c.id]}
+  end
+
   def descendant_ids
     children_only_id = children.select("id")
     children_only_id.collect(&:descendant_ids).flatten + children_only_id
