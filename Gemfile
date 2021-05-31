@@ -37,6 +37,7 @@ gem "textacular"
 
 gem "aws-s3", git: "https://github.com/bartoszkopinski/aws-s3.git"
 gem "fog", '1.19.0'
+gem 'xmlrpc'
 gem "carrierwave"
 gem "rmagick", '2.16.0'
 gem "json", '~> 1.8.1'

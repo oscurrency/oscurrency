@@ -418,8 +418,11 @@ GEM
     valid_email (0.0.7)
       activemodel
       mail
+    webrick (1.7.0)
     will_paginate (3.3.0)
     xml-simple (1.1.8)
+    xmlrpc (0.3.2)
+      webrick
     xpath (3.2.0)
       nokogiri (~> 1.8)
 
@@ -493,6 +496,7 @@ DEPENDENCIES
   uuid
   valid_email
   will_paginate
+  xmlrpc
 
 RUBY VERSION
    ruby 2.4.10p364
