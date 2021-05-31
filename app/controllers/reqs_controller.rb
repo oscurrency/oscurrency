@@ -5,7 +5,7 @@ class ReqsController < ApplicationController
   skip_before_filter :require_activation, :only => [:show, :index]
   before_filter :login_required
   load_resource :group
-  authorize_resource :req, :through => :group, :shallow => true
+  load_and_authorize_resource :req, :through => :group, :shallow => true
 
   # GET /reqs
   # GET /reqs.xml
@@ -55,7 +55,6 @@ class ReqsController < ApplicationController
 
   # GET /reqs/new
   def new
-    @req = Req.new
     @all_categories = Category.by_long_name
     @all_neighborhoods = Neighborhood.by_long_name
     @selected_neighborhoods = current_person.neighborhoods
@@ -82,7 +81,6 @@ class ReqsController < ApplicationController
   # POST /reqs
   # POST /reqs.xml
   def create
-    @req = Req.new(req_params)
     @req.group = @group
     @req.person = current_person
 
