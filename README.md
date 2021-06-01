@@ -1,6 +1,6 @@
 ### Quick Facts
-- ruby 2.1.5
-- rails 3.2.16
+- ruby 2.4.10
+- rails 4.2.8
 - heroku deployment
 - [Issues](https://github.com/oscurrency/oscurrency/issues)
 - [Demo site](http://demo.opensourcecurrency.org)
