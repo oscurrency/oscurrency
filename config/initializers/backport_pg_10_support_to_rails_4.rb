@@ -1,6 +1,6 @@
 module ActiveRecord
   module ConnectionAdapters
-    class PostgreSQLAdapter
+    module PostgreSQL
       module SchemaStatements
         # Resets the sequence of a table's primary key to the maximum value.
         def reset_pk_sequence!(table, pk = nil, sequence = nil) #:nodoc:
