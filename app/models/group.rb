@@ -63,9 +63,8 @@ class Group < ActiveRecord::Base
   class << self
 
     def name_sorted_and_paginated(page = 1)
-      paginate(:page => page,
-               :per_page => RASTER_PER_PAGE,
-               :order => "name ASC")
+      Group.order(:name).paginate(:page => page,
+                                  :per_page => RASTER_PER_PAGE)
     end
 
     def by_opentransact(asset)
