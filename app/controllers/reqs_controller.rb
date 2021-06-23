@@ -91,12 +91,11 @@ class ReqsController < ApplicationController
       if @req.save
         @reqs = Req.custom_search(nil,@group,active=true,page=1,ajax_posts_per_page,nil).order("updated_at desc")
         flash[:notice] = t('success_request_created')
-        #respond_with @req
-        #format.html { redirect_to(@req) }
         format.js
         format.xml  { head :ok }
       else
         @photo = @req.photos.build if @req.photos.blank?
+        flash[:error] = @req.errors.to_a.join(', ')
         format.html { render :action => "new" }
         format.js { render :action => "new" }
         format.xml  { render :xml => @req.errors, :status => :unprocessable_entity }

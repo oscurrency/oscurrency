@@ -544,7 +544,7 @@ en:
       req_created: "has created a new request"
     transact:
       for: "for"
-    multiple_select_label: "For multiple selection in the list below, press and hold Ctrl key (or Command for Mac users)"
+    multiple_select_label: "For multiple selection (at most 5) in the list, press and hold Ctrl key (or Command for Mac users)"
 
   person_mailer:
     connection_request:
