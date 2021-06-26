@@ -80,11 +80,11 @@
                   </a>
                   <ul class="dropdown-menu">
                     <li><%= link_to t('home.menu.about'), about_path if !global_prefs.about.blank? %></li>
-                    <li><%= link_to t('home.menu.practice'), practice_path if !global_prefs.practice.blank? %></li>
-                    <li><%= link_to t('home.menu.steps'), steps_path if !global_prefs.steps.blank? %></li>
-                    <li><%= link_to t('home.menu.contact'), contact_path if !global_prefs.contact.blank? %></li>
                     <li><%= link_to t('home.menu.agreement'), agreement_path if !global_prefs.agreement.blank? %></li>
+                    <li><%= link_to t('home.menu.policy'), policy_path if !global_prefs.steps.blank? %></li>
+                    <li><%= link_to t('home.menu.practice'), practice_path if !global_prefs.practice.blank? %></li>
                     <li><%= link_to t('home.menu.faq'), questions_path if !global_prefs.questions.blank? %></li>
+                    <li><%= link_to t('home.menu.contact'), contact_path if !global_prefs.contact.blank? %></li>
                   </ul>
                 </li>
               <%- end -%>

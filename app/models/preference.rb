@@ -39,6 +39,10 @@ class Preference < ActiveRecord::Base
   # default profile picture and default group picture
   has_many :photos, -> { order('created_at') }, :as => :photoable, :dependent => :destroy
 
+  def policy
+    steps
+  end
+
   def default_group_id_enum
     Group.all.map {|g| [g.name,g.id]}
   end

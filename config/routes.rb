@@ -116,7 +116,7 @@ Oscurrency::Application.routes.draw do
   get '/refreshblog' => 'feed_posts#refresh_blog', :as => :refreshblog
   get '/about' => 'home#about', :as => :about
   get '/practice' => 'home#practice', :as => :practice
-  get '/steps' => 'home#steps', :as => :steps
+  get '/policy' => 'home#policy', :as => :policy
   get '/questions' => 'home#questions', :as => :questions
   get '/contact' => 'home#contact', :as => :contact
   get '/agreement' => 'home#agreement', :as => :agreement
