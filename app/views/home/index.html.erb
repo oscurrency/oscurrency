@@ -2,7 +2,7 @@
 
 <div class="row">
   <div class="span9">
-    <% pages = %w[about practice policy contact faq].select {|p| global_prefs.send(p).present?} %>
+    <% pages = %w[about agreement practice policy contact faq].select {|p| global_prefs.send(p).present?} %>
     <ul class="nav nav-tabs">
       <li class="active"><a href="#skillbank" data-toggle="tab"><%= t("home.menu.skillbank") %></a></li>
       <% pages.each do |page| %>
