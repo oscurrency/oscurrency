@@ -48,8 +48,8 @@ class PeopleController < ApplicationController
   def new
     @body = "register single-col"
     @person = Person.new
-    @all_categories = Category.all.order("parent_id, name").sort_by { |a| a.long_name }
-    @all_neighborhoods = Neighborhood.all.order("parent_id, name").sort_by { |a| a.long_name }
+    @all_categories = Category.all_categories
+    @all_neighborhoods = Neighborhood.all_neighborhoods
     respond_to do |format|
       format.html
     end
@@ -73,8 +73,8 @@ class PeopleController < ApplicationController
           redirect_to(home_url)
         else
           @body = "register single-col"
-          @all_categories = Category.find(:all, :order => "parent_id, name").sort_by { |a| a.long_name }
-          @all_neighborhoods = Neighborhood.find(:all, :order => "parent_id, name").sort_by { |a| a.long_name }
+          @all_categories = Category.all_categories
+          @all_neighborhoods = Neighborhood.all_neighborhoods
           render :action => 'new'
         end
       end
@@ -109,8 +109,8 @@ class PeopleController < ApplicationController
 
   def edit
     @category = Category.new
-    @all_categories = Category.find(:all, :order => "parent_id, name").sort_by { |a| a.long_name }
-    @all_neighborhoods = Neighborhood.find(:all, :order => "parent_id, name").sort_by { |a| a.long_name }
+    @all_categories = Category.all_categories
+    @all_neighborhoods = Neighborhood.all_neighborhoods
     respond_to do |format|
       format.html
     end
@@ -140,8 +140,8 @@ class PeopleController < ApplicationController
           flash[:success] = t('success_profile_updated')
           format.html { redirect_to(@person) }
         else
-          @all_categories = Category.find(:all, :order => "parent_id, name").sort_by { |a| a.long_name }
-          @all_neighborhoods = Neighborhood.find(:all, :order => "parent_id, name").sort_by { |a| a.long_name }
+          @all_categories = Category.all_categories
+          @all_neighborhoods = Neighborhood.all_neighborhoods
           format.html { render :action => "edit" }
         end
       end
@@ -155,8 +155,8 @@ class PeopleController < ApplicationController
           flash[:success] = t('success_password_changed')
           format.html { redirect_to(@person) }
         else
-          @all_categories = Category.find(:all, :order => "parent_id, name").sort_by { |a| a.long_name }
-          @all_neighborhoods = Neighborhood.find(:all, :order => "parent_id, name").sort_by { |a| a.long_name }
+          @all_categories = Category.all_categories
+          @all_neighborhoods = Neighborhood.all_neighborhoods
           format.html { render :action => "edit" }
         end
       end
@@ -170,8 +170,8 @@ class PeopleController < ApplicationController
             format.html { redirect_to(@person) }
             format.js
           else
-            @all_categories = Category.find(:all, :order => "parent_id, name").sort_by { |a| a.long_name }
-            @all_neighborhoods = Neighborhood.find(:all, :order => "parent_id, name").sort_by { |a| a.long_name }
+            @all_categories = Category.all_categories
+            @all_neighborhoods = Neighborhood.all_neighborhoods
             format.html { render :action => "edit" }
             format.js
           end

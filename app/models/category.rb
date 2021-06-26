@@ -7,6 +7,10 @@ class Category < ActiveRecord::Base
   has_and_belongs_to_many :people
   acts_as_tree
 
+  def self.all_categories
+    all.order("parent_id, name").sort_by { |a| a.long_name }
+  end
+
   def self.root_nodes
     where(:parent_id => nil).order(:name)
   end

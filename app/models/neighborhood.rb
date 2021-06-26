@@ -6,6 +6,10 @@ class Neighborhood < ActiveRecord::Base
   has_and_belongs_to_many :people
   acts_as_tree
 
+  def self.all_neighborhoods
+    all.order("parent_id, name").sort_by { |a| a.long_name }
+  end
+
   def parent_id_enum
     [['',nil]] + Neighborhood.by_long_name.map {|n| [n.long_name, n.id]}
   end
